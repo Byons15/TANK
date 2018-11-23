@@ -74,7 +74,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>I:\SDL2_2.0.4\include;I:\SDL2_image-2.0.1\include;I:\SDL2_ttf-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>I:\SDL2_2.0.4\lib\x86;I:\SDL2_image-2.0.1\lib\x86;I:\SDL2_ttf-2.0.14\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -110,6 +116,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="file\FileLoader.cpp" />
+    <ClCompile Include="SDL\Event.cpp" />
+    <ClCompile Include="SDL\Games.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="Games.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="level" />
+    <None Include="libfreetype-6.dll" />
+    <None Include="libjpeg-9.dll" />
+    <None Include="libpng16-16.dll" />
+    <None Include="libtiff-5.dll" />
+    <None Include="libwebp-4.dll" />
+    <None Include="objects.data" />
+    <None Include="SDL2.dll" />
+    <None Include="SDL2_image.dll" />
+    <None Include="SDL2_ttf.dll" />
+    <None Include="zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="simkai.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
