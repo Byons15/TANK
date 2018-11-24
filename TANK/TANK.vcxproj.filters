@@ -24,6 +24,12 @@
     <ClCompile Include="SDL\Games.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SDL\Renderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL\AnimationFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -33,6 +39,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Games.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL\AnimationFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

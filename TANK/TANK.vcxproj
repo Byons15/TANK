@@ -119,11 +119,15 @@
     <ClCompile Include="file\FileLoader.cpp" />
     <ClCompile Include="SDL\Event.cpp" />
     <ClCompile Include="SDL\Games.cpp" />
+    <ClCompile Include="SDL\Renderer.cpp" />
+    <ClCompile Include="SDL\AnimationFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Games.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SDL\AnimationFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="level" />

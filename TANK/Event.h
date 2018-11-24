@@ -1,34 +1,26 @@
 #pragma once
 #include <SDL_events.h>
 
-#define EVENT_FILTER 0x901
-
 class Games;
 
 /*
-封装SDL_UserEvent的类。
-Event以SDL_UserEvent中的type成员作为事件标识。
-Event不能处理SDL_UserEvent以外的事件。
+封装SDL事件以及SDL用户事件，用钩子的方式实现。
 */
 class Event
 {
 	friend Games;
 public:
-
-	enum CALLWAY
-	{
-		Async,
-		Sync,
-	};
-
-	//触发事件。
-	//callWay == Sync : 函数直接呼叫派生类实现的eventProc，将事件交其处理。 
-	//callWay == Async : 函数将事件push到SDL的事件队列中，异步呼叫eventProc。
-	int eventTrigger(int type, int code, void *data1 = 0, void *data2 = 0, CALLWAY callWay = Async);
 	virtual ~Event() = default;
 protected:
-	//事件处理。
-	//被拦截的事件在触发后会调用这个函数。
-	//派生类需要实现它。
-	virtual void eventProc(const SDL_UserEvent &event) = 0;
+	
+	//SDL事件钩子回调函数。
+	//调用Games::setEventHook函数，在事件触发时会回调这个函数。
+	//派生类实现。
+	virtual void eventHookProc(const SDL_Event & event) = 0;
+
+	//SDL用户事件钩子回调函数。
+	//这个是用于用户自定义事件的钩子回调，由Games::setUserEventHook设置。
+	//它应该是由Games::userEventTrigger广播的事件。确切的说应该算消息。
+	virtual void userEventHookProc(const SDL_UserEvent &event) = 0;
+
 };
