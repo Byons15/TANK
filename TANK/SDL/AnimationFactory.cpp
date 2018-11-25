@@ -37,6 +37,15 @@ void AnimationFactory::createFactory(Renderer * renderer)
 	}
 }
 
+const Animation & AnimationFactory::findAnimation(const std::string & name) const
+{
+	auto iter = m_animationPool.find(name);
+	if (iter == m_animationPool.end())
+		throw std::out_of_range("没有找到动画："+ name);
+	
+	return iter->second;
+}
+
 AnimationFactory::~AnimationFactory()
 {
 	for (auto & t : m_texturePool) 

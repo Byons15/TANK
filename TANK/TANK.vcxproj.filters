@@ -30,6 +30,15 @@
     <ClCompile Include="SDL\AnimationFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SDL\Scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ground\Ground.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL\Spirit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -47,6 +56,15 @@
     <ClInclude Include="SDL\AnimationFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Spirit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="level" />
@@ -60,6 +78,7 @@
     <None Include="SDL2_image.dll" />
     <None Include="SDL2_ttf.dll" />
     <None Include="zlib1.dll" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="simkai.ttf" />

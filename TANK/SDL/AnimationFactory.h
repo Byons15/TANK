@@ -14,11 +14,17 @@ struct Animation
 	Uint32 frameInterval = 0;
 };
 
+struct SIZE
+{
+	Uint32 w, h;
+};
+
 class AnimationFactory
 {
 public:
 	AnimationFactory();
 	void createFactory(Renderer *renderer);
+	const Animation &findAnimation(const std::string &name) const;
 	~AnimationFactory();
 private:
 	std::map<std::string, SDL_Texture *> m_texturePool;

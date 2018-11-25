@@ -3,10 +3,10 @@
 #include <set>
 #include "SDL\AnimationFactory.h"
 
-struct SDL_Texture;
+#define RENDER 0x88181
+
 struct SDL_Window;
-struct SDL_Renderer;
-class View;
+class Scene;
 
 class Renderer :
 	public Event
@@ -23,13 +23,23 @@ public:
 		return m_renderer;
 	}
 
+	void addScene(Scene *s);
+
+	//参数 flip：参见SDL_RendererFlip
+	void renderTexture(SDL_Texture *texture, const SDL_Rect &destRect, const SDL_Rect &srcRect, 
+		Uint32 angle, Uint8 alpha = SDL_ALPHA_OPAQUE, int flip = 0);
+
 private:
 	virtual void userEventHookProc(const SDL_UserEvent &event);
+	virtual void eventHookProc(const SDL_Event & event);
 	void render();
-	int renderView(View *view, Uint32 time);
 
-	std::set<View *> m_renderQueue;
+	std::set<Scene *> m_renderQueue;
+	SDL_Window *m_window;
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
+	SIZE m_windowOriginalSize;
+	float m_windowWidthRatio, m_windowHeightRatio;
+	bool m_rending;
 };
 
