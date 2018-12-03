@@ -13,6 +13,11 @@ public:
 	Spirit(Scene *scene, const std::string &animationName = "");
 	virtual ~Spirit();
 
+	int setScene(Scene *scene);
+	Scene *scene() {
+		return m_scene;
+	}
+
 	size_t addAnimation(const Animation &a);
 	size_t addAnimation(const std::string &name);
 	int showAnimation(const Animation &a);

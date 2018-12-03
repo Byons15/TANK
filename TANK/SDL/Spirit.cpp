@@ -13,6 +13,18 @@ Spirit::~Spirit()
 {
 }
 
+int Spirit::setScene(Scene * scene)
+{
+	if (m_scene)
+		return -1;
+
+	if (!scene)
+		return -2;
+
+	m_scene = scene;
+	return 0;
+}
+
 size_t Spirit::addAnimation(const Animation & a)
 {
 	m_animationPool.push_back(a);
@@ -26,19 +38,21 @@ size_t Spirit::addAnimation(const std::string & name)
 
 int Spirit::showAnimation(const Animation & a)
 {
-	m_currAnimation = addAnimation(a);
-	return 0;
+	return showAnimation(addAnimation(a));;
 }
 
 int Spirit::showAnimation(const std::string & name)
 {
-	m_currAnimation = addAnimation(name);
-	return 0;
+	return showAnimation(addAnimation(name));
 }
 
 int Spirit::showAnimation(size_t index)
 {
 	if (index < m_animationPool.size()) {
+
+		m_renderHeight = m_animationPool[index].clipRect.h;
+		m_renderHeight = m_animationPool[index].clipRect.w;
+
 		m_currAnimation = index;
 		return 0;
 	}
@@ -73,6 +87,9 @@ void Spirit::update(Uint32 time)
 
 void Spirit::render(const SDL_Point & position)
 {
+	if (!m_scene)
+		return;
+
 	SDL_Rect renderRect{ m_scene->rect().x + position.x, m_scene->rect().y + position.y,
 						 m_renderWidth, m_renderHeight};
 

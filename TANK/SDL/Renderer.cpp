@@ -37,9 +37,12 @@ void Renderer::addScene(Scene * s)
 
 void Renderer::renderTexture(SDL_Texture * texture, const SDL_Rect & destRect, const SDL_Rect & srcRect, Uint32 angle, Uint8 alpha, int flip)
 {
-	if (alpha != SDL_ALPHA_OPAQUE) {
+	if (!texture)
+		return;
+
+	if (alpha != SDL_ALPHA_OPAQUE) 
 		SDL_SetTextureAlphaMod(texture, alpha);
-	}
+	
 
 	SDL_Rect rect = destRect;
 	rect.x = (int)((float)rect.x * m_windowWidthRatio);
@@ -49,9 +52,8 @@ void Renderer::renderTexture(SDL_Texture * texture, const SDL_Rect & destRect, c
 
 	SDL_RenderCopyEx(m_renderer, texture, &srcRect, &rect, angle, NULL, (SDL_RendererFlip)flip);
 
-	if (alpha != SDL_ALPHA_OPAQUE) {
+	if (alpha != SDL_ALPHA_OPAQUE) 
 		SDL_SetTextureAlphaMod(texture, SDL_ALPHA_OPAQUE);
-	}
 }
 
 void Renderer::userEventHookProc(const SDL_UserEvent & event)
