@@ -18,7 +18,7 @@ public:
 	Text()
 		:Text(0, { 0, 0 }) {}
 	Text(Scene *scene, const std::wstring &text = L"", Rendering rendering = shaded);
-	int setString(const std::wstring &text = L"");
+	int setString(const std::wstring &text = L"", int fontSize = 12);
 	virtual ~Text();
 private:
 	static TTF_Font *sm_font;

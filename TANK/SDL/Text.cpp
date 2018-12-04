@@ -12,7 +12,7 @@ Text::Text(Scene * scene, const std::wstring & text, Rendering rendering)
 		sm_font = TTF_OpenFont("simkai.ttf", 12);
 }
 
-int Text::setString(const std::wstring & text)
+int Text::setString(const std::wstring & text, int fontSize)
 {
 	if (m_texture.texture)
 		SDL_DestroyTexture(m_texture.texture);
