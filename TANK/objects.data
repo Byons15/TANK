@@ -1,9 +1,9 @@
 <objects>
-tank 0 0 79 79 2
-base 0 0 79 79 2
-brick 0 0 40 40 2
-rock 0 0 40 40 2
-water 0 0 40 40 1
-woods 0 0 40 40 5
-bullet 0 0 12 12 3
-<end>
+  base 0 0 79 79 2
+  brick 0 0 40 40 2
+  rock 0 0 40 40 2
+  water 0 0 40 40 1
+  woods 0 0 40 40 5
+  bullet 0 0 12 12 3
+  tank 0 0 79 79 2
+  <end>

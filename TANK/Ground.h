@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Spirit.h"
 
 #define MAP_SIZE 26
 #define GRID_SIZE 40
@@ -12,6 +13,5 @@ public:
 	~Ground();
 
 private:
-	
 };
 
