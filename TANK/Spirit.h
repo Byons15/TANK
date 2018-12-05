@@ -29,11 +29,11 @@ public:
 	void render(const SDL_Point &position);
 
 	void setZoom(Uint32 width, Uint32 height) {
-		m_renderHeight = height;
-		m_renderWidth  = width;
+		m_renderSize.h = height;
+		m_renderSize.w = width;
 	}
 	SIZE renderSize() {
-		return SIZE{ m_renderWidth, m_renderHeight };
+		return m_renderSize;
 	}
 	void setAlpha(Uint8 a) {
 		m_alpha = a;
@@ -44,7 +44,7 @@ public:
 
 private:
 	std::vector<Animation> m_animationPool;
-	Uint32 m_renderWidth, m_renderHeight;
+	SIZE m_renderSize;
 	Uint32 m_angle, m_currAnimation;
 	Scene *m_scene;
 	Uint8 m_alpha;

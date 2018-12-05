@@ -50,8 +50,8 @@ int Spirit::showAnimation(size_t index)
 {
 	if (index < m_animationPool.size()) {
 
-		m_renderHeight = m_animationPool[index].clipRect.h;
-		m_renderHeight = m_animationPool[index].clipRect.w;
+		m_renderSize.h = m_animationPool[index].clipRect.h;
+		m_renderSize.h = m_animationPool[index].clipRect.w;
 
 		m_currAnimation = index;
 		return 0;
@@ -66,6 +66,10 @@ int Spirit::removeAnimation(int index)
 		return -1;
 
 	m_animationPool.erase(m_animationPool.begin() + index);
+
+	if (m_currAnimation == index)
+		m_currAnimation = 0;
+
 	return 0;
 }
 
@@ -91,7 +95,7 @@ void Spirit::render(const SDL_Point & position)
 		return;
 
 	SDL_Rect renderRect{ m_scene->rect().x + position.x, m_scene->rect().y + position.y,
-						 m_renderWidth, m_renderHeight};
+						 m_renderSize.w, m_renderSize.h};
 
 	auto &a = m_animationPool[m_currAnimation];
 	m_scene->renderer()->renderTexture(a.texture, renderRect, a.clipRect, m_angle, m_alpha);

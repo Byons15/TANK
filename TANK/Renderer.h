@@ -6,6 +6,7 @@
 #define RENDER 0x88181
 
 struct SDL_Window;
+struct SDL_Renderer;
 class Scene;
 
 class Renderer :
