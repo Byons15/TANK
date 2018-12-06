@@ -1,17 +1,22 @@
 #pragma once
 #include "Scene.h"
-#include "Spirit.h"
-
-#define MAP_SIZE 26
-#define GRID_SIZE 40
+#include "ground\Maps.h"
+#include <vector>
+#include "ground\TerrainPool.h"
 
 class Ground :
 	public Scene
 {
 public:
-	Ground(Renderer *renderer, const SDL_Color &backdrop);
+	static constexpr uint32_t GRID_SIZE = 40;
+	Ground() = delete;
+	Ground(Renderer *renderer, const SDL_Color &backdrop = { 0, 0, 0 });
 	~Ground();
-
+protected:
+	virtual void update(Uint32 time);
+	virtual int render();
 private:
+	Maps m_maps;
+	TerrainPool m_terrainPool;
 };
 

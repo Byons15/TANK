@@ -6,7 +6,8 @@ typedef unsigned int uint32_t;
 class Maps
 {
 public:
-	static constexpr int MAP_SIZE = 26;
+	static constexpr uint32_t MAP_SIZE = 26;
+	static constexpr int TAG_BASE = 1;
 
 	Maps();
 	int loadMaps(int level);
@@ -20,9 +21,9 @@ public:
 	}
 	void clearMap();
 	~Maps();
+
 private:
 	int m_map[MAP_SIZE][MAP_SIZE];
 	SDL_Point m_enemyRefreshPoint[3];
 	SDL_Point m_alliesRefreshPoint[2];
 };
-

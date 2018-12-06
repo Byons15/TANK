@@ -3,8 +3,9 @@
 #include <sstream>
 
 Maps::Maps()
-	:m_map{0}
 {
+	clearMap();
+
 }
 
 int Maps::loadMaps(int level)
@@ -30,7 +31,7 @@ int Maps::loadMaps(int level)
 			if (m_map[col][ln] < 0) {
 				m_map[col][ln] = 0;
 
-				//将坐标的中的标识赋0，并保存这个敌军刷新点。说一下就是敌军刷新点最多有且必须有3个，多了溢出报错， 
+				//将坐标的中的标识赋0，并保存这个敌军刷新点。说一下就是敌军刷新点最多有且必须有3个。
 				//赋0表示这个点是空的。
 				//之后的两个if语句是保存P1 P2刷新点的。
 				if (m_map[col][ln] == -3) 
@@ -69,7 +70,17 @@ int Maps::setTerrain(int x, int y, uint32_t terrainIndex)
 
 void Maps::clearMap()
 {
+	memset(m_map, 0, sizeof(int) * MAP_SIZE * MAP_SIZE);
 
+	//默认坦克刷新点。
+	m_enemyRefreshPoint[0]  = { 0, 0 };
+	m_enemyRefreshPoint[1]  = { 12, 0 };
+	m_enemyRefreshPoint[2]  = { 24, 0 };
+	m_alliesRefreshPoint[0] = { 9, 24 }; 
+	m_alliesRefreshPoint[1] = { 15, 24 };
+
+	//默认基地位置。
+	m_map[12][24] = m_map[13][24] = m_map[12][25] = m_map[13][25] = TAG_BASE;
 }
 
 Maps::~Maps()

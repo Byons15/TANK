@@ -45,6 +45,9 @@
     <ClCompile Include="ground\Maps.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ground\TerrainPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -75,6 +78,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ground\Maps.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ground\TerrainPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

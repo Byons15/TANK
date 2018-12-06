@@ -9,6 +9,7 @@ class Scene
 {
 	friend class Renderer;
 public:
+	Scene() = delete;
 	Scene(Renderer *renderer, const SDL_Rect &sceneRect, const SDL_Color *backdrop = 0);
 	virtual ~Scene();
 

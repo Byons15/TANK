@@ -13,6 +13,7 @@ class Renderer :
 	public Event
 {
 public:
+	Renderer() = delete;
 	Renderer(SDL_Window *window, bool VSync = false);
 	~Renderer();
 	const AnimationFactory &animationFactory() const {
