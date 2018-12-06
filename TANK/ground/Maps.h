@@ -16,6 +16,7 @@ public:
 	~Maps();
 private:
 	int m_map[MAP_SIZE][MAP_SIZE];
-	SDL_Point reservePoint[6];
+	SDL_Point m_enemyRefreshPoint[3];
+	SDL_Point m_alliesRefreshPoint[2];
 };
 
