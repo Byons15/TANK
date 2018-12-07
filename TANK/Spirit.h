@@ -18,17 +18,10 @@ public:
 		return m_scene;
 	}
 
-	size_t addAnimation(const Animation &a);
-	size_t addAnimation(const std::string &name);
-	int showAnimation(const Animation &a);
-	int showAnimation(const std::string &name);
-	int showAnimation(size_t index = 0);
-	int removeAnimation(int index);
-
-	void update(Uint32 time);
+	virtual void update(Uint32 time);
 	void render(const SDL_Point &position);
 
-	void setZoom(Uint32 width, Uint32 height) {
+	void setRenderSize(Uint32 width, Uint32 height) {
 		m_renderSize.h = height;
 		m_renderSize.w = width;
 	}
@@ -43,9 +36,10 @@ public:
 	}
 
 private:
-	std::vector<Animation> m_animationPool;
+	Animation m_animation;
+	SDL_Rect m_clipRect;
 	SIZE m_renderSize;
-	Uint32 m_angle, m_currAnimation;
+	Uint32 m_angle;
 	Scene *m_scene;
 	Uint8 m_alpha;
 };
