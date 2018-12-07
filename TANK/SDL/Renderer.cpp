@@ -92,6 +92,7 @@ void Renderer::render()
 	for (auto &s : m_renderQueue) {
 		if (s->showState()) {
 
+			//äÖÈ¾³¡¾°±³¾°¡£
 			SDL_Rect destRect;
 			SDL_Texture *backdrop = s->backdrop(&destRect);
 			SDL_Rect srcRect = destRect;

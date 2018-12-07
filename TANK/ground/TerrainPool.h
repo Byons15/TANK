@@ -1,23 +1,26 @@
 #pragma once
-#include "../SDL/AnimationFactory.h"
 #include <vector>
-
-struct Terrain
-{
-	std::string name;
-	Animation animation;
-	uint32_t w = 0, h = 0, HP = 0;
-	char tankTransit = 0, bulletTransit = 0;
-};
+#include "Object.h"
+class AnimationFactory;
+class Scene;
 
 class TerrainPool
 {
 public:
-	TerrainPool(const AnimationFactory &animationFactory);
+	TerrainPool(Scene * scene);
 	void update(Uint32 time);
+	const Object &terrain(int terrainIndex) {
+		return m_pool[terrainIndex];
+	}
+	const Object &operator[](int index) {
+		return m_pool[index];
+	}
+	size_t size() {
+		return m_pool.size();
+	}
 	~TerrainPool();
 private:
-	std::vector<Terrain> m_pool;
-	const AnimationFactory &m_animationFactory;
+	std::vector<Object> m_pool;
+	Scene *m_scene;
 };
 

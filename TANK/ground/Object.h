@@ -1,13 +1,15 @@
 #pragma once
 #include "../SDL/AnimationFactory.h"
+#include "../Spirit.h"
 
 class Object
+	:public Spirit
 {
 public:
-	Object();
+	Object(Scene *scene, const std::string &objectName, int height, const SIZE &collisionSize);
 	~Object();
 private:
-	Animation m_animation;
 	SIZE m_collisionSize;
+	Uint32 m_height;
 };
 

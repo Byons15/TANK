@@ -18,12 +18,13 @@ public:
 		return m_scene;
 	}
 
-	virtual void update(Uint32 time);
-	void render(const SDL_Point &position);
+	void update(Uint32 time);
+	void render(const SDL_Point &position) const;
 
-	void setRenderSize(Uint32 width, Uint32 height) {
-		m_renderSize.h = height;
-		m_renderSize.w = width;
+	void showAnimation(const Animation &a);
+
+	void setRenderSize(SIZE size) {
+		m_renderSize = size;
 	}
 	SIZE renderSize() {
 		return m_renderSize;

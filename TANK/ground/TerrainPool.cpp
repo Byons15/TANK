@@ -1,26 +1,31 @@
 #include "TerrainPool.h"
 #include "../FileLoader.h"
 #include <sstream>
+#include "../Scene.h"
+#include "../Renderer.h"
 
-TerrainPool::TerrainPool(const AnimationFactory & animationFactory)
-	:m_animationFactory(animationFactory)
+TerrainPool::TerrainPool(Scene * scene)
+	:m_scene(scene)
 {
 	std::vector<std::string> terrainPoolData;
 	if (!fileLoad("objects", "terrain", &terrainPoolData))
 		throw std::runtime_error("构建地形对象池失败");
 
-	for (int i = 1; i <= terrainPoolData.size(); ++i) {
+	for (auto i = 1; i <= terrainPoolData.size(); ++i) {
 		std::istringstream is(terrainPoolData[i - 1]);
-		Terrain t;
-		is >> t.name >> t.w >> t.h >> t.tankTransit >> t.HP >> t.bulletTransit;
-		t.animation = animationFactory.findAnimation(t.name);
-		m_pool.push_back(t);
+		std::string name;
+		SIZE collisionSize;
+		Uint32 height;
+		is >> name >> collisionSize.w >> collisionSize.h >> height;
+		m_pool.push_back(Object(scene, name, height, collisionSize));
 	}
 }
 
 void TerrainPool::update(Uint32 time)
 {
-	
+	for (auto &obj : m_pool) {
+		obj.update(time);
+	}
 }
 
 TerrainPool::~TerrainPool()

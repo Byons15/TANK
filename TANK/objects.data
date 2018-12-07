@@ -1,7 +1,7 @@
 <terrain>
-  base  2 2 0 1 0
-  brick 1 1 0 1 0
-  rock  1 1 0 2 0
-  water 1 1 0 0 1
-  woods 1 1 -1 0 -1
+  base  79 79 2
+  brick 40 40 2
+  rock  40 40 2
+  water 40 40 1
+  woods 40 40 5
   <end>

@@ -27,13 +27,14 @@ int Spirit::setScene(Scene * scene)
 
 void Spirit::update(Uint32 time)
 {
+	m_clipRect = m_animation.clipRect;
 	if (m_animation.frameCount > 1) {
 		int currItem = (time % (m_animation.frameCount * m_animation.frameInterval)) / m_animation.frameInterval;
-		rect.x = (rect.w * currItem) + x;
+		m_clipRect.x = (m_clipRect.w * currItem) + m_animation.clipRect.x;
 	}
 }
 
-void Spirit::render(const SDL_Point & position)
+void Spirit::render(const SDL_Point & position) const
 {
 	if (!m_scene)
 		return;
@@ -41,6 +42,10 @@ void Spirit::render(const SDL_Point & position)
 	SDL_Rect renderRect{ m_scene->rect().x + position.x, m_scene->rect().y + position.y,
 						 m_renderSize.w, m_renderSize.h};
 
-	auto &a = m_animationPool[m_currAnimation];
-	m_scene->renderer()->renderTexture(a.texture, renderRect, a.clipRect, m_angle, m_alpha);
+	m_scene->renderer()->renderTexture(m_animation.texture, renderRect, m_clipRect, m_angle, m_alpha);
+}
+
+void Spirit::showAnimation(const Animation & a)
+{
+	m_animation = a;
 }

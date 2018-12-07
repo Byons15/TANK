@@ -48,8 +48,7 @@ int Text::setString(const std::wstring & text, int fontSize)
 	m_texture.clipRect = sur->clip_rect;
 	SDL_FreeSurface(sur);
 
-	removeAnimation(m_textAnimationIndex);
-	m_textAnimationIndex = showAnimation(m_texture);
+	showAnimation(m_texture);
 }
 
 Text::~Text()
