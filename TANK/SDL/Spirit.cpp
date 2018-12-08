@@ -45,7 +45,9 @@ void Spirit::render(const SDL_Point & position) const
 	m_scene->renderer()->renderTexture(m_animation.texture, renderRect, m_clipRect, m_angle, m_alpha);
 }
 
-void Spirit::showAnimation(const Animation & a)
+void Spirit::setAnimation(const Animation & a)
 {
 	m_animation = a;
+	m_renderSize.w = a.clipRect.w;
+	m_renderSize.h = a.clipRect.h;
 }

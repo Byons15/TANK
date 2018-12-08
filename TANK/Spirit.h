@@ -21,7 +21,7 @@ public:
 	void update(Uint32 time);
 	void render(const SDL_Point &position) const;
 
-	void showAnimation(const Animation &a);
+	void setAnimation(const Animation &a);
 
 	void setRenderSize(SIZE size) {
 		m_renderSize = size;
@@ -29,6 +29,7 @@ public:
 	SIZE renderSize() {
 		return m_renderSize;
 	}
+
 	void setAlpha(Uint8 a) {
 		m_alpha = a;
 	}

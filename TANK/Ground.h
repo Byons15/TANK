@@ -2,7 +2,6 @@
 #include "Scene.h"
 #include "ground\Maps.h"
 #include <vector>
-#include "ground\TerrainPool.h"
 
 class Ground :
 	public Scene
@@ -17,6 +16,5 @@ protected:
 	virtual int render();
 private:
 	Maps m_maps;
-	TerrainPool m_terrainPool;
 };
 
