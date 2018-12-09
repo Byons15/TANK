@@ -25,6 +25,7 @@ public:
 	bool showState() {
 		return m_showState;
 	}
+
 protected:
 	virtual void update(Uint32 time) = 0;
 	virtual int render() = 0;

@@ -10,7 +10,6 @@ AnimationFactory::AnimationFactory()
 
 }
 
-
 void AnimationFactory::createFactory(Renderer * renderer)
 {
 	m_renderer = renderer;

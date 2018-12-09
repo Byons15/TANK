@@ -29,7 +29,10 @@ public:
 	
 	int monitoringKey(SDL_Keycode key);
 	int monitoringKey(std::initializer_list<SDL_Keycode> keyList);
-	const KeyState &keyState(SDL_Keycode key);
+
+	//返回0：key没有按下
+	//返回!0 : key已经按了多久 ms。
+	int keyState(SDL_Keycode key);
 
 	int setEventHook(EventInterface *event, int type);
 	int setUserEventHook(EventInterface *event, int type);
@@ -39,7 +42,7 @@ public:
 protected:
 
 private:
-	std::map<SDL_Keycode, KeyState> m_monitoringKey;
+	std::map<SDL_Keycode, int> m_monitoringKey;
 	std::multimap<int, EventInterface *> m_eventHook;
 	std::multimap<int, EventInterface *> m_userEventHook;
 };

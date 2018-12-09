@@ -49,6 +49,7 @@ int Text::setString(const std::wstring & text, int fontSize)
 	SDL_FreeSurface(sur);
 
 	setAnimation(m_texture);
+	return 0;
 }
 
 Text::~Text()

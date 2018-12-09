@@ -3,6 +3,9 @@
 #include "../Event.h"
 #include <stdexcept>
 
+
+#include <SDL_image.h>
+
 #define USER_EVENT 0x4000
 
 Games *games = nullptr;
@@ -34,7 +37,7 @@ Games::~Games()
 
 int Games::monitoringKey(SDL_Keycode key)
 {
-	m_monitoringKey[key].key = key;
+	m_monitoringKey[key] = -1;
 	return 0;
 }
 
@@ -46,13 +49,15 @@ int Games::monitoringKey(std::initializer_list<SDL_Keycode> keyList)
 	return 0;
 }
 
-const Games::KeyState & Games::keyState(SDL_Keycode key)
+int Games::keyState(SDL_Keycode key)
 {
 	auto iter = m_monitoringKey.find(key);
 	if (iter == m_monitoringKey.end())
-		throw std::out_of_range("没有监控这个按键");
+		return 0;
 		
-	return iter->second;
+	if (iter->second == -1)
+		return 0;
+	return SDL_GetTicks() - iter->second;
 }
 
 int Games::setEventHook(EventInterface * event, int type)
@@ -122,9 +127,8 @@ int Games::exec()
 		{
 			auto iter = m_monitoringKey.find(event.key.keysym.sym);
 			if (iter != m_monitoringKey.end()) {
-				if (!iter->second.press) {   //只记录第一次KeyDown事件，保证成员time是第一次KeyDown事件的时间戳。
-					iter->second.press = true;
-					iter->second.time = event.key.timestamp;
+				if (iter->second == -1) {   //只记录第一次KeyDown事件，保证成员time是第一次KeyDown事件的时间戳。
+					iter->second = event.key.timestamp;
 				}
 			}
 		}
@@ -134,8 +138,7 @@ int Games::exec()
 		{
 			auto iter = m_monitoringKey.find(event.key.keysym.sym);
 			if (iter != m_monitoringKey.end()) {
-				iter->second.press = false;
-				iter->second.time = event.key.timestamp;
+				iter->second = -1;
 			}
 		}
 			break;
