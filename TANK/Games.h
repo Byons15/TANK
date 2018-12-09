@@ -18,6 +18,13 @@ public:
 	};
 
 	Games();
+
+	//delete
+	Games(const Games &) = delete;
+	Games(const Games &&) = delete;
+	Games &operator = (const Games &) = delete;
+	Games &operator = (const Games &&) = delete;
+
 	virtual ~Games();
 	
 	int monitoringKey(SDL_Keycode key);

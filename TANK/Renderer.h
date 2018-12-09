@@ -13,9 +13,11 @@ class Renderer :
 	public Event
 {
 public:
-	Renderer() = delete;
 	Renderer(SDL_Window *window, bool VSync = false);
 	~Renderer();
+
+	Renderer() = delete;
+
 	const AnimationFactory &animationFactory() const {
 		return m_animationFactory;
 	}
@@ -32,8 +34,8 @@ public:
 		Uint32 angle, Uint8 alpha = SDL_ALPHA_OPAQUE, int flip = 0);
 
 private:
-	virtual void userEventHookProc(const SDL_UserEvent &event);
-	virtual void eventHookProc(const SDL_Event & event);
+	virtual void userEventHookProc(const SDL_UserEvent &event) override;
+	virtual void eventHookProc(const SDL_Event & event) override;
 	void render();
 
 	std::set<Scene *> m_renderQueue;

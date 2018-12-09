@@ -45,10 +45,13 @@
     <ClCompile Include="ground\Maps.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ground\TerrainPool.cpp">
+    <ClCompile Include="ground\Object.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ground\Object.cpp">
+    <ClCompile Include="ground\Entity.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ground\ObjectsPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,10 +86,13 @@
     <ClInclude Include="ground\Maps.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ground\TerrainPool.h">
+    <ClInclude Include="ground\Object.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ground\Object.h">
+    <ClInclude Include="ground\Entity.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ground\ObjectsPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

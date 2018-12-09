@@ -1,7 +1,9 @@
-<terrain>
-  base  79 79 2
-  brick 40 40 2
-  rock  40 40 2
-  water 40 40 1
-  woods 40 40 5
+<object>
+  base   79 79 2
+  brick  40 40 2
+  rock   40 40 2
+  water  40 40 1
+  woods  40 40 5
+  tank   79 79 2
+  bullet 12 12 3
   <end>
