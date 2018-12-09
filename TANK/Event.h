@@ -6,11 +6,11 @@ class Games;
 /*
 封装SDL事件以及SDL用户事件，用钩子的方式实现。
 */
-class Event
+class EventInterface
 {
 	friend Games;
 public:
-	virtual ~Event() = default;
+	virtual ~EventInterface() = default;
 protected:
 	
 	//SDL事件钩子回调函数。

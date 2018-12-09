@@ -55,7 +55,7 @@ const Games::KeyState & Games::keyState(SDL_Keycode key)
 	return iter->second;
 }
 
-int Games::setEventHook(Event * event, int type)
+int Games::setEventHook(EventInterface * event, int type)
 {
 	auto &range = m_eventHook.equal_range(type);
 	for (auto iter = range.first; iter != m_eventHook.end() && iter != range.second; ++iter) {
@@ -67,7 +67,7 @@ int Games::setEventHook(Event * event, int type)
 	return 0;
 }
 
-int Games::setUserEventHook(Event * event, int type)
+int Games::setUserEventHook(EventInterface * event, int type)
 {
 	auto &range = m_userEventHook.equal_range(type);
 	for (auto iter = range.first; iter != m_userEventHook.end() && iter != range.second; ++iter) {

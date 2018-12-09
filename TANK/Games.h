@@ -3,11 +3,11 @@
 #include <map>
 #include <initializer_list>
 
-class Event;
+class EventInterface;
 
 class Games
 {
-	friend class Event;
+	friend class EventInterface;
 public:
 
 	struct KeyState
@@ -31,8 +31,8 @@ public:
 	int monitoringKey(std::initializer_list<SDL_Keycode> keyList);
 	const KeyState &keyState(SDL_Keycode key);
 
-	int setEventHook(Event *event, int type);
-	int setUserEventHook(Event *event, int type);
+	int setEventHook(EventInterface *event, int type);
+	int setUserEventHook(EventInterface *event, int type);
 	int userEventTrigger(const SDL_UserEvent &userEvent);
 	int exec();
 
@@ -40,8 +40,8 @@ protected:
 
 private:
 	std::map<SDL_Keycode, KeyState> m_monitoringKey;
-	std::multimap<int, Event *> m_eventHook;
-	std::multimap<int, Event *> m_userEventHook;
+	std::multimap<int, EventInterface *> m_eventHook;
+	std::multimap<int, EventInterface *> m_userEventHook;
 };
 
 extern Games *games;

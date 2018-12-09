@@ -163,12 +163,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="file\FileLoader.cpp" />
-    <ClCompile Include="ground\Entity.cpp" />
-    <ClCompile Include="ground\Ground.cpp" />
     <ClCompile Include="ground\Maps.cpp" />
-    <ClCompile Include="ground\Object.cpp" />
-    <ClCompile Include="ground\ObjectsPool.cpp" />
-    <ClCompile Include="SDL\Event.cpp" />
+    <ClCompile Include="SDL\EventInterface.cpp" />
     <ClCompile Include="SDL\Games.cpp" />
     <ClCompile Include="SDL\Renderer.cpp" />
     <ClCompile Include="SDL\AnimationFactory.cpp" />
@@ -180,11 +176,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Games.h" />
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="ground\Entity.h" />
     <ClInclude Include="ground\Maps.h" />
-    <ClInclude Include="ground\Object.h" />
-    <ClInclude Include="ground\ObjectsPool.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SDL\AnimationFactory.h" />
@@ -199,7 +191,9 @@
     <None Include="libpng16-16.dll" />
     <None Include="libtiff-5.dll" />
     <None Include="libwebp-4.dll" />
-    <None Include="objects.data" />
+    <None Include="objects.data">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SDL2.dll" />
     <None Include="SDL2_image.dll" />
     <None Include="SDL2_ttf.dll" />

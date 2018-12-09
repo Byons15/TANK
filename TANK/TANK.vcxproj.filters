@@ -18,9 +18,6 @@
     <ClCompile Include="file\FileLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SDL\Event.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="SDL\Games.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -33,9 +30,6 @@
     <ClCompile Include="SDL\Scene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ground\Ground.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="SDL\Spirit.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -45,13 +39,7 @@
     <ClCompile Include="ground\Maps.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ground\Object.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ground\Entity.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ground\ObjectsPool.cpp">
+    <ClCompile Include="SDL\EventInterface.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,9 +62,6 @@
     <ClInclude Include="Scene.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Spirit.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -84,15 +69,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ground\Maps.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ground\Object.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ground\Entity.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ground\ObjectsPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,16 +3,17 @@
 #include <set>
 #include "SDL\AnimationFactory.h"
 
-#define RENDER 0x88181
-
 struct SDL_Window;
 struct SDL_Renderer;
 class Scene;
 
 class Renderer :
-	public Event
+	public EventInterface
 {
 public:
+
+	static constexpr int RENDER = 0x88181;
+
 	Renderer(SDL_Window *window, bool VSync = false);
 	~Renderer();
 
