@@ -1,12 +1,12 @@
 #pragma once
 #include <SDL_rect.h>
+#include "../TANKS.h"
 
 typedef unsigned int uint32_t;
 
 class Maps
 {
 public:
-	static constexpr uint32_t MAP_SIZE = 26;
 	static constexpr int TAG_BASE = 1;
 
 	Maps();

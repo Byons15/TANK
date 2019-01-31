@@ -163,9 +163,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="file\FileLoader.cpp" />
-    <ClCompile Include="ground\Maps.cpp" />
+    <ClCompile Include="games\Games.cpp" />
+    <ClCompile Include="games\Ground.cpp" />
+    <ClCompile Include="games\Maps.cpp" />
+    <ClCompile Include="games\Tank.cpp" />
+    <ClCompile Include="menus\StartMenu.cpp" />
     <ClCompile Include="SDL\EventInterface.cpp" />
-    <ClCompile Include="SDL\Games.cpp" />
+    <ClCompile Include="SDL\Director.cpp" />
     <ClCompile Include="SDL\Renderer.cpp" />
     <ClCompile Include="SDL\AnimationFactory.cpp" />
     <ClCompile Include="SDL\Scene.cpp" />
@@ -175,12 +179,17 @@
   <ItemGroup>
     <ClInclude Include="Event.h" />
     <ClInclude Include="FileLoader.h" />
+    <ClInclude Include="Director.h" />
     <ClInclude Include="Games.h" />
-    <ClInclude Include="ground\Maps.h" />
+    <ClInclude Include="games\Maps.h" />
+    <ClInclude Include="games\Tank.h" />
+    <ClInclude Include="Ground.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SDL\AnimationFactory.h" />
     <ClInclude Include="Spirit.h" />
+    <ClInclude Include="StartMenu.h" />
+    <ClInclude Include="TANKS.h" />
     <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>

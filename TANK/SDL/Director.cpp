@@ -1,55 +1,46 @@
-#include "..\Games.h"
+#include "..\Director.h"
 #include <SDL_ttf.h>
 #include "../Event.h"
 #include <stdexcept>
-
 
 #include <SDL_image.h>
 
 #define USER_EVENT 0x4000
 
-Games *games = nullptr;
+Director *director = nullptr;
 
-int main(int argc, char *argv[])
+Director::Director()
 {
-	Games g;
-	g.exec();
-
-	return 0;
-}
-
-Games::Games()
-{
-	if (games)
-		throw std::runtime_error("Games类只能同时有唯一实例");
+	if (director)
+		throw std::runtime_error("Director类只能同时有唯一实例");
 	else
-		games = this;
+		director = this;
 
 	SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER);
 	TTF_Init();
 }
 
-Games::~Games()
+Director::~Director()
 {
 	TTF_Quit();
 	SDL_Quit();
 }
 
-int Games::monitoringKey(SDL_Keycode key)
+int Director::monitoringKey(SDL_Keycode key)
 {
 	m_monitoringKey[key] = -1;
 	return 0;
 }
 
-int Games::monitoringKey(std::initializer_list<SDL_Keycode> keyList)
+int Director::monitoringKey(std::initializer_list<SDL_Keycode> keyList)
 {
 	for (auto key : keyList) {
-		Games::monitoringKey(key);
+		Director::monitoringKey(key);
 	}
 	return 0;
 }
 
-int Games::keyState(SDL_Keycode key)
+int Director::keyState(SDL_Keycode key)
 {
 	auto iter = m_monitoringKey.find(key);
 	if (iter == m_monitoringKey.end())
@@ -60,7 +51,7 @@ int Games::keyState(SDL_Keycode key)
 	return SDL_GetTicks() - iter->second;
 }
 
-int Games::setEventHook(EventInterface * event, int type)
+int Director::setEventHook(EventInterface * event, int type)
 {
 	auto &range = m_eventHook.equal_range(type);
 	for (auto iter = range.first; iter != m_eventHook.end() && iter != range.second; ++iter) {
@@ -72,7 +63,23 @@ int Games::setEventHook(EventInterface * event, int type)
 	return 0;
 }
 
-int Games::setUserEventHook(EventInterface * event, int type)
+void Director::unsetEventHook(EventInterface * event, int type)
+{
+	auto beg = m_eventHook.lower_bound(type);
+	auto end = m_eventHook.upper_bound(type);
+	if (beg == m_eventHook.end())
+		return;
+	
+
+	for (auto iter = beg; iter != m_eventHook.end() && iter != end; ++iter) {
+		if (event == iter->second) {
+			m_eventHook.erase(iter);
+			break;
+		}
+	}
+}
+
+int Director::setUserEventHook(EventInterface * event, int type)
 {
 	auto &range = m_userEventHook.equal_range(type);
 	for (auto iter = range.first; iter != m_userEventHook.end() && iter != range.second; ++iter) {
@@ -84,7 +91,22 @@ int Games::setUserEventHook(EventInterface * event, int type)
 	return 0;
 }
 
-int Games::userEventTrigger(const SDL_UserEvent & user)
+void Director::unsetUserEventHook(EventInterface * event, int type)
+{
+	auto &range = m_userEventHook.equal_range(type);
+
+	if (range.first == m_userEventHook.end())
+		return;
+
+	for (auto iter = range.first; iter != m_userEventHook.end() && iter != range.second; ++iter) {
+		if (event == iter->second) {
+			m_userEventHook.erase(iter);
+			break;
+		}
+	}
+}
+
+int Director::userEventTrigger(const SDL_UserEvent & user)
 {
 	SDL_Event event;
 	event.user = user;
@@ -95,7 +117,7 @@ int Games::userEventTrigger(const SDL_UserEvent & user)
 	return SDL_PushEvent(&event);
 }
 
-int Games::exec()
+int Director::exec()
 {
 	SDL_Event event;
 	bool quit = false;
@@ -123,29 +145,31 @@ int Games::exec()
 			}
 			break;
 		}
-		case SDL_KEYDOWN:
-		{
-			auto iter = m_monitoringKey.find(event.key.keysym.sym);
-			if (iter != m_monitoringKey.end()) {
-				if (iter->second == -1) {   //只记录第一次KeyDown事件，保证成员time是第一次KeyDown事件的时间戳。
-					iter->second = event.key.timestamp;
-				}
-			}
-		}
-			break;
-
-		case SDL_KEYUP: 
-		{
-			auto iter = m_monitoringKey.find(event.key.keysym.sym);
-			if (iter != m_monitoringKey.end()) {
-				iter->second = -1;
-			}
-		}
-			break;
+		
 
 		case SDL_QUIT:
 			quit = true;
 			break;
+
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+		{
+			auto iter = m_monitoringKey.find(event.key.keysym.sym);
+			if (iter != m_monitoringKey.end()) {
+				
+				//key down
+				if (event.type == SDL_KEYDOWN) {
+					if (iter->second == -1) {   //只记录第一次KeyDown事件，保证成员time是第一次KeyDown事件的时间戳。
+						iter->second = event.key.timestamp;
+					}
+				}
+				//key up
+				else {
+					iter->second = -1;
+				}
+			}
+		}
+		//进入事件分发。
 
 		default:
 		{
@@ -161,4 +185,11 @@ int Games::exec()
 	}
 
 	return 0;
+}
+
+void Director::quit()
+{
+	SDL_Event event;
+	event.type = SDL_QUIT;
+	SDL_PushEvent(&event);
 }

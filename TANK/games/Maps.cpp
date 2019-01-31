@@ -5,7 +5,6 @@
 Maps::Maps()
 {
 	clearMap();
-
 }
 
 int Maps::loadMaps(int level)

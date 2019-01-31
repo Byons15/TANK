@@ -1,50 +1,24 @@
 #pragma once
-#include <SDL.h>
-#include <map>
-#include <initializer_list>
+#include "Director.h"
+#include "Renderer.h"
+#include "StartMenu.h"
+#include "Event.h"
 
-class EventInterface;
-
-class Games
+class Games :
+	public Director,
+	public EventInterface
 {
-	friend class EventInterface;
 public:
-
-	struct KeyState
-	{
-		SDL_Keycode key;
-		Uint32 time;
-		bool press;
-	};
-
 	Games();
-
-	//delete
-	Games(const Games &) = delete;
-	Games(const Games &&) = delete;
-	Games &operator = (const Games &) = delete;
-	Games &operator = (const Games &&) = delete;
-
-	virtual ~Games();
-	
-	int monitoringKey(SDL_Keycode key);
-	int monitoringKey(std::initializer_list<SDL_Keycode> keyList);
-
-	//返回0：key没有按下
-	//返回!0 : key已经按了多久 ms。
-	int keyState(SDL_Keycode key);
-
-	int setEventHook(EventInterface *event, int type);
-	int setUserEventHook(EventInterface *event, int type);
-	int userEventTrigger(const SDL_UserEvent &userEvent);
-	int exec();
+	~Games();
 
 protected:
+	virtual void eventHookProc(const SDL_Event &event) override;
+	virtual void userEventHookProc(const SDL_UserEvent &user) override;
 
 private:
-	std::map<SDL_Keycode, int> m_monitoringKey;
-	std::multimap<int, EventInterface *> m_eventHook;
-	std::multimap<int, EventInterface *> m_userEventHook;
+	SDL_Window *m_window;
+	Renderer m_renderer;
+	StartMenu m_startMenu;
 };
 
-extern Games *games;

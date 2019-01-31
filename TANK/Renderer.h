@@ -17,15 +17,25 @@ public:
 	Renderer(SDL_Window *window, bool VSync = false);
 	~Renderer();
 
-	Renderer() = delete;
+	Renderer();
 
 	const AnimationFactory &animationFactory() const {
 		return m_animationFactory;
 	}
+
 	//获取SDL渲染器。
 	SDL_Renderer *renderer()
 	{
 		return m_renderer;
+	}
+
+	//设置渲染窗口。
+	//成功返回0，返回-1表示渲染器已经设置了窗口，不可再次设置。
+	int setWindow(SDL_Window *window, bool VSync = false);
+
+	//获取渲染器的目标窗口。
+	SDL_Window *window() {
+		return m_window;
 	}
 
 	void addScene(Scene *s);
@@ -44,7 +54,7 @@ private:
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
 	SIZE m_windowOriginalSize;
-	float m_windowWidthRatio, m_windowHeightRatio;
+	float m_windowWidthScale, m_windowHeightScale;
 	bool m_rending;
 };
 

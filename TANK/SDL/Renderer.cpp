@@ -1,28 +1,13 @@
 #include "..\Renderer.h"
 #include "../FileLoader.h"
-#include <sstream>
 #include <SDL_timer.h>
 #include <SDL_render.h>
-#include "../Games.h"
 #include "../Scene.h"
 
 Renderer::Renderer(SDL_Window * window, bool VSync)
-	:m_rending(false)
+	:m_rending(false), m_renderer(0), m_window(window)
 {
-	Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-	flags = VSync ? flags | SDL_RENDERER_PRESENTVSYNC : flags;
-
-	m_renderer = SDL_CreateRenderer(window, -1, flags);
-	m_animationFactory.createFactory(this);
-
-	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
-	m_windowWidthRatio = m_windowHeightRatio = 1;
-	games->setEventHook(this, SDL_WINDOWEVENT);
-
-	games->setUserEventHook(this, RENDER);
-	SDL_UserEvent user;
-	user.type = RENDER;
-	games->userEventTrigger(user);
+	setWindow(window, VSync);
 }
 
 Renderer::~Renderer()
@@ -30,11 +15,47 @@ Renderer::~Renderer()
 	SDL_DestroyRenderer(m_renderer);
 }
 
+Renderer::Renderer()
+	:m_renderer(0), m_window(0)
+{
+}
+
+int Renderer::setWindow(SDL_Window * window, bool VSync)
+{
+	if (m_renderer)
+		return -1;
+
+	//从窗口创建渲染器，依据参数决定是否开启垂直同步。
+	Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+	flags = VSync ? flags | SDL_RENDERER_PRESENTVSYNC : flags;
+
+	m_renderer = SDL_CreateRenderer(window, -1, flags);
+	if (!m_renderer)
+		return -1;
+
+	//创建适用于这个渲染器的纹理工厂。
+	m_animationFactory.createFactory(this);
+
+	//获取窗口并hook窗口大小更改事件，使最终的渲染画面适应窗口。
+	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
+	m_windowWidthScale = m_windowHeightScale = 1;
+
+	setEventHook(SDL_WINDOWEVENT);
+
+	//将渲染工作加入事件队列。
+	setUserEventHook(RENDER);
+	SDL_UserEvent user;
+	user.type = RENDER;
+	userEventTrigger(user);
+
+	return 0;
+}
+
 void Renderer::addScene(Scene * s)
 {
 	m_renderQueue.insert(s);
 }
-
+																																				     
 void Renderer::renderTexture(SDL_Texture * texture, const SDL_Rect & destRect, const SDL_Rect & srcRect, Uint32 angle, Uint8 alpha, int flip)
 {
 	if (!texture)
@@ -43,15 +64,16 @@ void Renderer::renderTexture(SDL_Texture * texture, const SDL_Rect & destRect, c
 	if (alpha != SDL_ALPHA_OPAQUE) 
 		SDL_SetTextureAlphaMod(texture, alpha);
 	
-
+	//通过比例来调整最终渲染大小。
 	SDL_Rect rect = destRect;
-	rect.x = (int)((float)rect.x * m_windowWidthRatio);
-	rect.y = (int)((float)rect.y * m_windowHeightRatio);
-	rect.w = (int)((float)rect.w * m_windowWidthRatio);
-	rect.h = (int)((float)rect.h * m_windowHeightRatio);
+	rect.x = (int)((float)rect.x * m_windowWidthScale);
+	rect.y = (int)((float)rect.y * m_windowHeightScale);
+	rect.w = (int)((float)rect.w * m_windowWidthScale);
+	rect.h = (int)((float)rect.h * m_windowHeightScale);
 
 	SDL_RenderCopyEx(m_renderer, texture, &srcRect, &rect, angle, NULL, (SDL_RendererFlip)flip);
 
+	//复原透明度，因为纹理有可能是享元的。
 	if (alpha != SDL_ALPHA_OPAQUE) 
 		SDL_SetTextureAlphaMod(texture, SDL_ALPHA_OPAQUE);
 }
@@ -60,9 +82,14 @@ void Renderer::userEventHookProc(const SDL_UserEvent & event)
 {
 	switch (event.type)
 	{
-	case RENDER:
+	case RENDER: {
 		render();
+
+		SDL_UserEvent user;
+		user.type = RENDER;
+		userEventTrigger(user);
 		break;
+	}
 	default:
 		break;
 	}
@@ -73,9 +100,10 @@ void Renderer::eventHookProc(const SDL_Event & event)
 	switch (event.type)
 	{
 	case SDL_WINDOWEVENT:
+		//处理窗口大小更改事件以更改比例。
 		if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED && event.window.windowID == SDL_GetWindowID(m_window)) {
-			m_windowHeightRatio = (float)event.window.data2 / (float)m_windowOriginalSize.h;
-			m_windowWidthRatio = (float)event.window.data1 / (float)m_windowOriginalSize.w;
+			m_windowHeightScale = (float)event.window.data2 / (float)m_windowOriginalSize.h;
+			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
 		}
 		break;
 	default:
@@ -87,10 +115,12 @@ void Renderer::render()
 {
 	auto time = SDL_GetTicks();
 
-	SDL_RenderClear(m_renderer);
+	if (SDL_RenderClear(m_renderer)) {
+		return;
+	}
 	
 	for (auto &s : m_renderQueue) {
-		if (s->showState()) {
+		if (s->state()) {
 
 			//渲染场景背景。
 			SDL_Rect destRect;
@@ -105,5 +135,8 @@ void Renderer::render()
 			s->render();
 		}
 	}
+	
+	//在开启垂直同步时，SDL_RenderPresent内部会阻塞线程以同步监视器频率。
 	SDL_RenderPresent(m_renderer);
+
 }
