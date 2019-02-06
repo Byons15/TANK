@@ -100,10 +100,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>I:\SDL2_2.0.4\include;I:\SDL2_image-2.0.1\include;I:\SDL2_ttf-2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SDL2_2.0.4\include;D:\SDL2_image_2.0.1\include;D:\SDL2_ttf_2.0.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>I:\SDL2_2.0.4\lib\x86;I:\SDL2_image-2.0.1\lib\x86;I:\SDL2_ttf-2.0.14\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\SDL2_2.0.4\lib\x86;D:\SDL2_image_2.0.1\lib\x86;D:\SDL2_ttf_2.0.14\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -167,6 +167,7 @@
     <ClCompile Include="games\Ground.cpp" />
     <ClCompile Include="games\Maps.cpp" />
     <ClCompile Include="games\Tank.cpp" />
+    <ClCompile Include="games\TankFactory.cpp" />
     <ClCompile Include="menus\StartMenu.cpp" />
     <ClCompile Include="SDL\EventInterface.cpp" />
     <ClCompile Include="SDL\Director.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Games.h" />
     <ClInclude Include="games\Maps.h" />
     <ClInclude Include="games\Tank.h" />
+    <ClInclude Include="games\TankFactory.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
