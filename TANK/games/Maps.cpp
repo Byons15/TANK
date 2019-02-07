@@ -15,7 +15,7 @@ int Maps::loadMaps(int level)
 	//导入数据。
 	std::string groupName = "level " + std::to_string(level);
 	std::vector<std::string> data;
-	if (fileLoad("level", groupName, &data) != MAP_SIZE)
+	if (fileLoad(groupName, &data) != MAP_SIZE)
 		return -1;
 	
 	

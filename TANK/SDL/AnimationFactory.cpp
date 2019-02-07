@@ -15,8 +15,7 @@ void AnimationFactory::createFactory(Renderer * renderer)
 	m_renderer = renderer;
 
 	std::vector<std::string> data;
-	if (!fileLoad("texture\\texture.data", "texture", &data))
-		throw std::runtime_error("´ò¿ª\"texture\\texture.data\"Ê§°Ü");
+	fileLoad("texture", &data);
 
 	for (auto & line : data) {
 		std::istringstream is(line);

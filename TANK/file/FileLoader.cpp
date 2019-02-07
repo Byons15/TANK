@@ -1,9 +1,9 @@
 #include "../FileLoader.h"
 #include <fstream>
 
-unsigned int fileLoad(const std::string & fileName, const std::string & groupName, std::vector<std::string>* retData)
+unsigned int fileLoad(const std::string & groupName, std::vector<std::string>* retData)
 {
-	std::ifstream file(fileName);
+	std::ifstream file("TANK.dat");
 	if (!file) {
 		return 0;
 	}

@@ -52,9 +52,6 @@ void Spirit::setAnimation(const Animation & a)
 
 	if(a.frameCount > 1)
 		m_animationFirstTime = SDL_GetTicks();
-
-	m_alpha = SDL_ALPHA_OPAQUE;
-	m_angle = 0;
 }
 
 void Spirit::setAnimation(const std::string & name)
