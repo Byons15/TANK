@@ -106,13 +106,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="level" />
     <None Include="libfreetype-6.dll" />
     <None Include="libjpeg-9.dll" />
     <None Include="libpng16-16.dll" />
     <None Include="libtiff-5.dll" />
     <None Include="libwebp-4.dll" />
-    <None Include="objects.data" />
     <None Include="SDL2.dll" />
     <None Include="SDL2_image.dll" />
     <None Include="SDL2_ttf.dll" />

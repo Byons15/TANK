@@ -22,6 +22,7 @@ TankFactory::TankFactory(Renderer *renderer)
 			is >> str;
 			dat.form.push_back(renderer->animationFactory().findAnimation(str));
 		}
+		dat.form.resize(dat.maxHP, dat.form[0]);
 		
 		is >> str;
 		dat.rewardForm = (str == "DEFAULT") ? dat.form[0] : renderer->animationFactory().findAnimation(str);

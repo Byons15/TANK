@@ -18,8 +18,8 @@ private:
 	static TankFactory *sm_factory;
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
-	SDL_Rect m_rect;
+	SDL_Rect m_pixelRect;
 	int m_HP, m_speeds;
 	Ground *m_ground;
 };
-
+ 
