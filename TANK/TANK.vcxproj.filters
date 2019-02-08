@@ -57,6 +57,9 @@
     <ClCompile Include="games\TankFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="games\Mover.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -102,6 +105,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="games\TankFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="games\Mover.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

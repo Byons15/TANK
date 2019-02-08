@@ -166,6 +166,7 @@
     <ClCompile Include="games\Games.cpp" />
     <ClCompile Include="games\Ground.cpp" />
     <ClCompile Include="games\Maps.cpp" />
+    <ClCompile Include="games\Mover.cpp" />
     <ClCompile Include="games\Tank.cpp" />
     <ClCompile Include="games\TankFactory.cpp" />
     <ClCompile Include="menus\StartMenu.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Director.h" />
     <ClInclude Include="Games.h" />
     <ClInclude Include="games\Maps.h" />
+    <ClInclude Include="games\Mover.h" />
     <ClInclude Include="games\Tank.h" />
     <ClInclude Include="games\TankFactory.h" />
     <ClInclude Include="Ground.h" />

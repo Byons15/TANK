@@ -7,11 +7,27 @@ class Tank :
 	public Spirit
 {
 public:
-	Tank(Ground * ground, int &model);
+
+	enum EVENT
+	{
+		BONUSCHEST = 0x300,
+	};
+
+	enum REWARDS
+	{
+		DEFAULT = 0,
+		ADDHP,
+		SUPERPOWER,
+		SUPERSPEEDS,
+		INVINCIBLE,
+	};
+
+	Tank(Ground * ground, int &model, REWARDS rewards);
 	~Tank();
 	int HP() const {
 		return m_HP;
 	}
+
 	int beHit(int power);
 	static void setFactory(TankFactory *factory);
 private:
@@ -21,5 +37,6 @@ private:
 	SDL_Rect m_pixelRect;
 	int m_HP, m_speeds;
 	Ground *m_ground;
+	REWARDS m_rewarde;
 };
  
