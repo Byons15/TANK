@@ -5,7 +5,7 @@ class Mover
 {
 public:
 	Mover() = default;
-	int move(const SDL_Point &origin, const SDL_Point &dest, unsigned startTimestamp, unsigned speeds);
+	int move(const SDL_Point &origin, const SDL_Point &dest, unsigned startTimestamp, float speeds);
 	SDL_Point current(unsigned timestamp);
 	void endMove() {
 		m_moving = false;
@@ -16,8 +16,8 @@ public:
 	~Mover() = default;
 private:
 	SDL_Point m_origin, m_dest;
-	float m_cosX, m_cosY, m_speeds, m_lenght;
-	unsigned m_lastTimestamp;
+	float m_cosa, m_sina, m_speeds;
+	int m_lenght, m_startTimestamp;
 	bool m_moving;
 };
 

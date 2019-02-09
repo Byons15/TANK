@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "StartMenu.h"
 #include "Event.h"
+#include "Ground.h"
 
 class Games :
 	public Director,
@@ -20,5 +21,6 @@ private:
 	SDL_Window *m_window;
 	Renderer m_renderer;
 	StartMenu m_startMenu;
+	Ground m_ground;
 };
 

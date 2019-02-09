@@ -14,11 +14,10 @@ Games::Games()
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
 		WINDOW_WIDTH, WINDOW_HEIGHT, 
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)),
-	 m_renderer(m_window, false), m_startMenu(&m_renderer)
+	 m_renderer(m_window, true), m_startMenu(&m_renderer), m_ground(&m_renderer)
 {
-	//TODO::debug
-	EventInterface::setUserEventHook(StartMenu::CLOSE);
-	m_startMenu.open(0, 0);
+	//TODO:: debug
+	m_ground.open(0, 0);
 }
 
 
@@ -37,9 +36,7 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 	switch (user.type)
 	{
 	case StartMenu::CLOSE:
-		//TODO::Debug.
-		printf("%d, %d", user.data1, user.data2);
-		getchar();
+		//TODO::
 		break;
 	default:
 		break;

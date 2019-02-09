@@ -1,7 +1,7 @@
 #include "Mover.h"
 #include <cmath>
 
-int Mover::move(const SDL_Point & origin, const SDL_Point & dest, unsigned startTimestamp, unsigned speeds)
+int Mover::move(const SDL_Point & origin, const SDL_Point & dest, unsigned startTimestamp, float speeds)
 {
 	if (m_moving)
 		return -1;
@@ -10,14 +10,12 @@ int Mover::move(const SDL_Point & origin, const SDL_Point & dest, unsigned start
 	m_lenght = static_cast<int>(sqrt((dest.x - origin.x) * (dest.x - origin.x) +
 		(dest.y - origin.y) * (dest.y - origin.y)));
 
-	//cos
-	m_cosX = m_lenght / (dest.x - origin.x);
-	m_cosY = m_lenght / (dest.y - origin.y);
+	//正余铉比
+	m_sina = static_cast<float>(dest.y - origin.y) / static_cast<float>(m_lenght);
+	m_cosa = static_cast<float>(dest.x - origin.x) / static_cast<float>(m_lenght);
 
-	//转换速度单位。
-	//从p / s 转换成 p / ms
-	m_speeds = speeds / 1000;
-	m_lastTimestamp = startTimestamp;
+	m_speeds = speeds;
+	m_startTimestamp = startTimestamp;
 	m_origin = origin;
 	m_dest = dest;
 
@@ -32,15 +30,15 @@ SDL_Point Mover::current(unsigned timestamp)
 
 	SDL_Point p = m_origin;
 
-	int pixelCount = static_cast<int>(static_cast<float>(timestamp - m_lastTimestamp) / m_speeds);
-	m_lastTimestamp = m_lastTimestamp - ((timestamp - m_lastTimestamp) - pixelCount * m_speeds);
+	int pixelCount = static_cast<int>((timestamp - m_startTimestamp) * m_speeds);
 
 	if (pixelCount >= m_lenght) {
+		m_moving = false;
 		return m_dest;
 	}
 
-	p.x += static_cast<int>(pixelCount * m_cosX);
-	p.y += static_cast<int>(pixelCount * m_cosY);
+	p.x += static_cast<int>(pixelCount * m_cosa);
+	p.y += static_cast<int>(pixelCount * m_sina);
 
 	return p;
 }

@@ -8,13 +8,16 @@ class Ground :
 	public EventInterface
 {
 public:
-	Ground();
+	Ground(Renderer *renderer);
 	~Ground();
 
-protected:
 	virtual void open(void *data, int code) override;
 	virtual void close() override;
 
+protected:
+	
+	virtual void update(Uint32 time) override;
+	virtual int render() override;
 	virtual void userEventHookProc(const SDL_UserEvent &user) override;
 
 private:
