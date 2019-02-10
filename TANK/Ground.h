@@ -22,5 +22,9 @@ protected:
 
 private:
 	Maps m_map;
+	
 };
 
+
+SDL_Rect pixelToGroundRect(const SDL_Rect & pixelRect);
+SDL_Point pixelToGroundPoint(const SDL_Point & pixelPoint);

@@ -2,6 +2,7 @@
 #include "..\Spirit.h"
 #include "TankFactory.h"
 #include "../Ground.h"
+#include "Mover.h"
 
 class Tank :
 	public Spirit
@@ -35,8 +36,9 @@ private:
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
 	SDL_Rect m_pixelRect;
+	Mover m_mover;
 	int m_HP, m_speeds;
-	Ground *m_ground;
 	REWARDS m_rewarde;
+	Ground *m_ground;
 };
  
