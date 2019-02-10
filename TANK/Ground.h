@@ -2,6 +2,9 @@
 #include "Scene.h"
 #include "games\Maps.h"
 #include "Event.h"
+#include "games\Tank.h"
+#include <array>
+#include "TANKS.h"
 
 class Ground :
 	public Scene,
@@ -15,14 +18,15 @@ public:
 	virtual void close() override;
 
 protected:
-	
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
 	virtual void userEventHookProc(const SDL_UserEvent &user) override;
 
 private:
-	Maps m_map;
-	
+	void clearRadar();
+
+	Maps m_maps;
+	std::array<std::array<Tank *, MAP_SIZE>, MAP_SIZE> m_radar;
 };
 
 

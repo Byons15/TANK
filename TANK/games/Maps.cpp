@@ -69,7 +69,9 @@ int Maps::setTerrain(int x, int y, uint32_t terrainIndex)
 
 void Maps::clearMap()
 {
-	memset(m_map, 0, sizeof(int) * MAP_SIZE * MAP_SIZE);
+	for (auto &iter : m_map) {
+		iter.fill(0);
+	}
 
 	//默认坦克刷新点。
 	m_enemyRefreshPoint[0]  = { 0, 0 };

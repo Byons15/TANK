@@ -4,7 +4,7 @@
 Ground::Ground(Renderer * renderer)
 	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE })
 {
-
+	
 }
 
 Ground::~Ground()
@@ -29,6 +29,13 @@ int Ground::render()
 
 void Ground::userEventHookProc(const SDL_UserEvent & user)
 {
+}
+
+void Ground::clearRadar()
+{
+	for (auto &iter : m_radar) {
+		iter.fill(0);
+	}
 }
 
 SDL_Point pixelToGroundPoint(const SDL_Point & pixelPoint)

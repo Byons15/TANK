@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL_rect.h>
 #include "../TANKS.h"
+#include <array>
 
 typedef unsigned int uint32_t;
 
@@ -23,7 +24,7 @@ public:
 	~Maps();
 
 private:
-	int m_map[MAP_SIZE][MAP_SIZE];
+	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> m_map;
 	SDL_Point m_enemyRefreshPoint[3];
 	SDL_Point m_alliesRefreshPoint[2];
 };
