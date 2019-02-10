@@ -23,15 +23,23 @@ public:
 		INVINCIBLE,
 	};
 
-	Tank(Ground * ground, int &model, REWARDS rewards);
+	Tank(Ground * ground, int &model, const SDL_Point &position, REWARDS rewards);
 	~Tank();
 	int HP() const {
 		return m_HP;
 	}
+	inline SDL_Point position() const;
+	int setPosition(const SDL_Point &pos);
+	int startMove(Mover::DIRECTION direction);
+	void stopMove();
 
+private: friend class Ground;
 	int beHit(int power);
 	static void setFactory(TankFactory *factory);
+	void update(Uint32 time);
+
 private:
+
 	static TankFactory *sm_factory;
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
@@ -40,5 +48,6 @@ private:
 	int m_HP, m_speeds;
 	REWARDS m_rewarde;
 	Ground *m_ground;
+	bool m_input;
 };
  

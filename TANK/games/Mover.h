@@ -4,6 +4,15 @@
 class Mover
 {
 public:
+
+	enum DIRECTION
+	{
+		UP,
+		RIGHT = 90,
+		DOWN = 180,
+		LEFT = 270,
+	};
+
 	Mover() = default;
 	int move(const SDL_Point &origin, const SDL_Point &dest, unsigned startTimestamp, float speeds);
 	SDL_Point current(unsigned timestamp);

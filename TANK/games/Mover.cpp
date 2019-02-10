@@ -3,9 +3,6 @@
 
 int Mover::move(const SDL_Point & origin, const SDL_Point & dest, unsigned startTimestamp, float speeds)
 {
-	if (m_moving)
-		return -1;
-
 	//÷±œﬂæ‡¿Î°£
 	m_lenght = static_cast<int>(sqrt((dest.x - origin.x) * (dest.x - origin.x) +
 		(dest.y - origin.y) * (dest.y - origin.y)));

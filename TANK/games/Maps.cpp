@@ -34,13 +34,13 @@ int Maps::loadMaps(int level)
 				//赋0表示这个点是空的。
 				//之后的两个if语句是保存P1 P2刷新点的。
 				if (m_map[col][ln] == -3) 
-					m_enemyRefreshPoint[enemyRefreshIndex++] = { col, ln };
+					m_enemyBind[enemyRefreshIndex++] = { col, ln };
 
 				if (m_map[col][ln] == -1) 
-					m_alliesRefreshPoint[0] = { col, ln };
+					m_alliesBind[0] = { col, ln };
 
 				if (m_map[col][ln] == -2) 
-					m_alliesRefreshPoint[0] = { col, ln };
+					m_alliesBind[1] = { col, ln };
 			}
 		}
 	}
@@ -74,11 +74,11 @@ void Maps::clearMap()
 	}
 
 	//默认坦克刷新点。
-	m_enemyRefreshPoint[0]  = { 0, 0 };
-	m_enemyRefreshPoint[1]  = { 12, 0 };
-	m_enemyRefreshPoint[2]  = { 24, 0 };
-	m_alliesRefreshPoint[0] = { 9, 24 }; 
-	m_alliesRefreshPoint[1] = { 15, 24 };
+	m_enemyBind[0]  = { 0, 0 };
+	m_enemyBind[1]  = { 12, 0 };
+	m_enemyBind[2]  = { 24, 0 };
+	m_alliesBind[0] = { 9, 24 }; 
+	m_alliesBind[1] = { 15, 24 };
 
 	//默认基地位置。
 	m_map[12][24] = m_map[13][24] = m_map[12][25] = m_map[13][25] = TAG_BASE;

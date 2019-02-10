@@ -5,7 +5,7 @@
 
 TankFactory *Tank::sm_factory = 0;
 
-Tank::Tank(Ground * ground, int &model, REWARDS rewards = DEFAULT)
+Tank::Tank(Ground * ground, int &model, const SDL_Point &position, REWARDS rewards = DEFAULT)
 	:Spirit(ground), m_rewarde(rewards)
 {
 	//从工厂查找并构造参数。
@@ -24,12 +24,32 @@ Tank::Tank(Ground * ground, int &model, REWARDS rewards = DEFAULT)
 		setAnimation(m_rewardsForm);
 	}
 
+	m_pixelRect.x = position.x;
+	m_pixelRect.y = position.y;
+
 	//坦克的碰撞大小为两格网格-1.
 	m_pixelRect.h = m_pixelRect.w = GRID_SIZE * 2 - 1;
 }
 
 Tank::~Tank()
 {
+}
+
+SDL_Point Tank::position() const
+{
+	return SDL_Point{ m_pixelRect.x, m_pixelRect.y };
+}
+
+int Tank::setPosition(const SDL_Point & pos)
+{
+	//先尝试在ground更新位置， 如果成功再设置坦克位置。
+	auto result = m_ground->tankPositionUpdate(this, pos);
+	if (!result) {
+		m_pixelRect.x = pos.x;
+		m_pixelRect.y = pos.y;
+	}
+
+	return result;
 }
 
 int Tank::beHit(int power)
@@ -58,4 +78,9 @@ int Tank::beHit(int power)
 void Tank::setFactory(TankFactory * factory)
 {
 	sm_factory = factory;
+}
+
+void Tank::update(Uint32 time)
+{
+	
 }

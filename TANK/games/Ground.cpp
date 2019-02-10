@@ -2,7 +2,7 @@
 #include "../Renderer.h"
 
 Ground::Ground(Renderer * renderer)
-	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE })
+	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer)
 {
 	
 }
@@ -11,24 +11,19 @@ Ground::~Ground()
 {
 }
 
-void Ground::open(void * data, int code)
-{
-}
 
-void Ground::close()
+void Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 {
-}
-
-void Ground::update(Uint32 time)
-{
-}
-
-int Ground::render()
-{
-}
-
-void Ground::userEventHookProc(const SDL_UserEvent & user)
-{
+	SDL_Point p;
+	if (camp == ALLISE) {
+		p = m_maps.alliesBind(bindIndex);
+	}
+	else if (camp == ENEMY) {
+		p = m_maps.enemyBind(bindIndex);
+	}
+	else {
+		throw std::out_of_range("³¬³öÕóÓªÑ¡Ôñ·¶Î§");
+	}
 }
 
 void Ground::clearRadar()
