@@ -4,6 +4,7 @@
 #include "../Event.h"
 #include <map>
 #include "TankFactory.h"
+#include <functional>
 
 class Tank;
 
@@ -34,6 +35,7 @@ public:
 		return m_tankFactory;
 	}
 
+	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
 	Tank* addTank(int tankModel, CAMP camp, int bindIndex);
 
 	//攻击坦克。
@@ -52,7 +54,14 @@ private: friend class Tank;
 	//更新坦克位置。
 	//此功能只能由Tank类调用，其他人调用会打乱战场布局
 	//成功返回0， 发生碰撞无法更新则返回-1
-	int tankPositionUpdate(Tank *tank, const SDL_Point &pos);
+	int tankPositionUpdate(Tank *tank, const SDL_Point &pixelPos);
+
+	//看名字，我只解释一下，函数会回调4次p，参数x 参数y 分别传入：
+	//0,0
+	//0,1
+	//1,0
+	//1,1
+	inline static void fourSquareTraversal(std::function<void (int x, int y)> p);
 
 private:
 	void clearGround();

@@ -37,19 +37,41 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	//注意转换成像素位置
 	Tank *t = new Tank(this, tankModel, pixelToGroundPoint(p));
 
+	//如果复活点被占用，则生成坦克失败。
+	if (tankPositionUpdate(t, p) == -1) {
+		delete t;
+		return 0;
+	}
+
 	return t;
 }
 
 void Ground::destoryTank(Tank * tank)
 {
 	SDL_Point p = m_tanks[tank];
-	for (int x = 0; x != 2;  ++x) {
-		for (int y = 0; y != 2; ++y) {
-			m_radar[p.x + x][p.y + y] = 0;
-		}
-	}
+	//将坦克从雷达中抹去。
+	fourSquareTraversal([this, &p](int x, int y) {m_radar[p.x + x][p.y + y] = 0; });
+	
+	m_tanks.erase(tank);
 
 	delete tank;
+}
+
+int Ground::tankPositionUpdate(Tank * tank, const SDL_Point & pixelPos)
+{
+	//TODO::碰撞检测。
+
+	return 0;
+}
+
+//不知道这玩意inline了编译器会不会听。
+inline void Ground::fourSquareTraversal(std::function<void(int x, int y)> p)
+{
+	for (int x = 0; x != 2; ++x) {
+		for (int y = 0; y != 2; ++y) {
+			p(x, y);
+		}
+	}
 }
 
 void Ground::clearGround()
@@ -59,8 +81,9 @@ void Ground::clearGround()
 	}
 
 	for (auto &iter : m_tanks) {
-		
+		delete iter.first;
 	}
+	m_tanks.clear();
 }
 
 SDL_Point pixelToGroundPoint(const SDL_Point & pixelPoint)
