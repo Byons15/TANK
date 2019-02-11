@@ -5,8 +5,8 @@
 
 TankFactory *Tank::sm_factory = 0;
 
-Tank::Tank(Ground * ground, int &model, const SDL_Point &position, REWARDS rewards = DEFAULT)
-	:Spirit(ground), m_rewarde(rewards)
+Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
+	:Spirit(ground)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -18,11 +18,6 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position, REWARDS rewar
 
 	//设置坦克当前形态。
 	beHit(0);
-	
-	//是否带有奖励。
-	if (rewards) {
-		setAnimation(m_rewardsForm);
-	}
 
 	m_pixelRect.x = position.x;
 	m_pixelRect.y = position.y;
@@ -52,6 +47,17 @@ int Tank::setPosition(const SDL_Point & pos)
 	return result;
 }
 
+void Tank::setRewards(REWARDS r)
+{
+	m_rewarde = r;
+	if (m_rewarde != DEFAULT) {
+		setAnimation(m_rewardsForm);
+	}
+	else {
+		setAnimation(m_form[m_HP - 1]);
+	}
+}
+
 int Tank::beHit(int power)
 {
 	//如果坦克携带有奖励箱，则触发奖励, 而不是减HP。
@@ -63,9 +69,7 @@ int Tank::beHit(int power)
 		user.code = m_rewarde;
 		director->userEventTrigger(user);
 
-		//恢复成普通坦克。
-		setAnimation(m_form[m_HP - 1]);
-		m_rewarde = DEFAULT;
+		setRewards(DEFAULT);
 	}
 	else {
 		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;

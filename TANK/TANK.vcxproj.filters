@@ -98,9 +98,6 @@
     <ClInclude Include="Games.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="games\Tank.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -108,6 +105,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="games\Mover.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="games\Ground.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

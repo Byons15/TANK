@@ -1,7 +1,7 @@
 #pragma once
 #include "..\Spirit.h"
 #include "TankFactory.h"
-#include "../Ground.h"
+#include "Ground.h"
 #include "Mover.h"
 
 class Tank :
@@ -22,9 +22,7 @@ public:
 		SUPERSPEEDS,
 		INVINCIBLE,
 	};
-
-	Tank(Ground * ground, int &model, const SDL_Point &position, REWARDS rewards);
-	~Tank();
+	
 	int HP() const {
 		return m_HP;
 	}
@@ -32,8 +30,11 @@ public:
 	int setPosition(const SDL_Point &pos);
 	int startMove(Mover::DIRECTION direction);
 	void stopMove();
+	void setRewards(REWARDS r);
 
 private: friend class Ground;
+	Tank(Ground * ground, int &model, const SDL_Point &position);
+	~Tank();
 	int beHit(int power);
 	static void setFactory(TankFactory *factory);
 	void update(Uint32 time);

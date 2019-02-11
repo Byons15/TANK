@@ -183,11 +183,11 @@
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Director.h" />
     <ClInclude Include="Games.h" />
+    <ClInclude Include="games\Ground.h" />
     <ClInclude Include="games\Maps.h" />
     <ClInclude Include="games\Mover.h" />
     <ClInclude Include="games\Tank.h" />
     <ClInclude Include="games\TankFactory.h" />
-    <ClInclude Include="Ground.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SDL\AnimationFactory.h" />

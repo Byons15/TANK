@@ -1,10 +1,9 @@
 #pragma once
-#include "Scene.h"
-#include "games\Maps.h"
-#include "Event.h"
-#include "games\Tank.h"
+#include "../Scene.h"
+#include "Maps.h"
+#include "../Event.h"
 #include <map>
-#include "games\TankFactory.h"
+#include "TankFactory.h"
 
 class Tank;
 
@@ -30,12 +29,19 @@ public:
 	Maps &maps() {
 		return m_maps;
 	}
+	Tank* radar(int x, int y);
+	const TankFactory &tankFactory() {
+		return m_tankFactory;
+	}
 
-	void addTank(int tankModel, CAMP camp, int bindIndex);
+	Tank* addTank(int tankModel, CAMP camp, int bindIndex);
 
 	//攻击坦克。
 	//坦克已摧毁返回0， 坦克已受伤返回1， 坦克处在无敌状态返回-1
 	int attackTank(Tank *tank, int power);
+
+	//摧毁坦克， 这个是强制的
+	void destoryTank(Tank *tank);
 
 protected: 
 	virtual void update(Uint32 time) override;
@@ -49,7 +55,7 @@ private: friend class Tank;
 	int tankPositionUpdate(Tank *tank, const SDL_Point &pos);
 
 private:
-	void clearRadar();
+	void clearGround();
 
 	Maps m_maps;
 	std::array<std::array<Tank *, MAP_SIZE>, MAP_SIZE> m_radar;  //雷达保存了哪个网格上存在坦克。
