@@ -29,7 +29,11 @@
 <end>
 
 <terrain>
-
+  base   0 1
+  brick  0 1
+  rock   0 2
+  water  0 0
+  woods  -1 0
 <end>
 
 <level 1>
