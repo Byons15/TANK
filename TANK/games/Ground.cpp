@@ -1,22 +1,26 @@
 #include "Ground.h"
 #include "../Renderer.h"
 #include "Tank.h"
+#include "../FileLoader.h"
+#include <sstream>
 
 Ground::Ground(Renderer * renderer)
 	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer)
 {
-	//TODO::
+	//载入地形数据
+	std::vector<std::string> data;
+	fileLoad("terrain", &data);
+	for (auto &s : data) {
+		std::istringstream is(s);
+		TERRAIN t;
+		is >> t.name >> t.tankPass >> t.HP;
+		m_terrains.push_back(t);
+	}
 }
 
 Ground::~Ground()
 {
-	//TODO::
-}
-
-
-Tank * Ground::radar(int x, int y)
-{
-	return m_radar[x][y];
+	clearGround();
 }
 
 Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
@@ -38,7 +42,7 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	Tank *t = new Tank(this, tankModel, pixelToGroundPoint(p));
 
 	//如果复活点被占用，则生成坦克失败。
-	if (tankPositionUpdate(t, p) == -1) {
+	if (tankColCheck(t, p) == -1) {
 		delete t;
 		return 0;
 	}
@@ -46,38 +50,62 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	return t;
 }
 
+int Ground::attackTank(Tank * tank, int power)
+{
+	auto result = tank->beHit(power);
+	if (!result)
+		destoryTank(tank);
+
+	return result;
+}
+
 void Ground::destoryTank(Tank * tank)
 {
-	SDL_Point p = m_tanks[tank];
-	//将坦克从雷达中抹去。
-	fourSquareTraversal([this, &p](int x, int y) {m_radar[p.x + x][p.y + y] = 0; });
-	
 	m_tanks.erase(tank);
 
 	delete tank;
 }
 
-int Ground::tankPositionUpdate(Tank * tank, const SDL_Point & pixelPos)
+int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos)
 {
 	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize});
 
 	//检查地形碰撞。 
-	for (int x = 0; x != rect.w; ++x) {
-		for (int y = 0; y != rect.h; ++y) {
+	int result = 0;
+	foreachRect(rect.w, rect.y, 
+		[this, &rect, &result] (int x, int y) -> void 
+		{
 			if (m_maps(rect.x + x, rect.y + y)) {
-				return -1;
+				if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
+					result = -1;
+					return;
+				}
 			}
-		}
+		});
+	if (result == -1) {
+		return -1;
 	}
 
+	//检查坦克碰撞。
+	SDL_Rect r1 = {pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize};
+	SDL_Rect r2 = {0, 0, Tank::colSize, Tank::colSize };
+	for (auto &t : m_tanks) {
+		r2.x = t->position().x;
+		r2.y = t->position().y;
+		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t != tank) {
+			return -2;
+		}
+	}
+		
+	//能走到这里说明没有发生碰撞
 	return 0;
 }
 
 //不知道这玩意inline了编译器会不会听。
-inline void Ground::fourSquareTraversal(std::function<void(int x, int y)> p)
+inline void Ground::foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p)
 {
-	for (int x = 0; x != 2; ++x) {
-		for (int y = 0; y != 2; ++y) {
+	for (int x = 0; x != maxX; ++x) {
+		for (int y = 0; y != maxY; ++y) {
 			p(x, y);
 		}
 	}
@@ -85,12 +113,8 @@ inline void Ground::fourSquareTraversal(std::function<void(int x, int y)> p)
 
 void Ground::clearGround()
 {
-	for (auto &iter : m_radar) {
-		iter.fill(0);
-	}
-
 	for (auto &iter : m_tanks) {
-		delete iter.first;
+		delete iter;
 	}
 	m_tanks.clear();
 }

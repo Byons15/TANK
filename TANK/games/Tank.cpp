@@ -17,7 +17,7 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 	m_speeds = dat.speeds;
 
 	//设置坦克当前形态。
-	beHit(0);
+	setAnimation(m_form[m_HP - 1]);
 
 	m_position = position;
 }
@@ -29,7 +29,7 @@ Tank::~Tank()
 int Tank::setPosition(const SDL_Point & pos)
 {
 	//先尝试在ground更新位置， 如果成功再设置坦克位置。
-	auto result = m_ground->tankPositionUpdate(this, pos);
+	auto result = m_ground->tankColCheck(this, pos);
 	if (!result) {
 		m_position = pos;
 	}
@@ -48,24 +48,48 @@ void Tank::setRewards(REWARDS r)
 	}
 }
 
-int Tank::beHit(int power)
+int Tank::beHit(Tank *aggressor, int power)
 {
 	//如果坦克携带有奖励箱，则触发奖励, 而不是减HP。
 	if (m_rewarde != DEFAULT) {
 		
-		//触发奖励。
-		SDL_UserEvent user;
-		user.type = BONUSCHEST;
-		user.code = m_rewarde;
-		director->userEventTrigger(user);
+		
 
 		setRewards(DEFAULT);
 	}
-	else {
-		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
-		setAnimation(m_form[m_HP - 1]);
+	else if (m_rewarde == REWARDS::INVINCIBLE) {
+		
+	}
+	else{
+		
 	}
 
+	
+
+	switch (m_rewarde)
+	{
+	case Tank::DEFAULT:
+		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
+		setAnimation(m_form[m_HP - 1]);
+		return m_HP;
+	case Tank::ADDLIVE:
+		break;
+	case Tank::SUPERPOWER:
+		break;
+	case Tank::INVINCIBLE:
+		return m_HP;
+	default:
+		break;
+	}
+
+	//触发奖励。
+	SDL_UserEvent user;
+	user.type = BONUSCHEST;
+	user.code = m_rewarde;
+	user.data1 = aggressor;
+	director->userEventTrigger(user);
+
+	setRewards(DEFAULT);
 	return m_HP;
 }
 

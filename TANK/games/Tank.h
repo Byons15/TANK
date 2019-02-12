@@ -17,9 +17,8 @@ public:
 	enum REWARDS
 	{
 		DEFAULT = 0,
-		ADDHP,
+		ADDLIVE,
 		SUPERPOWER,
-		SUPERSPEEDS,
 		INVINCIBLE,
 	};
 	
@@ -37,12 +36,11 @@ public:
 private: friend class Ground;
 	Tank(Ground * ground, int &model, const SDL_Point &position);
 	~Tank();
-	int beHit(int power);
+	int beHit(Tank *aggressor, int power);
 	static void setFactory(TankFactory *factory);
 	void update(Uint32 time);
 
 private:
-
 	static TankFactory *sm_factory;
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
