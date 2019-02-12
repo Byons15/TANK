@@ -8,7 +8,7 @@ class Tank :
 	public Spirit
 {
 public:
-
+	static constexpr int colSize = GRID_SIZE * 2 - 1;
 	enum EVENT
 	{
 		BONUSCHEST = 0x300,
@@ -26,7 +26,9 @@ public:
 	int HP() const {
 		return m_HP;
 	}
-	inline SDL_Point position() const;
+	inline const SDL_Point &position() const {
+		return m_position;
+	}
 	int setPosition(const SDL_Point &pos);
 	int startMove(Mover::DIRECTION direction);
 	void stopMove();
@@ -44,7 +46,7 @@ private:
 	static TankFactory *sm_factory;
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
-	SDL_Rect m_pixelRect;
+	SDL_Point m_position;
 	Mover m_mover;
 	int m_HP, m_speeds;
 	REWARDS m_rewarde;

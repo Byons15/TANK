@@ -19,20 +19,11 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 	//设置坦克当前形态。
 	beHit(0);
 
-	m_pixelRect.x = position.x;
-	m_pixelRect.y = position.y;
-
-	//坦克的碰撞大小为两格网格-1.
-	m_pixelRect.h = m_pixelRect.w = GRID_SIZE * 2 - 1;
+	m_position = position;
 }
 
 Tank::~Tank()
 {
-}
-
-SDL_Point Tank::position() const
-{
-	return SDL_Point{ m_pixelRect.x, m_pixelRect.y };
 }
 
 int Tank::setPosition(const SDL_Point & pos)
@@ -40,8 +31,7 @@ int Tank::setPosition(const SDL_Point & pos)
 	//先尝试在ground更新位置， 如果成功再设置坦克位置。
 	auto result = m_ground->tankPositionUpdate(this, pos);
 	if (!result) {
-		m_pixelRect.x = pos.x;
-		m_pixelRect.y = pos.y;
+		m_position = pos;
 	}
 
 	return result;

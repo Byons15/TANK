@@ -59,7 +59,16 @@ void Ground::destoryTank(Tank * tank)
 
 int Ground::tankPositionUpdate(Tank * tank, const SDL_Point & pixelPos)
 {
-	//TODO::Åö×²¼ì²â¡£
+	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize});
+
+	//¼ì²éµØÐÎÅö×²¡£ 
+	for (int x = 0; x != rect.w; ++x) {
+		for (int y = 0; y != rect.h; ++y) {
+			if (m_maps(rect.x + x, rect.y + y)) {
+				return -1;
+			}
+		}
+	}
 
 	return 0;
 }
