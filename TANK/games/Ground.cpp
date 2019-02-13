@@ -52,7 +52,7 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 
 int Ground::attackTank(Tank * tank, int power)
 {
-	auto result = tank->beHit(power);
+	auto result = tank->beHit(tank, power);
 	if (!result)
 		destoryTank(tank);
 
@@ -69,6 +69,11 @@ void Ground::destoryTank(Tank * tank)
 int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos)
 {
 	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize});
+
+	//边界检查.
+	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
+		return -1;
+	}
 
 	//检查地形碰撞。 
 	int result = 0;

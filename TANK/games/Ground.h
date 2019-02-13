@@ -44,9 +44,9 @@ public:
 	//摧毁坦克， 这个是强制的
 	void destoryTank(Tank *tank);
 
-	//更新坦克位置。
+	//碰撞检查
 	//此功能只能由Tank类调用，其他人调用会打乱战场布局
-	//成功返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2
+	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2
 	int tankColCheck(Tank *tank, const SDL_Point &pixelPos);
 
 	//看名字，我只解释一下，函数会回调4次p，参数x 参数y 分别传入：
@@ -56,7 +56,7 @@ public:
 	//1,1
 	inline static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
 
-protected: 
+protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
 	virtual void userEventHookProc(const SDL_UserEvent &user) override;
@@ -73,7 +73,7 @@ private:
 	std::vector<TERRAIN> m_terrains;
 
 	TankFactory m_tankFactory;
-	std::set<Tank *> m_tanks;  //val值保存的是坦克在战场网格中的位置的左上角。
+	std::set<Tank *> m_tanks;
 };
 
 

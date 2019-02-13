@@ -13,14 +13,6 @@ public:
 	{
 		BONUSCHEST = 0x300,
 	};
-
-	enum REWARDS
-	{
-		DEFAULT = 0,
-		ADDLIVE,
-		SUPERPOWER,
-		INVINCIBLE,
-	};
 	
 	int HP() const {
 		return m_HP;
@@ -31,7 +23,15 @@ public:
 	int setPosition(const SDL_Point &pos);
 	int startMove(Mover::DIRECTION direction);
 	void stopMove();
-	void setRewards(REWARDS r);
+
+	//设置奖励箱
+	//rewarde是用户定义的参数，这个参数会在坦克触发奖励箱时传到事件队列，一般用于标识奖励类型，传入0则取消奖励箱。
+	//成功返回0， 坦克处在无敌状态则返回-1
+	int setRewards(int rewarde);
+
+	//成功返回0， 坦克当前携带有奖励箱则返回-1
+	int invincible();
+	void unInvincible();
 
 private: friend class Ground;
 	Tank(Ground * ground, int &model, const SDL_Point &position);
@@ -41,14 +41,13 @@ private: friend class Ground;
 	void update(Uint32 time);
 
 private:
-	static TankFactory *sm_factory;
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
-	SDL_Point m_position;
 	Mover m_mover;
-	int m_HP, m_speeds;
-	REWARDS m_rewarde;
+	SDL_Point m_position;
+	int m_HP, m_speeds, m_rewarde;
 	Ground *m_ground;
-	bool m_input;
+	static TankFactory *sm_factory;
+	bool m_input, m_invincible;
 };
  
