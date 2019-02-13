@@ -13,7 +13,8 @@ public:
 		LEFT = 270,
 	};
 
-	Mover() = default;
+	Mover()
+		:m_moving(false) {}
 	int move(const SDL_Point &origin, const SDL_Point &dest, unsigned startTimestamp, float speeds);
 	SDL_Point current(unsigned timestamp);
 	void endMove() {

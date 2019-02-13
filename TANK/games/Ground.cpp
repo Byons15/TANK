@@ -42,7 +42,7 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	Tank *t = new Tank(this, tankModel, pixelToGroundPoint(p));
 
 	//如果复活点被占用，则生成坦克失败。
-	if (tankColCheck(t, p) == -1) {
+	if (t->setPosition(p) == -1) {
 		delete t;
 		return 0;
 	}
@@ -66,7 +66,7 @@ void Ground::destoryTank(Tank * tank)
 	delete tank;
 }
 
-int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos)
+int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retColDest)
 {
 	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize});
 
@@ -98,6 +98,7 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos)
 		r2.x = t->position().x;
 		r2.y = t->position().y;
 		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t != tank) {
+			*retColDest = t;
 			return -2;
 		}
 	}
