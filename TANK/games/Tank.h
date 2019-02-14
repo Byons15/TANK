@@ -25,13 +25,14 @@ public:
 	int setPosition(const SDL_Point &pos);
 
 	//开始移动。
-	int startMove(Mover::DIRECTION direction);
+	int startMove(Mover::DIRECTION direction, Uint32 time);
 
 	//stopMove会使坦克进入“结束移动”状态，结束移动状态表示坦克自行移动到最近的下一个网格，同时不接受移动操作。
-	void stopMove();
+	void stopMove(Uint32 time);
 	int setCommander(Commander *cmder);
-	bool moveState() const {
-		return m_mover.state();
+	bool moveState() const;
+	int model() const {
+		return m_model;
 	}
 
 	//设置奖励箱
@@ -57,7 +58,8 @@ private:
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
-	int m_HP, m_speeds, m_rewarde, m_defaultSpeeds;
+	int m_HP, m_rewarde, m_model;
+	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;
 	Commander *m_commander;

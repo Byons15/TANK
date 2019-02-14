@@ -14,6 +14,8 @@ Ground::Ground(Renderer * renderer)
 		std::istringstream is(s);
 		TERRAIN t;
 		is >> t.name >> t.tankPass >> t.HP;
+		t.spirit.setScene(this);
+		t.spirit.setAnimation(t.name);
 		m_terrains.push_back(t);
 	}
 }
@@ -21,6 +23,16 @@ Ground::Ground(Renderer * renderer)
 Ground::~Ground()
 {
 	clearGround();
+}
+
+void Ground::open(void * data, int code)
+{
+	setState(true);
+}
+
+void Ground::close()
+{
+	setState(false);
 }
 
 Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
@@ -47,6 +59,8 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 		return 0;
 	}
 
+	m_tanks[t] = camp;
+
 	return t;
 }
 
@@ -61,8 +75,12 @@ int Ground::attackTank(Tank * tank, int power)
 
 void Ground::destoryTank(Tank * tank)
 {
-	m_tanks.erase(tank);
+	SDL_UserEvent user;
+	user.type = DESTORYTANK;
+	user.code = m_tanks[tank];
+	user.data1 = reinterpret_cast<void *>(tank->model());
 
+	m_tanks.erase(tank);
 	delete tank;
 }
 
@@ -95,10 +113,10 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	SDL_Rect r1 = {pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize};
 	SDL_Rect r2 = {0, 0, Tank::colSize, Tank::colSize };
 	for (auto &t : m_tanks) {
-		r2.x = t->position().x;
-		r2.y = t->position().y;
-		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t != tank) {
-			*retColDest = t;
+		r2.x = t.first->position().x;
+		r2.y = t.first->position().y;
+		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t.first != tank) {
+			*retColDest = t.first;
 			return -2;
 		}
 	}
@@ -120,7 +138,7 @@ inline void Ground::foreachRect(int maxX, int maxY, std::function<void(int x, in
 void Ground::clearGround()
 {
 	for (auto &iter : m_tanks) {
-		delete iter;
+		delete iter.first;
 	}
 	m_tanks.clear();
 }

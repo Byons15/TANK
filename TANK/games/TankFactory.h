@@ -28,7 +28,8 @@ private:
 	{
 		std::vector<Animation> form;
 		Animation rewardForm, invincibleForm;
-		int maxHP, speeds;
+		int maxHP;
+		float speeds;
 	};
 
 	const TANKDAT &findTankData(const std::string &name);

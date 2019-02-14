@@ -2,7 +2,7 @@
 #include "../Scene.h"
 #include "Maps.h"
 #include "../Event.h"
-#include <set>
+#include <map>
 #include "TankFactory.h"
 #include <functional>
 
@@ -18,6 +18,11 @@ public:
 	{
 		ALLISE,
 		ENEMY,
+	};
+
+	enum EVENT
+	{
+		DESTORYTANK = 0x999,
 	};
 
 	Ground(Renderer *renderer);
@@ -68,12 +73,13 @@ private:
 	struct TERRAIN
 	{
 		std::string name;
+		Spirit spirit;
 		int tankPass, HP;
 	};
 	std::vector<TERRAIN> m_terrains;
 
 	TankFactory m_tankFactory;
-	std::set<Tank *> m_tanks;
+	std::map<Tank *, CAMP> m_tanks;
 };
 
 

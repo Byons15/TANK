@@ -21,7 +21,7 @@ public:
 		m_moving = false;
 	}
 	bool state() const {
-		m_moving;
+		return m_moving;
 	}
 	~Mover() = default;
 private:

@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_stopMoving(false), m_invincible(false)
+	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -38,11 +38,87 @@ int Tank::setPosition(const SDL_Point & pos)
 	return result;
 }
 
+int Tank::startMove(Mover::DIRECTION direction, Uint32 time)
+{
+	SDL_Point dest = m_position;
+	switch (direction)
+	{
+	case Mover::UP:
+		dest.y = 0;
+		break;
+	case Mover::RIGHT:
+		dest.x = GRID_SIZE * MAP_SIZE - GRID_SIZE * 2;
+		break;
+	case Mover::DOWN:
+		dest.y = GRID_SIZE * MAP_SIZE - GRID_SIZE * 2;
+		break;
+	case Mover::LEFT:
+		dest.x = 0;
+		break;
+	default:
+		break;
+	}
+
+	m_direction = direction;
+	m_mover.move(m_position, dest, time, m_speeds);
+	return 0;
+}
+
+void Tank::stopMove(Uint32 time)
+{
+	m_mover.endMove();
+
+	//如果与网格对其的，则不进入“结束移动状态”，仅简单地结束移动。
+	if (onGrid()) {
+		m_stopMoving = false;
+		return;
+	}
+	
+	//获取坦克覆盖的范围。
+	auto gridRect = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
+	SDL_Point stopPostion;
+
+	//根据当前方向获取坦克需要移动到的网格。
+	switch (m_direction)
+	{
+	case Mover::UP:
+		stopPostion.x = gridRect.x;
+		stopPostion.y = gridRect.y;
+		break;
+	case Mover::RIGHT:
+		stopPostion.x = gridRect.x + gridRect.w - 1;
+		stopPostion.y = gridRect.y;
+		break;
+	case Mover::DOWN:
+		stopPostion.x = gridRect.x;
+		stopPostion.y = gridRect.y + gridRect.h - 1;
+		break;
+	case Mover::LEFT:
+		stopPostion.x = gridRect.x;
+		stopPostion.y = gridRect.y;
+		break;
+	default:
+		break;
+	}
+
+	//从当前位置移动到目标网格所在的位置。
+	m_mover.move(m_position, { stopPostion.x * GRID_SIZE, stopPostion. y * GRID_SIZE }, time, m_speeds);
+	m_stopMoving = true;  //进入“结束移动”状态。
+}
+
 int Tank::setCommander(Commander * cmder)
 {
 	m_commander = cmder;
 	m_stopMoving = true;
 	return 0;
+}
+
+bool Tank::moveState() const
+{
+	if (m_stopMoving)
+		return false;
+
+	return m_mover.state();
 }
 
 int Tank::setRewards(int rewarde)
@@ -119,7 +195,7 @@ void Tank::update(Uint32 time)
 		//当前不是“结束移动”状态，所以要处理移动命令.
 
 		if (result == -1 || direction != m_direction) {
-			stopMove();
+			stopMove(time);
 		}
 	}
 
@@ -141,21 +217,21 @@ void Tank::update(Uint32 time)
 		Tank *colDest;
 		auto result = m_ground->tankColCheck(this, p, &colDest);
 		if (result == -1) { //碰到边界或地形。
-			stopMove();
+			stopMove(time);
 		}
 		else if (result == 0) {
 			m_position = p;  //没有碰到东西
 		}
 		else if(result == -2){ //碰到坦克
-			stopMove();
+			stopMove(time);
 			if (colDest->m_direction == m_direction) { //追尾处理
 				m_speeds = colDest->m_speeds;
-				startMove(m_direction);
+				startMove(m_direction, time);
 			}
 		}
 	}
 	else { //移动器结束时证明坦克已经对齐了网格，我们可以开始执行下一个命令了。
-		startMove(direction);
+		startMove(direction, time);
 	}
 }
 

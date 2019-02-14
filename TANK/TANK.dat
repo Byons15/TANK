@@ -21,11 +21,11 @@
 <end>
 
 <tank>
-	P1 500 1 P1 DEFAULT DEFAULT
-	agility 500 1 agility DEFAULT DEFAULT
-	armoured 300 3 armoured1 armoured2 armoured3 DEFAULT DEFAULT
-	ordinary1 400 1 ordinary1 DEFAULT DEFAULT
-	ordinary2 400 1 ordinary2 DEFAULT DEFAULT
+	P1 0.5 1 P1 DEFAULT DEFAULT
+	agility 0.45 1 agility DEFAULT DEFAULT
+	armoured 0.3 3 armoured1 armoured2 armoured3 DEFAULT DEFAULT
+	ordinary1 0.35 1 ordinary1 DEFAULT DEFAULT
+	ordinary2 0.35 1 ordinary2 DEFAULT DEFAULT
 <end>
 
 <terrain>
