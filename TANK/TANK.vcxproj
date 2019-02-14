@@ -166,6 +166,7 @@
     <ClCompile Include="games\Games.cpp" />
     <ClCompile Include="games\Ground.cpp" />
     <ClCompile Include="games\Maps.cpp" />
+    <ClCompile Include="games\Missile.cpp" />
     <ClCompile Include="games\Mover.cpp" />
     <ClCompile Include="games\Tank.cpp" />
     <ClCompile Include="games\TankFactory.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Games.h" />
     <ClInclude Include="games\Ground.h" />
     <ClInclude Include="games\Maps.h" />
+    <ClInclude Include="games\Missile.h" />
     <ClInclude Include="games\Mover.h" />
     <ClInclude Include="games\Tank.h" />
     <ClInclude Include="games\TankFactory.h" />

@@ -125,6 +125,34 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	return 0;
 }
 
+int Ground::missileColCheck(Missile * m, const SDL_Point & checkPos, Tank ** retColDest)
+{
+	auto rect = pixelToGroundRect({checkPos.x, checkPos.y, Missile::missileSize, Missile::missileSize });
+
+	//边界检查.
+	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
+		return -3;
+	}
+
+	//检查地形碰撞。 
+	int result = 0;
+	foreachRect(rect.w, rect.y,
+		[this, &rect, &result](int x, int y) -> void
+	{
+		if (m_maps(rect.x + x, rect.y + y)) {
+			if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
+				result = -1;
+				return;
+			}
+		}
+	});
+	if (result == -1) {
+		return -1;
+	}
+
+	return 0;
+}
+
 //不知道这玩意inline了编译器会不会听。
 inline void Ground::foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p)
 {

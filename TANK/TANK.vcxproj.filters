@@ -60,6 +60,9 @@
     <ClCompile Include="games\Mover.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="games\Missile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -108,6 +111,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="games\Ground.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="games\Missile.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

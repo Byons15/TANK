@@ -5,6 +5,7 @@
 #include <map>
 #include "TankFactory.h"
 #include <functional>
+#include "Missile.h"
 
 class Tank;
 
@@ -49,10 +50,13 @@ public:
 	//摧毁坦克， 这个是强制的
 	void destoryTank(Tank *tank);
 
-	//碰撞检查
-	//此功能只能由Tank类调用，其他人调用会打乱战场布局
+	//坦克碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2
 	int tankColCheck(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
+
+	//炮弹碰撞检查
+	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
+	int missileColCheck(Missile *m, const SDL_Point &checkPos, Tank ** retColDest);
 
 	//看名字，我只解释一下，函数会回调4次p，参数x 参数y 分别传入：
 	//0,0
