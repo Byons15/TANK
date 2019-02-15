@@ -38,6 +38,34 @@ int Tank::setPosition(const SDL_Point & pos)
 	return result;
 }
 
+void Tank::fire()
+{
+	SDL_Point missilb = m_position;
+	
+	switch (m_direction)
+	{
+	case Mover::UP:
+		missilb.x = m_position.x + colSize / 2 - Missile::missileSize / 2;
+		missilb.y = m_position.y - Missile::missileSize / 2;
+		break;
+	case Mover::DOWN:
+		missilb.x = m_position.x + colSize / 2 - Missile::missileSize / 2;
+		missilb.y = m_position.y + colSize - Missile::missileSize / 2;
+		break;
+	case Mover::LEFT:
+		missilb.x = m_position.x - Missile::missileSize / 2;
+		missilb.y = m_position.y + colSize / 2 - Missile::missileSize / 2;
+		break;
+	case Mover::RIGHT:
+		missilb.x = m_position.x + colSize - Missile::missileSize / 2;
+		missilb.y = m_position.y + colSize / 2 - Missile::missileSize / 2;
+	default:
+		break;
+	}
+
+	m_ground->addMissile(new Missile(m_ground, this, m_power, missilb, m_direction));
+}
+
 int Tank::startMove(Mover::DIRECTION direction, Uint32 time)
 {
 	SDL_Point dest = m_position;
@@ -201,6 +229,7 @@ void Tank::update(Uint32 time)
 
 	if (fire) {
 		//TODO::开火!!
+		Tank::fire();
 	}
 
 	//当处于“结束移动”状态时，我们同“非结束移动”状态一样都从移动器中更新位置，直到移动器结束移动。

@@ -24,6 +24,8 @@ public:
 	}
 	int setPosition(const SDL_Point &pos);
 
+	void fire();
+
 	//开始移动。
 	int startMove(Mover::DIRECTION direction, Uint32 time);
 
@@ -42,7 +44,6 @@ public:
 
 	//成功返回0， 坦克当前携带有奖励箱则返回-1
 	int invincible();
-	void unInvincible();
 
 private: friend class Ground;
 	Tank(Ground * ground, int &model, const SDL_Point &position);
@@ -54,12 +55,13 @@ private: friend class Ground;
 
 private:
 	bool onGrid();
+	void unInvincible();
 
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
-	int m_HP, m_rewarde, m_model;
+	int m_HP, m_rewarde, m_model, m_power;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;

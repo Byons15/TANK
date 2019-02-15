@@ -4,6 +4,7 @@
 #include "../FileLoader.h"
 #include <sstream>
 #include "../Director.h"
+#include <list>
 
 Ground::Ground(Renderer * renderer)
 	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer)
@@ -239,7 +240,31 @@ void Ground::update(Uint32 time)
 
 int Ground::render()
 {
-	
+	//渲染位于坦克下方的地形并挑拣出位于坦克上方的地形
+	std::list<SDL_Point> lastRender;
+	for (auto x = 0; x != MAP_SIZE; ++x) {
+		for (auto y = 0; y != MAP_SIZE; ++y) {
+			if (m_terrains[m_maps(x, y) - 1].tankPass == 1) {
+				lastRender.push_back({ x, y });
+			}
+			else {
+				m_terrains[m_maps(x, y) - 1].spirit.render({ x * GRID_SIZE, y *GRID_SIZE });
+			}
+		}
+	}
+
+	for (auto &t : m_tanks) {
+		t.first->render();
+	}
+
+	for (auto &m : m_missiles) {
+		m->render();
+	}
+
+	//渲染位于坦克上方的地形。
+	for (auto &p : lastRender) {
+		m_terrains[m_maps(p.x, p.y) - 1].spirit.render({ p.x * GRID_SIZE, p.y *GRID_SIZE });
+	}
 
 	return 0;
 }
