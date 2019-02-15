@@ -235,6 +235,11 @@ void Tank::update(Uint32 time)
 	}
 }
 
+void Tank::render()
+{
+	Spirit::render(m_position);
+}
+
 bool Tank::onGrid()
 {
 	auto rect = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
