@@ -1,3 +1,8 @@
+<control>
+  P1 119 115 97 100 106 107
+  P2 1073741906 1073741905 1073741904 1073741903 1073741922 1073741923
+<end>
+
 <texture>
   agility texture\agility.png 0 0 79 79 2 80
   armoured1 texture\armoured.png 0 0 79 79 2 80
@@ -18,7 +23,7 @@
   levelIcon texture\levelIcon.png 0 0 36 68 1
   LOGO texture\LOGO.png 0 0 797 202 1
   MenuCursor texture\MenuCursor.png 0 0 30 30 1
-  <end>
+<end>
 
 <tank>
 	P1 0.5 1 P1 DEFAULT DEFAULT

@@ -14,10 +14,10 @@ Games::Games()
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
 		WINDOW_WIDTH, WINDOW_HEIGHT, 
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)),
-	 m_renderer(m_window, true), m_startMenu(&m_renderer), m_ground(&m_renderer)
+	 m_renderer(m_window, true), m_startMenu(&m_renderer), m_ground(&m_renderer), m_normal(&m_ground)
 {
 	//TODO:: debug
-	m_ground.open(0, 0);
+	//m_ground.open(0, 0);
 }
 
 

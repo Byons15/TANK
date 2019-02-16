@@ -20,6 +20,9 @@ Ground::Ground(Renderer * renderer)
 		t.spirit.setAnimation(t.name);
 		m_terrains.push_back(t);
 	}
+
+	//设置坦克工厂
+	Tank::setFactory(&m_tankFactory);
 }
 
 Ground::~Ground()
@@ -55,10 +58,10 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	}
 	
 	//注意转换成像素位置
-	Tank *t = new Tank(this, tankModel, pixelToGroundPoint(p));
+	Tank *t = new Tank(this, tankModel, p);
 
 	//如果复活点被占用，则生成坦克失败。
-	if (t->setPosition(p) == -1) {
+	if (t->setPosition({p.x * GRID_SIZE, p.y * GRID_SIZE}) == -1) {
 		delete t;
 		return 0;
 	}
@@ -137,7 +140,7 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 
 	//检查地形碰撞。 
 	int result = 0;
-	foreachRect(rect.w, rect.y, 
+	foreachRect(rect.w, rect.h, 
 		[this, &rect, &result] (int x, int y) -> void 
 		{
 			if (m_maps(rect.x + x, rect.y + y)) {
@@ -180,7 +183,7 @@ int Ground::missileColCheck(Missile * m, const SDL_Point & checkPos, Tank ** ret
 
 	//检查地形碰撞。 
 	int result = 0;
-	foreachRect(rect.w, rect.y,
+	foreachRect(rect.w, rect.h,
 		[this, &rect, &result, &retColTerrain](int x, int y) -> void
 	{
 		if (m_maps(rect.x + x, rect.y + y)) {
@@ -200,6 +203,9 @@ int Ground::missileColCheck(Missile * m, const SDL_Point & checkPos, Tank ** ret
 	SDL_Rect r1 = { checkPos.x, checkPos.y, Missile::missileSize, Missile::missileSize };
 	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
 	for (auto &t : m_tanks) {
+		if (t.first == m->m_sender)
+			continue;
+
 		r2.x = t.first->position().x;
 		r2.y = t.first->position().y;
 		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
@@ -242,13 +248,21 @@ int Ground::render()
 {
 	//渲染位于坦克下方的地形并挑拣出位于坦克上方的地形
 	std::list<SDL_Point> lastRender;
+	bool baseRender = false;
 	for (auto x = 0; x != MAP_SIZE; ++x) {
 		for (auto y = 0; y != MAP_SIZE; ++y) {
-			if (m_terrains[m_maps(x, y) - 1].tankPass == 1) {
-				lastRender.push_back({ x, y });
-			}
-			else {
-				m_terrains[m_maps(x, y) - 1].spirit.renderFrame({ x * GRID_SIZE, y *GRID_SIZE });
+			if (m_maps(x, y)) {
+				if (m_terrains[m_maps(x, y) - 1].tankPass == 1) {
+					lastRender.push_back({ x, y });
+				}
+				else {
+					if (baseRender && m_maps(x, y) == 1)
+						continue;
+					
+					m_terrains[m_maps(x, y) - 1].spirit.renderFrame({ x * GRID_SIZE, y *GRID_SIZE });
+					if (m_maps(x, y) == 1)
+						baseRender = true;
+				}
 			}
 		}
 	}

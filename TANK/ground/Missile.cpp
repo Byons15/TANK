@@ -17,10 +17,10 @@ Missile::Missile(Ground * ground, Tank * sender, int power, const SDL_Point &beg
 		endPos.y = 0;
 		break;
 	case Mover::RIGHT:
-		endPos.x = MAP_SIZE - 1;
+		endPos.x = MAP_SIZE * GRID_SIZE - 1;
 		break;
 	case Mover::DOWN:
-		endPos.y = MAP_SIZE - 1;
+		endPos.y = MAP_SIZE * GRID_SIZE - 1;
 		break;
 	case Mover::LEFT:
 		endPos.x = 0;
@@ -29,8 +29,6 @@ Missile::Missile(Ground * ground, Tank * sender, int power, const SDL_Point &beg
 		break;
 	}
 
-	endPos.x = endPos.x * GRID_SIZE;
-	endPos.y = endPos.y * GRID_SIZE;
 	m_mover.move(beginPos, endPos, m_startTime, 1);
 }
 
@@ -66,6 +64,8 @@ void Missile::update(Uint32 time)
 
 		m_startTime = time;
 		m_boom = true;
+		m_position.x -= 15;
+		m_position.y -= 15;
 		setAnimation("boom");
 
 		SDL_UserEvent user;

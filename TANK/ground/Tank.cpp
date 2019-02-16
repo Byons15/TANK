@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model)
+	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -88,6 +88,7 @@ int Tank::startMove(Mover::DIRECTION direction, Uint32 time)
 	}
 
 	m_direction = direction;
+	setAngle(direction);
 	m_mover.move(m_position, dest, time, m_speeds);
 	return 0;
 }
@@ -131,13 +132,11 @@ void Tank::stopMove(Uint32 time)
 
 	//从当前位置移动到目标网格所在的位置。
 	m_mover.move(m_position, { stopPostion.x * GRID_SIZE, stopPostion. y * GRID_SIZE }, time, m_speeds);
-	m_stopMoving = true;  //进入“结束移动”状态。
 }
 
 int Tank::setCommander(Commander * cmder)
 {
 	m_commander = cmder;
-	m_stopMoving = true;
 	return 0;
 }
 

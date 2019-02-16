@@ -20,8 +20,8 @@ public:
 
 	enum TARGET
 	{
-		TANK = -1,
-		TERRAIN = -2,
+		TERRAIN = -1,
+		TANK = -2,
 		BORDER = -3,
 	};
 

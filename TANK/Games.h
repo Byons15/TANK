@@ -4,6 +4,7 @@
 #include "StartMenu.h"
 #include "Event.h"
 #include "ground\Ground.h"
+#include "games/Normal.h"
 
 class Games :
 	public Director,
@@ -22,5 +23,6 @@ private:
 	Renderer m_renderer;
 	StartMenu m_startMenu;
 	Ground m_ground;
+	Normal m_normal;
 };
 
