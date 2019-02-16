@@ -30,8 +30,9 @@ private: friend class Tank;
 		 friend class Ground;
 	Missile(Ground *ground, Tank *sender, int power, const SDL_Point &beginPos, Mover::DIRECTION direction);
 	void update(Uint32 time);
-	inline void render();
+	void render();
 private:
+
 	Uint32 m_startTime;
 	int m_power;
 	SDL_Point m_position;

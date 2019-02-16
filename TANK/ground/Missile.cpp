@@ -94,7 +94,7 @@ void Missile::update(Uint32 time)
 	}
 }
 
-inline void Missile::render()
+void Missile::render()
 {
-	Spirit::render(m_position);
+	Spirit::renderFrame(m_position);
 }

@@ -248,7 +248,7 @@ int Ground::render()
 				lastRender.push_back({ x, y });
 			}
 			else {
-				m_terrains[m_maps(x, y) - 1].spirit.render({ x * GRID_SIZE, y *GRID_SIZE });
+				m_terrains[m_maps(x, y) - 1].spirit.renderFrame({ x * GRID_SIZE, y *GRID_SIZE });
 			}
 		}
 	}
@@ -263,7 +263,7 @@ int Ground::render()
 
 	//渲染位于坦克上方的地形。
 	for (auto &p : lastRender) {
-		m_terrains[m_maps(p.x, p.y) - 1].spirit.render({ p.x * GRID_SIZE, p.y *GRID_SIZE });
+		m_terrains[m_maps(p.x, p.y) - 1].spirit.renderFrame({ p.x * GRID_SIZE, p.y *GRID_SIZE });
 	}
 
 	return 0;

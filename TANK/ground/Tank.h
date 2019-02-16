@@ -51,7 +51,7 @@ private: friend class Ground;
 	int beHit(Tank *aggressor, int power);
 	static void setFactory(TankFactory *factory);
 	void update(Uint32 time);
-	inline void render();
+	void render();
 
 private:
 	bool onGrid();

@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "StartMenu.h"
 #include "Event.h"
-#include "games\Ground.h"
+#include "ground\Ground.h"
 
 class Games :
 	public Director,

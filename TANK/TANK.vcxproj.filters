@@ -39,28 +39,28 @@
     <ClCompile Include="SDL\Director.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Maps.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="menus\StartMenu.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Games.cpp">
+    <ClCompile Include="ground\Games.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Ground.cpp">
+    <ClCompile Include="ground\Ground.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Tank.cpp">
+    <ClCompile Include="ground\Maps.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\TankFactory.cpp">
+    <ClCompile Include="ground\Missile.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Mover.cpp">
+    <ClCompile Include="ground\Mover.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="games\Missile.cpp">
+    <ClCompile Include="ground\Tank.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ground\TankFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,9 +89,6 @@
     <ClInclude Include="Director.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\Maps.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TANKS.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -101,19 +98,22 @@
     <ClInclude Include="Games.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\Tank.h">
+    <ClInclude Include="ground\TankFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\TankFactory.h">
+    <ClInclude Include="ground\Ground.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\Mover.h">
+    <ClInclude Include="ground\Maps.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\Ground.h">
+    <ClInclude Include="ground\Missile.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="games\Missile.h">
+    <ClInclude Include="ground\Mover.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ground\Tank.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

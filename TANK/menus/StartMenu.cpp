@@ -60,15 +60,15 @@ void StartMenu::update(Uint32 time)
 int StartMenu::render()
 {
 	//‰÷»æLOGO°£
-	m_logo.render(m_logoPosition);
+	m_logo.renderFrame(m_logoPosition);
 
 	//‰÷»æ≤Àµ•°£
 	for (int i = 0; i != 3; ++i) {
-		m_combo[i].render(m_menuItemPosition[i]);
+		m_combo[i].renderFrame(m_menuItemPosition[i]);
 	}
 
 	//‰÷»æ÷∏’Î°£
-	m_cursor.render(m_cursorViewPosition[m_currItem]);
+	m_cursor.renderFrame(m_cursorViewPosition[m_currItem]);
 	return 0;
 }
 

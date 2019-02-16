@@ -31,7 +31,7 @@ public:
 
 	//渲染到position。
 	//position: 位置相对于scene。当精灵不属于任何场景时， 渲染失败。
-	void render(const SDL_Point &position) const;
+	void renderFrame(const SDL_Point &position) const;
 
 	void setAnimation(const Animation &a);
 	void setAnimation(const std::string &name);

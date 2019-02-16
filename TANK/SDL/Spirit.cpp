@@ -33,7 +33,7 @@ void Spirit::updateFrames(Uint32 time)
 	}
 }
 
-void Spirit::render(const SDL_Point & position) const
+void Spirit::renderFrame(const SDL_Point & position) const
 {
 	if (!m_scene)
 		return;

@@ -266,7 +266,7 @@ void Tank::update(Uint32 time)
 
 void Tank::render()
 {
-	Spirit::render(m_position);
+	Spirit::renderFrame(m_position);
 }
 
 bool Tank::onGrid()
