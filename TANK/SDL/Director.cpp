@@ -40,7 +40,7 @@ int Director::monitoringKey(std::initializer_list<SDL_Keycode> keyList)
 	return 0;
 }
 
-int Director::keyState(SDL_Keycode key)
+int Director::keyState(SDL_Keycode key, int *retkeyDownTime)
 {
 	auto iter = m_monitoringKey.find(key);
 	if (iter == m_monitoringKey.end())
@@ -48,7 +48,11 @@ int Director::keyState(SDL_Keycode key)
 		
 	if (iter->second == -1)
 		return 0;
-	return SDL_GetTicks() - iter->second;
+
+	if (retkeyDownTime)
+		*retkeyDownTime = SDL_GetTicks() - iter->second;
+
+	return iter->second;
 }
 
 int Director::setEventHook(EventInterface * event, int type)

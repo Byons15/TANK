@@ -20,6 +20,42 @@ int Mover::move(const SDL_Point & origin, const SDL_Point & dest, unsigned start
 	return 0;
 }
 
+int Mover::move(const SDL_Point & origin, DIRECTION direction, int lenght, unsigned startTimestamp, float speeds)
+{
+	m_dest = origin;
+	switch (direction)
+	{
+	case Mover::UP:
+		m_dest.y -= lenght;
+		break;
+	case Mover::RIGHT:
+		m_dest.x += lenght;
+		break;
+	case Mover::DOWN:
+		m_dest.y += lenght;
+		break;
+	case Mover::LEFT:
+		m_dest.x -= lenght;
+		break;
+	default:
+		break;
+	}
+
+	m_speeds = speeds;
+	m_startTimestamp = startTimestamp;
+	m_origin = origin;
+	m_lenght = lenght;
+	m_direction = direction;
+	m_moving = true;
+
+	return 0;
+}
+
+int Mover::setLenght(int newLenght)
+{
+	return move(m_origin, m_direction, newLenght, m_startTimestamp, m_speeds);
+}
+
 SDL_Point Mover::current(unsigned timestamp)
 {
 	if (!m_moving)
@@ -34,8 +70,23 @@ SDL_Point Mover::current(unsigned timestamp)
 		return m_dest;
 	}
 
-	p.x += static_cast<int>(pixelCount * m_cosa);
-	p.y += static_cast<int>(pixelCount * m_sina);
+	switch (m_direction)
+	{
+	case Mover::UP:
+		p.y -= pixelCount;
+		break;
+	case Mover::RIGHT:
+		p.x += pixelCount;
+		break;
+	case Mover::DOWN:
+		p.y += pixelCount;
+		break;
+	case Mover::LEFT:
+		p.x -= pixelCount;
+		break;
+	default:
+		break;
+	}
 
 	return p;
 }

@@ -31,8 +31,8 @@ public:
 	int monitoringKey(SDL_Keycode key);
 	int monitoringKey(std::initializer_list<SDL_Keycode> keyList);
 
-	//返回按键被按下的时间点(从程序初始化开始的时间), 没有按下则返回0
-	int keyState(SDL_Keycode key);
+	//返回按键被按下的时间戳, 没有按下则返回0
+	int keyState(SDL_Keycode key, int *retkeyDownTime = 0);
 
 	//触发SDL_User事件。
 	//要触发SDL事件请直接使用SDL API.

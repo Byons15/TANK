@@ -30,7 +30,7 @@ public:
 	int startMove(Mover::DIRECTION direction, Uint32 time);
 
 	//stopMove会使坦克进入“结束移动”状态，结束移动状态表示坦克自行移动到最近的下一个网格，同时不接受移动操作。
-	void stopMove(Uint32 time);
+	void stopMove();
 	int setCommander(Commander *cmder);
 	bool moveState() const;
 	int model() const {
@@ -76,10 +76,9 @@ public:
 	Commander() = default;
 
 	//派生类实现此函数以将命令传给坦克，这个函数会在Tank需要命令的时候调用。
-	//fire ：派生类返回是否开火
 	//direction：派生类返回新的移动方向
-	//返回值：当前不下达移动命令时返回-1， 否则返回0。
-	virtual int command(Ground *ground, Tank *tank, Uint32 timestamp, bool &fire, Mover::DIRECTION &direction) = 0;
+	//返回值：当前不下达移动命令时返回-1，下达了移动命令时返回0.
+	virtual int command(Ground *ground, Tank *tank, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
 	virtual ~Commander() = default;
 private:
 };

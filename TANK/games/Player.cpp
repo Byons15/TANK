@@ -51,12 +51,12 @@ Player::Player(PLAYER p)
 	director->monitoringKey(m_B);
 }
 
-int Player::command(Ground * ground, Tank * tank, Uint32 timestamp, bool & fire, Mover::DIRECTION & direction)
+int Player::command(Ground * ground, Tank * tank, Uint32 timestamp, Mover::DIRECTION & direction)
 {
 	auto result = inputDirection(&direction);
 
 	if (director->keyState(m_A)) {
-		fire = true;
+		tank->fire();
 	}
 
 	return result;
@@ -73,6 +73,6 @@ int Player::inputDirection(Mover::DIRECTION *ret)
 			result = 0;
 		}
 	}
-	
+
 	return result;
 }

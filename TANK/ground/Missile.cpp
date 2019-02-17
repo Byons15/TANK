@@ -11,25 +11,30 @@ Missile::Missile(Ground * ground, Tank * sender, int power, const SDL_Point &beg
 
 	auto endPos = m_position = beginPos;
 
+	if (SDL_PointInRect(&beginPos, &m_ground->rect()) == SDL_FALSE)
+		return;
+
+	int lenght;
+
 	switch (direction)
 	{
 	case Mover::UP:
 		endPos.y = 0;
+		lenght = beginPos.y;
 		break;
 	case Mover::RIGHT:
-		endPos.x = MAP_SIZE * GRID_SIZE - 1;
+		lenght = (MAP_SIZE * GRID_SIZE) - beginPos.x;
 		break;
 	case Mover::DOWN:
-		endPos.y = MAP_SIZE * GRID_SIZE - 1;
+		lenght = (MAP_SIZE * GRID_SIZE) - beginPos.y;
 		break;
 	case Mover::LEFT:
-		endPos.x = 0;
+		lenght = beginPos.x;
 		break;
 	default:
 		break;
 	}
-
-	m_mover.move(beginPos, endPos, m_startTime, 1);
+	m_mover.move(beginPos, direction, lenght, m_startTime, 1);
 }
 
 void Missile::update(Uint32 time)
