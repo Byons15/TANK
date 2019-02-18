@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground)
+	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground), m_power(1)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -115,10 +115,10 @@ void Tank::stopMove()
 		lastLenght = m_mover.beginPos().y - (gridRect.y * GRID_SIZE);
 		break;
 	case Mover::RIGHT:
-		lastLenght = ((gridRect.x + gridRect.w - 1) * GRID_SIZE) - m_mover.beginPos().x;
+		lastLenght = ((gridRect.x + gridRect.w - 2) * GRID_SIZE) - m_mover.beginPos().x;
 		break;
 	case Mover::DOWN:
-		lastLenght = ((gridRect.y + gridRect.h - 1) * GRID_SIZE) - m_mover.beginPos().y;
+		lastLenght = ((gridRect.y + gridRect.h - 2) * GRID_SIZE) - m_mover.beginPos().y;
 		break;
 	case Mover::LEFT:
 		lastLenght = m_mover.beginPos().x - (gridRect.x * GRID_SIZE);
