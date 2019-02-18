@@ -120,7 +120,7 @@ void Ground::destoryBase()
 
 void Ground::destoryTerrain(const SDL_Point & pos)
 {
-	if (m_maps(pos.x, pos.y) - 1 == 1) {
+	if (m_maps(pos.x, pos.y) == 1) {
 		destoryBase();
 	}
 
