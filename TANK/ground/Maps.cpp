@@ -18,7 +18,7 @@ int Maps::loadMaps(int level)
 	if (fileLoad(groupName, &data) != MAP_SIZE)
 		return -1;
 	
-	
+	m_basePoint = { -1, -1 };
 	//读取数据并构造地图。
 	size_t enemyRefreshIndex = 0;
 	for (int ln = 0; ln != MAP_SIZE; ++ln) {
@@ -41,6 +41,11 @@ int Maps::loadMaps(int level)
 
 				if (m_map[col][ln] == -2) 
 					m_alliesBind[1] = { col, ln };
+			}
+
+			//保存基地位置。
+			if (m_basePoint.x == -1 && m_basePoint.y == -1 && m_map[col][ln] == 1) {
+				m_basePoint = { col, ln };
 			}
 		}
 	}

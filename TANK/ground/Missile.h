@@ -26,6 +26,10 @@ public:
 	};
 
 	Missile() = delete;
+	int power() {
+		return m_power;
+	}
+
 private: friend class Tank;
 		 friend class Ground;
 	Missile(Ground *ground, Tank *sender, int power, const SDL_Point &beginPos, Mover::DIRECTION direction);

@@ -48,19 +48,10 @@ void Missile::update(Uint32 time)
 		//¼ì²éÅö×²¡£
 		SDL_Point colTerrainPos;
 		Tank *colTank;
-		auto result = m_ground->missileColCheck(this, m_position, &colTank, &colTerrainPos);
-
+		auto result = m_ground->missileCollision(this, m_position);
 		if (result) {  //Óöµ½Åö×².
 			m_boomTarget = static_cast<TARGET>(result);
-			m_mover.endMove(); 
-
-			if (m_boomTarget == TANK) {
-				m_ground->attackTank(colTank, m_power);
-			}
-
-			if (m_boomTarget == TERRAIN) {
-				m_ground->attackTerrain(colTerrainPos, m_power);
-			}
+			m_mover.endMove();
 		}
 	}
 
@@ -84,7 +75,7 @@ void Missile::update(Uint32 time)
 	}
 
 	if (m_boom) {
-		if (time - m_startTime >= 1500) {
+		if (time - m_startTime >= 500) {
 
 			SDL_UserEvent user;
 			user.type = END_BOOM;

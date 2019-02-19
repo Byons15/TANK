@@ -61,13 +61,13 @@ private:
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
-	int m_HP, m_rewarde, m_model, m_power;
+	int m_HP, m_rewarde, m_model, m_power, m_missileFillingTime;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;
 	Commander *m_commander;
 	static TankFactory *sm_factory;
-	bool m_stopMoving, m_invincible;
+	bool m_stopMoving, m_invincible, m_missileFilling;
 };
  
 class Commander

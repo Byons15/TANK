@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground), m_power(1)
+	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_missileFilling(false)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -40,6 +40,11 @@ int Tank::setPosition(const SDL_Point & pos)
 
 void Tank::fire()
 {
+	if (m_missileFilling)
+		return;
+	m_missileFillingTime = SDL_GetTicks();
+	m_missileFilling = true;
+
 	SDL_Point missilb = m_position;
 	
 	switch (m_direction)
@@ -213,6 +218,12 @@ void Tank::update(Uint32 time)
 {
 	Mover::DIRECTION direction = m_direction;
 	auto result = m_commander->command(m_ground, this, time, direction);
+
+	if (m_missileFilling) {
+		if (time - m_missileFillingTime >= 300) {
+			m_missileFilling = false;
+		}
+	}
 
 	//如果有移动命令并且坦克不处于stopMoving
 	if (!result && !m_stopMoving) {

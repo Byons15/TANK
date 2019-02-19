@@ -66,12 +66,9 @@ public:
 	//炮弹碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
 	int missileColCheck(Missile *m, const SDL_Point &checkPos, Tank ** retColDest, SDL_Point *retColTerrain);
+	int missileCollision(Missile *m, const SDL_Point &pos);
 
-	//看名字，我只解释一下，函数会回调4次p，参数x 参数y 分别传入：
-	//0,0
-	//0,1
-	//1,0
-	//1,1
+	//投机取巧之作，遍历maxX和maxY组成的矩阵，将每个位置回调p
 	inline static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
 
 protected:

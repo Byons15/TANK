@@ -115,7 +115,10 @@ void Ground::destoryTank(Tank * tank)
 void Ground::destoryBase()
 {
 	//TODO::
-	close();
+	foreachRect(2, 2, [this](int x, int y) -> void { m_maps.setTerrain(m_maps.basePosition().x + x, m_maps.basePosition().y + y); });
+
+	//TODO::
+	//close();
 }
 
 void Ground::destoryTerrain(const SDL_Point & pos)
@@ -215,6 +218,50 @@ int Ground::missileColCheck(Missile * m, const SDL_Point & checkPos, Tank ** ret
 	}
 
 	return 0;
+}
+
+int Ground::missileCollision(Missile * m, const SDL_Point & pos)
+{
+	auto rect = pixelToGroundRect({ pos.x, pos.y, Missile::missileSize, Missile::missileSize });
+
+	//边界检查.
+	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
+		return -3;
+	}
+	int result = 0;
+
+	//检查地形碰撞。 
+	foreachRect(rect.w, rect.h,
+		[this, &rect, &result, &m](int x, int y) -> void
+	{
+		if (m_maps(rect.x + x, rect.y + y)) {
+			if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
+				attackTerrain({ rect.x + x, rect.y + y }, m->power());
+				result = -1;
+			}
+		}
+	});
+
+	//检查坦克碰撞。
+	SDL_Rect r1 = { pos.x, pos.y, Missile::missileSize, Missile::missileSize };
+	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
+	for (auto iter = m_tanks.begin(); iter != m_tanks.end();) {
+		if (iter->first != m->m_sender) {
+			r2.x = iter->first->position().x;
+			r2.y = iter->first->position().y;
+			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
+				auto d = iter;
+				++iter;
+				attackTank(d->first, m->power());
+				continue;
+				result = -2;
+			}
+		}
+
+		++iter;
+	}
+
+	return result;
 }
 
 //不知道这玩意inline了编译器会不会听。

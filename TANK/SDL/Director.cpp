@@ -141,15 +141,14 @@ int Director::exec()
 				//分发用户事件。
 				auto user = (SDL_UserEvent *)event.user.data1;
 				auto &range = m_userEventHook.equal_range(user->type);
-				for (auto iter = range.first; iter != range.second && iter != m_userEventHook.end(); ++iter) {
+				for (auto iter = range.first; iter != range.second && iter != m_userEventHook.end(); ++iter)
 					iter->second->userEventHookProc(*user);
-				}
+
 				delete user;
 			}
 			}
-			break;
 		}
-		
+		break;
 
 		case SDL_QUIT:
 			quit = true;
