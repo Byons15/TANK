@@ -3,6 +3,8 @@
 #include <string>
 #include <SDL_rect.h>
 
+#define NEW
+
 struct SDL_Texture;
 class Renderer;
 
@@ -28,6 +30,7 @@ public:
 	~AnimationFactory();
 private:
 	std::map<std::string, SDL_Texture *> m_texturePool;
+	SDL_Texture *m_texture;
 	std::map<std::string, Animation> m_animationPool;
 	Renderer *m_renderer;
 };

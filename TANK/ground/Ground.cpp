@@ -89,7 +89,7 @@ int Ground::attackTerrain(const SDL_Point & pos, int power)
 {
 	auto terrain = m_maps(pos.x, pos.y);
 	if (terrain != 0) {
-		if (m_terrains[terrain - 1].HP <= power)
+		if (m_terrains[terrain - 1].HP <= power && m_terrains[terrain - 1].HP != 0)
 			destoryTerrain(pos);
 		else {
 			return -2;
@@ -170,53 +170,6 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	}
 		
 	//能走到这里说明没有发生碰撞
-	return 0;
-}
-
-int Ground::missileColCheck(Missile * m, const SDL_Point & checkPos, Tank ** retColDest, SDL_Point *retColTerrain)
-{
-	*retColDest = 0;
-	*retColTerrain = {-1, -1};
-	auto rect = pixelToGroundRect({checkPos.x, checkPos.y, Missile::missileSize, Missile::missileSize });
-
-	//边界检查.
-	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
-		return -3;
-	}
-
-	//检查地形碰撞。 
-	int result = 0;
-	foreachRect(rect.w, rect.h,
-		[this, &rect, &result, &retColTerrain](int x, int y) -> void
-	{
-		if (m_maps(rect.x + x, rect.y + y)) {
-			if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
-				result = -1;
-				retColTerrain->x = rect.x + x;
-				retColTerrain->y = rect.y + y;
-				return;
-			}
-		}
-	});
-	if (result == -1) {
-		return -1;
-	}
-
-	//检查坦克碰撞。
-	SDL_Rect r1 = { checkPos.x, checkPos.y, Missile::missileSize, Missile::missileSize };
-	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
-	for (auto &t : m_tanks) {
-		if (t.first == m->m_sender)
-			continue;
-
-		r2.x = t.first->position().x;
-		r2.y = t.first->position().y;
-		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
-			*retColDest = t.first;
-			return -2;
-		}
-	}
-
 	return 0;
 }
 
