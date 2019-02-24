@@ -2,6 +2,7 @@
 #include <SDL_rect.h>
 #include "../TANKS.h"
 #include <array>
+#include <vector>
 
 typedef unsigned int uint32_t;
 
@@ -13,8 +14,10 @@ public:
 					 	 alliesBindCount = 2;
 	Maps();
 	int loadMaps(int level);
+	int createMaps(Uint32 terrainMaxIndex);
 	int operator()(int x, int y);
 	int setTerrain(int x, int y, uint32_t terrainIndex = 0);
+	void initReservePoint();
 	const SDL_Point basePosition() {
 		return m_basePoint;
 	}
@@ -34,6 +37,10 @@ public:
 	~Maps();
 
 private:
+	void natureMap(Uint32 terrainMaxIndex);
+	bool inReservePoint(const SDL_Point &check);
+	double pointWeight(int x, int y, const std::vector<double> & terrainWeights);
+
 	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> m_map;
 	SDL_Point m_enemyBind[enemyBindCount];
 	SDL_Point m_alliesBind[alliesBindCount];

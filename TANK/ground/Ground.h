@@ -70,6 +70,10 @@ public:
 	//投机取巧之作，遍历maxX和maxY组成的矩阵，将每个位置回调p
 	inline static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
 
+	size_t terrainItemCount() {
+		return m_terrains.size();
+	}
+
 protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
