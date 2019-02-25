@@ -39,7 +39,7 @@ public:
 private:
 	void natureMap(Uint32 terrainMaxIndex);
 	bool inReservePoint(const SDL_Point &check);
-	void smoothPoint(int x, int y, const std::vector<double> & terrainWeights);
+	void smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, const std::vector<int> & terrainWeights);
 
 	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> m_map;
 	SDL_Point m_enemyBind[enemyBindCount];

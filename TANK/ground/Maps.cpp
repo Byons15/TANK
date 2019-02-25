@@ -3,7 +3,6 @@
 #include <sstream>
 #include <random>
 
-
 Maps::Maps()
 {
 	clearMap();
@@ -61,9 +60,10 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 {
 	clearMap();
 	
+	
 	//简单地随机分布地形。
 	std::default_random_engine e;
-	std::uniform_int_distribution<> dis(0, terrainMaxIndex);
+	std::uniform_int_distribution<> dis(1, terrainMaxIndex);
 	for (size_t x = 0; x != m_map.size(); ++x) {
 		for (size_t y = 0; y != m_map[x].size(); ++y) {
 			m_map[x][y] = dis(e);
@@ -71,7 +71,8 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 		}
 	}
 
-	//将每种地形都随机赋予权重。
+	//平滑地图。
+	natureMap(terrainMaxIndex);
 	natureMap(terrainMaxIndex);
 
 	//TODO：：这里调整地图以保证各个刷新点能到达基地的位置。
@@ -148,19 +149,21 @@ Maps::~Maps()
 void Maps::natureMap(Uint32 terrainMaxIndex)
 {	
 	//随机每种地形的权重。
-	std::vector<double> terrainWeights(terrainMaxIndex + 1, 0);
+	std::vector<int> terrainWeights(terrainMaxIndex + 1, 0);
 	std::default_random_engine e;
-	std::uniform_real_distribution<> drs;
+	std::uniform_int_distribution<> drs(0, (terrainMaxIndex + 1) * 2);
 	for (auto &w : terrainWeights) {
 		w = drs(e);
 	}
 
-	for (auto x = 1; x != MAP_SIZE - 1; ++x) {
-		for (auto y = 1; y != MAP_SIZE - 1; ++y) {
-			smoothPoint(x, y, terrainWeights);
+	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> dest = m_map;
+	for (auto x = 0; x != MAP_SIZE; ++x) {
+		for (auto y = 0; y != MAP_SIZE; ++y) {
+			smoothPoint(dest, x, y, terrainWeights);
 		}
 	}
 
+	m_map = dest;
 }
 
 //检查参数坐标是否位于保留区域内.
@@ -190,34 +193,49 @@ bool Maps::inReservePoint(const SDL_Point & check)
 }
 
 
-void Maps::smoothPoint(int x, int y, const std::vector<double>& terrainWeights)
+void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, const std::vector<int>& terrainWeights)
 {
 	std::pair<int, int> much{ 0, 0 };
 
 	//找出九宫格中数量最多的地形。
 	for (auto t = 0; t != terrainWeights.size(); ++t) {
-		int number = 0;
+		int weight = 0;
+
 		//遍历以x，y为中心的九宫格。 
-		for (auto i = x - 1; i <= x + 1; ++i) {
-			for (auto j = y - 1; j <= y + 1; ++j) {
+		SDL_Rect rect;
+		rect.x = (x - 1 < 0) ? x : x - 1;
+		rect.y = (y - 1 < 0) ? y : y - 1;
+		rect.w = (x + 1 >= MAP_SIZE) ? x : x + 1;
+		rect.h = (y + 1 >= MAP_SIZE) ? y : y + 1;
+		for (auto i = rect.x; i <= rect.w; ++i) {
+			for (auto j = rect.y; j <= rect.h; ++j) {
 				if (t == m_map[i][j])
-					++number;
+					++weight;
 			}
 		}
+		/*if (x - 1 >= 0 && t == m_map[x - 1][y])
+			++weight;
+		if (x + 1 < MAP_SIZE && t == m_map[x + 1][y])
+			++weight;
+		if (y - 1 >= 0 && t == m_map[x][y - 1])
+			++weight;
+		if (y + 1 < MAP_SIZE && t == m_map[x][y + 1])
+			++weight;
+		*/
 
-		if (much.second > number) {
-			much = {t, number};
+		if (much.second < weight) {
+			much = {t, weight };
 		}
-		else if(much.second == number){
+		else if(much.second == weight){
 			std::default_random_engine e;
 			std::uniform_int_distribution<> dis(1, 10);
 			if (dis(e) > 5) {
-				much = { t, number };
+				much = { t, weight };
 			}
+		//	much.first = 0;
 		}
 	}
-	if (!inReservePoint({ x, y })) {
-		much.first = (much.first == 1) ? 0 : much.first;
-		m_map[x][y] = much.first;
-	}
+
+	much.first = (much.first == 1) ? 0 : much.first;
+	destMap[x][y] = much.first;
 }
