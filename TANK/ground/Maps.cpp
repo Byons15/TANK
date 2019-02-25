@@ -84,8 +84,6 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 		}
 	}
 
-	
-
 	//保留刷新点以及基地位置。
 	initReservePoint();
 
@@ -156,16 +154,13 @@ void Maps::natureMap(Uint32 terrainMaxIndex)
 	for (auto &w : terrainWeights) {
 		w = drs(e);
 	}
-	
-	//获取每个地图坐标上的权重。
-	std::array<std::array<double, MAP_SIZE>, MAP_SIZE> pointWeights;
-	for (auto x = 0; x != m_map.size(); ++x) {
-		for (auto y = 0; y != m_map[x].size(); ++y) {
-			pointWeights[x][y] = pointWeight(x, y, terrainWeights);
+
+	for (auto x = 1; x != MAP_SIZE - 1; ++x) {
+		for (auto y = 1; y != MAP_SIZE - 1; ++y) {
+			smoothPoint(x, y, terrainWeights);
 		}
 	}
 
-	
 }
 
 //检查参数坐标是否位于保留区域内.
@@ -194,19 +189,35 @@ bool Maps::inReservePoint(const SDL_Point & check)
 	return false;
 }
 
-double Maps::pointWeight(int x, int y, const std::vector<double> & t)
+
+void Maps::smoothPoint(int x, int y, const std::vector<double>& terrainWeights)
 {
-	auto corner = t[operator()(x - 1, y - 1)] +
-					t[operator()(x - 1, y + 1)] +
-					t[operator()(x + 1, y - 1)] +
-					t[operator()(x + 1, y + 1)] / 16.0;
+	std::pair<int, int> much{ 0, 0 };
 
-	auto around = t[operator()(x - 1, y)] +
-					t[operator()(x, y + 1)] +
-					t[operator()(x, y - 1)] +
-					t[operator()(x + 1, y)] / 8.0;
+	//找出九宫格中数量最多的地形。
+	for (auto t = 0; t != terrainWeights.size(); ++t) {
+		int number = 0;
+		//遍历以x，y为中心的九宫格。 
+		for (auto i = x - 1; i <= x + 1; ++i) {
+			for (auto j = y - 1; j <= y + 1; ++j) {
+				if (t == m_map[i][j])
+					++number;
+			}
+		}
 
-	auto center = t[m_map[x][y]];
-
-	return center + around + corner;
+		if (much.second > number) {
+			much = {t, number};
+		}
+		else if(much.second == number){
+			std::default_random_engine e;
+			std::uniform_int_distribution<> dis(1, 10);
+			if (dis(e) > 5) {
+				much = { t, number };
+			}
+		}
+	}
+	if (!inReservePoint({ x, y })) {
+		much.first = (much.first == 1) ? 0 : much.first;
+		m_map[x][y] = much.first;
+	}
 }
