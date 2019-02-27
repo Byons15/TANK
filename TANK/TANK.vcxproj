@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="file\FileLoader.cpp" />
+    <ClCompile Include="games\AI.cpp" />
     <ClCompile Include="games\Games.cpp" />
     <ClCompile Include="games\Normal.cpp" />
     <ClCompile Include="games\Player.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Director.h" />
     <ClInclude Include="Games.h" />
+    <ClInclude Include="games\AI.h" />
     <ClInclude Include="games\Normal.h" />
     <ClInclude Include="games\Player.h" />
     <ClInclude Include="ground\Ground.h" />

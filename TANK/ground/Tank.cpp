@@ -216,6 +216,7 @@ void Tank::setFactory(TankFactory * factory)
 
 void Tank::update(Uint32 time)
 {
+	
 	Mover::DIRECTION direction = m_direction;
 	auto result = m_commander->command(m_ground, this, time, direction);
 
@@ -234,7 +235,7 @@ void Tank::update(Uint32 time)
 			startMove(direction, time);
 		}
 	}
-	
+
 	if(result == -1 && !m_stopMoving){
 		stopMove();
 	}
@@ -242,7 +243,7 @@ void Tank::update(Uint32 time)
 	//处于移动中时，更新坦克位置。
 	if (m_mover.state()) {
 		auto newPos = m_mover.current(time);
-		
+
 		Tank *colDest;
 		auto checkResult = m_ground->tankColCheck(this, newPos, &colDest);
 		if (!checkResult) {
@@ -256,7 +257,7 @@ void Tank::update(Uint32 time)
 				stopMove();
 			}
 			else {
-				
+
 			}
 		}
 
@@ -264,7 +265,7 @@ void Tank::update(Uint32 time)
 			m_stopMoving = false;
 
 	}
-	
+
 	//没有移动并且有移动命令时，开始依据命令移动。
 	if (!m_mover.state() && !result) {
 		startMove(direction, time);
