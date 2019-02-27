@@ -2,6 +2,7 @@
 #include "../FileLoader.h"
 #include <sstream>
 #include <random>
+#include <SDL_timer.h>
 
 Maps::Maps()
 {
@@ -60,9 +61,8 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 {
 	clearMap();
 	
-	
 	//简单地随机分布地形。
-	std::default_random_engine e;
+	std::default_random_engine e(SDL_GetTicks());
 	std::uniform_int_distribution<> dis(1, terrainMaxIndex);
 	for (size_t x = 0; x != m_map.size(); ++x) {
 		for (size_t y = 0; y != m_map[x].size(); ++y) {
@@ -71,7 +71,7 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 		}
 	}
 
-	//平滑地图。
+	//平滑两遍地图。
 	natureMap(terrainMaxIndex);
 	natureMap(terrainMaxIndex);
 
@@ -148,57 +148,23 @@ Maps::~Maps()
 
 void Maps::natureMap(Uint32 terrainMaxIndex)
 {	
-	//随机每种地形的权重。
-	std::vector<int> terrainWeights(terrainMaxIndex + 1, 0);
-	std::default_random_engine e;
-	std::uniform_int_distribution<> drs(0, (terrainMaxIndex + 1) * 2);
-	for (auto &w : terrainWeights) {
-		w = drs(e);
-	}
-
+	//平滑每个位置。
 	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> dest = m_map;
 	for (auto x = 0; x != MAP_SIZE; ++x) {
 		for (auto y = 0; y != MAP_SIZE; ++y) {
-			smoothPoint(dest, x, y, terrainWeights);
+			smoothPoint(dest, x, y, terrainMaxIndex);
 		}
 	}
 
 	m_map = dest;
 }
 
-//检查参数坐标是否位于保留区域内.
-bool Maps::inReservePoint(const SDL_Point & check)
-{
-	SDL_Rect rect = { 0, 0, 2, 2 };
-	for (auto &e : m_enemyBind) {
-		rect.x = e.x;
-		rect.y = e.y;
-		if (SDL_PointInRect(&check, &rect) == SDL_TRUE)
-			return true;
-	}
-
-	for (auto &a : m_alliesBind) {
-		rect.x = a.x;
-		rect.y = a.y;
-		if (SDL_PointInRect(&check, &rect) == SDL_TRUE)
-			return true;
-	}
-
-	rect.x = m_basePoint.x;
-	rect.y = m_basePoint.y;
-	if (SDL_PointInRect(&check, &rect) == SDL_TRUE)
-		return true;
-
-	return false;
-}
-
-
-void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, const std::vector<int>& terrainWeights)
+void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, int terrainMaxIndex)
 {
 	std::pair<int, int> much{ 0, 0 };
 
 	//找出九宫格中数量最多的地形。
-	for (auto t = 0; t != terrainWeights.size(); ++t) {
+	for (auto t = 0; t <= terrainMaxIndex; ++t) {
 		int weight = 0;
 
 		//遍历以x，y为中心的九宫格。 
@@ -213,26 +179,16 @@ void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap
 					++weight;
 			}
 		}
-		/*if (x - 1 >= 0 && t == m_map[x - 1][y])
-			++weight;
-		if (x + 1 < MAP_SIZE && t == m_map[x + 1][y])
-			++weight;
-		if (y - 1 >= 0 && t == m_map[x][y - 1])
-			++weight;
-		if (y + 1 < MAP_SIZE && t == m_map[x][y + 1])
-			++weight;
-		*/
 
 		if (much.second < weight) {
 			much = {t, weight };
 		}
 		else if(much.second == weight){
-			std::default_random_engine e;
+			std::default_random_engine e(SDL_GetTicks());
 			std::uniform_int_distribution<> dis(1, 10);
 			if (dis(e) > 5) {
 				much = { t, weight };
 			}
-		//	much.first = 0;
 		}
 	}
 
