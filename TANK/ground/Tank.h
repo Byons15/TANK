@@ -22,6 +22,7 @@ public:
 	inline const SDL_Point &position() const {
 		return m_position;
 	}
+	inline const SDL_Point &gridPosition();
 	int setPosition(const SDL_Point &pos);
 
 	void fire();
@@ -60,7 +61,7 @@ private:
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
-	SDL_Point m_position;
+	SDL_Point m_position, m_gridPosition;
 	int m_HP, m_rewarde, m_model, m_power, m_missileFillingTime;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
