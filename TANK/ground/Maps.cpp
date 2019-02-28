@@ -195,3 +195,14 @@ void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap
 	much.first = (much.first == 1) ? 0 : much.first;
 	destMap[x][y] = much.first;
 }
+
+int Maps::navigationToBase(const SDL_Point & beginPos)
+{
+	
+	return 0;
+}
+
+int Maps::navigationToPosition(const SDL_Point & src, const SDL_Point & dest)
+{
+	return 0;
+}

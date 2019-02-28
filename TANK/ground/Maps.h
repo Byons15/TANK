@@ -39,6 +39,8 @@ public:
 private:
 	void natureMap(Uint32 terrainMaxIndex);
 	void smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, int terrainMaxIndex);
+	int navigationToBase(const SDL_Point &beginPos);
+	int navigationToPosition(const SDL_Point &src, const SDL_Point &dest);
 
 	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> m_map;
 	SDL_Point m_enemyBind[enemyBindCount];
