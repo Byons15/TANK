@@ -256,7 +256,8 @@ void Tank::setFactory(TankFactory * factory)
 
 void Tank::update(Uint32 time)
 {
-	
+#define RECODE
+#ifndef RECODE
 	Mover::DIRECTION direction = m_direction;
 	auto result = m_commander->command(m_ground, this, time, direction);
 
@@ -271,12 +272,12 @@ void Tank::update(Uint32 time)
 		if (direction != m_direction) {
 			stopMove();
 		}
-		else if (!m_mover.state()){
+		else if (!m_mover.state()) {
 			startMove(direction, time);
 		}
 	}
 
-	if(result == -1 && !m_stopMoving){
+	if (result == -1 && !m_stopMoving) {
 		stopMove();
 	}
 
@@ -292,7 +293,7 @@ void Tank::update(Uint32 time)
 		else if (checkResult == -1) {
 			stopMove();
 		}
-		else if(checkResult == -2){
+		else if (checkResult == -2) {
 			if (colDest->m_direction != m_direction) {
 				stopMove();
 			}
@@ -310,7 +311,27 @@ void Tank::update(Uint32 time)
 	if (!m_mover.state() && !result) {
 		startMove(direction, time);
 	}
-	
+
+#endif // RECODE
+
+#ifdef RECODE
+	if (m_mover.state()) {
+		auto newPos = m_mover.current(time);
+
+		//检查新旧两个位置的范围，如果两个范围不一样，则坦克准备进入了新的位置，此时要检查输入以及碰撞来确定是否进入新的位置。
+		SDL_Rect r1, r2;
+		r1 = pixelToGroundRect({ newPos.x, newPos.y, colSize, colSize });
+		r2 = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
+		if (SDL_RectEquals(&r1, &r2) == SDL_FALSE) {
+			Mover::DIRECTION direction = m_direction;
+			auto result = m_commander->command(m_ground, this, time, direction);
+			if (result == 0 && direction != m_direction) {
+				stopMove();
+			}
+		}
+	}
+#endif // RECODE
+
 }
 
 void Tank::render()
