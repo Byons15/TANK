@@ -325,8 +325,10 @@ void Tank::update(Uint32 time)
 		if (SDL_RectEquals(&r1, &r2) == SDL_FALSE) {
 			Mover::DIRECTION direction = m_direction;
 			auto result = m_commander->command(m_ground, this, time, direction);
-			if (result == 0 && direction != m_direction) {
-				stopMove();
+			if (result == 0) {
+				Tank *colDest = nullptr;
+				auto checkResult = m_ground->tankColCheck(this, newPos, &colDest);
+				
 			}
 		}
 	}

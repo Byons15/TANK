@@ -74,6 +74,10 @@ public:
 		return m_terrains.size();
 	}
 
+	const std::map<Tank *, CAMP> &tanks() const {
+		return m_tanks;
+	}
+
 protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
