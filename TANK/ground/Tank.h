@@ -56,6 +56,7 @@ private: friend class Ground;
 private:
 	bool onGrid();
 	void unInvincible();
+	SDL_Rect front();
 
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;

@@ -184,6 +184,46 @@ void Tank::unInvincible()
 	setAnimation(m_form[m_HP - 1]);
 }
 
+//获取坦克正面的范围。
+SDL_Rect Tank::front()
+{
+	//当前坦克位置的覆盖范围。
+	SDL_Rect rect = pixelToGroundRect({m_position.x, m_position.y, GRID_SIZE * 2, GRID_SIZE * 2});
+	
+	SDL_Rect result;
+	switch (m_direction)
+	{
+	case Mover::UP:
+		result.x = rect.x;
+		result.y = rect.y;
+		result.w = rect.w;
+		result.h = 1;
+	 break;
+	case Mover::RIGHT:
+		result.x = rect.x + rect.w - 1;
+		result.y = rect.y;
+		result.w = 1;
+		result.h = rect.h;
+	 break;
+	case Mover::DOWN:
+		result.x = rect.x;
+		result.y = rect.y + rect.h - 1;
+		result.w = rect.w;
+		result.h = 1;
+	 break;
+	case Mover::LEFT:
+		result.x = rect.x;
+		result.y = rect.y;
+		result.w = 1;
+		result.h = rect.h;
+	 break;
+	default:
+	 break;
+	}
+
+	return result;
+}
+
 int Tank::beHit(Tank *aggressor, int power)
 {
 	if (m_invincible) {

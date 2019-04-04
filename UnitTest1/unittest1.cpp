@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../TANK/games/Ground.h"
+#include "../TANK/ground/Ground.h"
+#include "../TANK/ground/Tank.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
