@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_stopMoving(false), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_missileFilling(false)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_missileFilling(false)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -104,51 +104,43 @@ void Tank::stopMove()
 {
 	//如果与网格对其的，则不进入“结束移动状态”，仅简单地结束移动。
 	if (onGrid()) {
-		m_stopMoving = false;
 		m_mover.endMove();
 		return;
 	}
 	
 	//获取坦克覆盖的范围。
 	auto gridRect = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
-	int lastLenght;
-
-	//根据当前方向获取坦克需要移动到的网格。
+	
+	//根据当前方向获取停止位置。 
 	switch (m_direction)
 	{
 	case Mover::UP:
-		lastLenght = m_mover.beginPos().y - (gridRect.y * GRID_SIZE);
+		m_position.x = gridRect.x * GRID_SIZE;
+		m_position.y = gridRect.y * GRID_SIZE;
 		break;
 	case Mover::RIGHT:
-		lastLenght = ((gridRect.x + gridRect.w - 2) * GRID_SIZE) - m_mover.beginPos().x;
+		m_position.x = (gridRect.x + gridRect.w - 2) * GRID_SIZE;
+		m_position.y = gridRect.y * GRID_SIZE;
 		break;
 	case Mover::DOWN:
-		lastLenght = ((gridRect.y + gridRect.h - 2) * GRID_SIZE) - m_mover.beginPos().y;
+		m_position.x = gridRect.x * GRID_SIZE;
+		m_position.y = (gridRect.y + gridRect.h - 2) * GRID_SIZE;
 		break;
 	case Mover::LEFT:
-		lastLenght = m_mover.beginPos().x - (gridRect.x * GRID_SIZE);
+		m_position.x = gridRect.x * GRID_SIZE;
+		m_position.y = gridRect.y * GRID_SIZE;
 		break;
 	default:
 		break;
 	}
 
-	//从当前位置移动到目标网格所在的位置。
-	m_mover.setLenght(lastLenght);
-	m_stopMoving = true;
+	m_mover.endMove();
 }
 
 int Tank::setCommander(Commander * cmder)
 {
 	m_commander = cmder;
 	return 0;
-}
-
-bool Tank::moveState() const
-{
-	if (m_stopMoving)
-		return false;
-
-	return m_mover.state();
 }
 
 int Tank::setRewards(int rewarde)
@@ -182,46 +174,6 @@ void Tank::unInvincible()
 {
 	m_invincible = false;
 	setAnimation(m_form[m_HP - 1]);
-}
-
-//获取坦克正面的范围。
-SDL_Rect Tank::front()
-{
-	//当前坦克位置的覆盖范围。
-	SDL_Rect rect = pixelToGroundRect({m_position.x, m_position.y, GRID_SIZE * 2, GRID_SIZE * 2});
-	
-	SDL_Rect result;
-	switch (m_direction)
-	{
-	case Mover::UP:
-		result.x = rect.x;
-		result.y = rect.y;
-		result.w = rect.w;
-		result.h = 1;
-	 break;
-	case Mover::RIGHT:
-		result.x = rect.x + rect.w - 1;
-		result.y = rect.y;
-		result.w = 1;
-		result.h = rect.h;
-	 break;
-	case Mover::DOWN:
-		result.x = rect.x;
-		result.y = rect.y + rect.h - 1;
-		result.w = rect.w;
-		result.h = 1;
-	 break;
-	case Mover::LEFT:
-		result.x = rect.x;
-		result.y = rect.y;
-		result.w = 1;
-		result.h = rect.h;
-	 break;
-	default:
-	 break;
-	}
-
-	return result;
 }
 
 int Tank::beHit(Tank *aggressor, int power)
@@ -323,14 +275,42 @@ void Tank::update(Uint32 time)
 		r1 = pixelToGroundRect({ newPos.x, newPos.y, colSize, colSize });
 		r2 = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
 		if (SDL_RectEquals(&r1, &r2) == SDL_FALSE) {
+
+			//新位置占用的网格与当前网格不同时，检查输入。
 			Mover::DIRECTION direction = m_direction;
 			auto result = m_commander->command(m_ground, this, time, direction);
-			if (result == 0) {
+			if (result == 0) { //有移动命令.
+
+				//检查新位置是否碰撞.
 				Tank *colDest = nullptr;
 				auto checkResult = m_ground->tankColCheck(this, newPos, &colDest);
-				
+				if (checkResult == 0) { //新位置没有发生碰撞 
+
+					//没有改变方向时，则继续前进，更新位置。
+					if (m_direction == direction) {
+						m_position = newPos;
+					}
+					else {  //新命令改变了方向，停止当前移动。
+						stopMove();
+					}
+				}
+				else {  //新位置发生碰撞。
+					stopMove();
+				}
+			}
+			else if(result == -1){
+				stopMove();
 			}
 		}
+		else {
+			m_position = newPos;
+		}
+		
+	}
+	else {
+		Mover::DIRECTION direction = m_direction;
+		auto result = m_commander->command(m_ground, this, time, direction);
+		startMove(direction, time);
 	}
 #endif // RECODE
 

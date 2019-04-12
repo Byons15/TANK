@@ -56,7 +56,6 @@ private: friend class Ground;
 private:
 	bool onGrid();
 	void unInvincible();
-	SDL_Rect front();
 
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
@@ -68,7 +67,7 @@ private:
 	Ground *m_ground;
 	Commander *m_commander;
 	static TankFactory *sm_factory;
-	bool m_stopMoving, m_invincible, m_missileFilling;
+	bool m_invincible, m_missileFilling;
 };
  
 class Commander
