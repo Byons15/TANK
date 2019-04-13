@@ -3,11 +3,13 @@
 #include "TankFactory.h"
 #include "Ground.h"
 #include "Mover.h"
+#include "../Event.h"
 
 class Commander;
 
 class Tank :
-	public Spirit
+	public Spirit,
+	public EventInterface
 {
 public:
 	static constexpr int colSize = GRID_SIZE * 2 - 1;
@@ -56,18 +58,19 @@ private: friend class Ground;
 private:
 	bool onGrid();
 	void unInvincible();
+	virtual void userEventHookProc(const SDL_UserEvent &event) override;
 
 	std::vector<Animation> m_form;
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
-	int m_HP, m_rewarde, m_model, m_power, m_missileFillingTime;
+	int m_HP, m_rewarde, m_model, m_power;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;
 	Commander *m_commander;
 	static TankFactory *sm_factory;
-	bool m_invincible, m_missileFilling;
+	bool m_invincible, m_reload;
 };
  
 class Commander

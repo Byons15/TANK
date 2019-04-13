@@ -61,11 +61,11 @@ public:
 
 	//坦克碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2,并将被撞坦克赋值retColDest
-	int tankColCheck(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
+	int positionTest(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
 
 	//炮弹碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
-	int missileCollision(Missile *m, const SDL_Point &pos);
+	int positionTest(Missile *m, const SDL_Point &pos);
 
 	//投机取巧之作，遍历maxX和maxY组成的矩阵，将每个位置回调p
 	inline static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
@@ -98,7 +98,7 @@ private:
 	TankFactory m_tankFactory;
 	std::map<Tank *, CAMP> m_tanks;
 
-	std::set<Missile *> m_missiles;
+	std::list<Missile *> m_missiles;
 };
 
 

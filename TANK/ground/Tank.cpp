@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_missileFilling(false)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -20,6 +20,8 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 	setAnimation(m_form[m_HP - 1]);
 
 	m_position = position;
+
+	setUserEventHook(Missile::BEGIN_BOOM);
 }
 
 Tank::~Tank()
@@ -30,7 +32,7 @@ int Tank::setPosition(const SDL_Point & pos)
 {
 	//先尝试在ground更新位置， 如果成功再设置坦克位置。
 	Tank *colDset;
-	auto result = m_ground->tankColCheck(this, pos, &colDset);
+	auto result = m_ground->positionTest(this, pos, &colDset);
 	if (!result) {
 		m_position = pos;
 	}
@@ -40,10 +42,8 @@ int Tank::setPosition(const SDL_Point & pos)
 
 void Tank::fire()
 {
-	if (m_missileFilling)
+	if (m_reload)
 		return;
-	m_missileFillingTime = SDL_GetTicks();
-	m_missileFilling = true;
 
 	SDL_Point missilb = m_position;
 	
@@ -69,6 +69,8 @@ void Tank::fire()
 	}
 
 	m_ground->addMissile(new Missile(m_ground, this, m_power, missilb, m_direction));
+
+	m_reload = true;
 }
 
 int Tank::startMove(Mover::DIRECTION direction, Uint32 time)
@@ -176,6 +178,20 @@ void Tank::unInvincible()
 	setAnimation(m_form[m_HP - 1]);
 }
 
+void Tank::userEventHookProc(const SDL_UserEvent & event)
+{
+	switch (event.type)
+	{
+	case Missile::BEGIN_BOOM:
+		if ((Tank *)event.data2 == this) {
+			m_reload = false;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 int Tank::beHit(Tank *aggressor, int power)
 {
 	if (m_invincible) {
@@ -238,7 +254,7 @@ void Tank::update(Uint32 time)
 		auto newPos = m_mover.current(time);
 
 		Tank *colDest;
-		auto checkResult = m_ground->tankColCheck(this, newPos, &colDest);
+		auto checkResult = m_ground->positionTest(this, newPos, &colDest);
 		if (!checkResult) {
 			m_position = newPos;
 		}
@@ -283,7 +299,7 @@ void Tank::update(Uint32 time)
 
 				//检查新位置是否碰撞.
 				Tank *colDest = nullptr;
-				auto checkResult = m_ground->tankColCheck(this, newPos, &colDest);
+				auto checkResult = m_ground->positionTest(this, newPos, &colDest);
 				if (checkResult == 0) { //新位置没有发生碰撞 
 
 					//没有改变方向时，则继续前进，更新位置。

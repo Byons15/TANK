@@ -1,6 +1,7 @@
 #pragma once
 #include "..\Spirit.h"
 #include"Mover.h"
+#include <list>
 
 class Ground;
 class Tank;
@@ -33,6 +34,12 @@ public:
 private: friend class Tank;
 		 friend class Ground;
 	Missile(Ground *ground, Tank *sender, int power, const SDL_Point &beginPos, Mover::DIRECTION direction);
+	void setDestoryIterator(std::list<Missile *>::iterator iter) {
+		m_destoryIterator = iter;
+	}
+	std::list<Missile *>::iterator destoryIterator() {
+		return m_destoryIterator;
+	}
 	void update(Uint32 time);
 	void render();
 private:
@@ -44,6 +51,7 @@ private:
 	Ground *m_ground;
 	Mover m_mover;
 	TARGET m_boomTarget;
+	std::list<Missile *>::iterator m_destoryIterator;
 	bool m_boom, m_destory;
 };
 

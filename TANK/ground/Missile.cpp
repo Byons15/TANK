@@ -48,7 +48,7 @@ void Missile::update(Uint32 time)
 		//¼ì²éÅö×²¡£
 		SDL_Point colTerrainPos;
 		Tank *colTank;
-		auto result = m_ground->missileCollision(this, m_position);
+		auto result = m_ground->positionTest(this, m_position);
 		if (result) {  //Óöµ½Åö×².
 			m_boomTarget = static_cast<TARGET>(result);
 			m_mover.endMove();

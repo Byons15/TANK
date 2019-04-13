@@ -73,7 +73,8 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 
 void Ground::addMissile(Missile * m)
 {
-	m_missiles.insert(m);
+	m_missiles.push_back(m);
+	m->setDestoryIterator(--m_missiles.end());
 }
 
 int Ground::attackTank(Tank * tank, int power)
@@ -130,7 +131,7 @@ void Ground::destoryTerrain(const SDL_Point & pos)
 	m_maps.setTerrain(pos.x, pos.y);
 }
 
-int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retColDest)
+int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retColDest)
 {
 	*retColDest = 0;
 
@@ -173,7 +174,7 @@ int Ground::tankColCheck(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	return 0;
 }
 
-int Ground::missileCollision(Missile * m, const SDL_Point & pos)
+int Ground::positionTest(Missile * m, const SDL_Point & pos)
 {
 	auto rect = pixelToGroundRect({ pos.x, pos.y, Missile::missileSize, Missile::missileSize });
 
@@ -290,7 +291,7 @@ void Ground::userEventHookProc(const SDL_UserEvent & user)
 	case Missile::END_BOOM: 
 	{
 		Missile * m = reinterpret_cast<Missile *>(user.data1);
-		m_missiles.erase(m);
+		m_missiles.erase(m->destoryIterator());
 		delete m;
 	}
 		break;
