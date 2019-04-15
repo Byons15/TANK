@@ -46,8 +46,6 @@ void Missile::update(Uint32 time)
 		m_position = m_mover.current(time);  //更新位置。
 
 		//检查碰撞。
-		SDL_Point colTerrainPos;
-		Tank *colTank;
 		auto result = m_ground->positionTest(this, m_position);
 		if (result) {  //遇到碰撞.
 			m_boomTarget = static_cast<TARGET>(result);
