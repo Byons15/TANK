@@ -30,10 +30,13 @@ public:
 	int power() {
 		return m_power;
 	}
+	const SDL_Point &position() const {
+		return m_position;
+	}
 
 private: friend class Tank;
 		 friend class Ground;
-	Missile(Ground *ground, Tank *sender, int power, const SDL_Point &beginPos, Mover::DIRECTION direction);
+	Missile(Ground *ground, Tank *sender, int power);
 	void setDestoryIterator(std::list<Missile *>::iterator iter) {
 		m_destoryIterator = iter;
 	}

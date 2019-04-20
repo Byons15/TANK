@@ -28,13 +28,16 @@ Tank::~Tank()
 {
 }
 
-int Tank::setPosition(const SDL_Point & pos)
+int Tank::setGroundPosition(const SDL_Point & pos)
 {
 	//先尝试在ground更新位置， 如果成功再设置坦克位置。
+	SDL_Point pixel;
+	pixel.x = pos.x * GRID_SIZE;
+	pixel.y = pos.y * GRID_SIZE;
 	Tank *colDset;
-	auto result = m_ground->positionTest(this, pos, &colDset);
+	auto result = m_ground->positionTest(this, pixel, &colDset);
 	if (!result) {
-		m_position = pos;
+		m_position = pixel;
 	}
 
 	return result;
@@ -45,30 +48,7 @@ void Tank::fire()
 	if (m_reload)
 		return;
 
-	SDL_Point missilb = m_position;
-	
-	switch (m_direction)
-	{
-	case Mover::UP:
-		missilb.x = m_position.x + colSize / 2 - Missile::missileSize / 2;
-		missilb.y = m_position.y - Missile::missileSize / 2;
-		break;
-	case Mover::DOWN:
-		missilb.x = m_position.x + colSize / 2 - Missile::missileSize / 2;
-		missilb.y = m_position.y + colSize - Missile::missileSize / 2;
-		break;
-	case Mover::LEFT:
-		missilb.x = m_position.x - Missile::missileSize / 2;
-		missilb.y = m_position.y + colSize / 2 - Missile::missileSize / 2;
-		break;
-	case Mover::RIGHT:
-		missilb.x = m_position.x + colSize - Missile::missileSize / 2;
-		missilb.y = m_position.y + colSize / 2 - Missile::missileSize / 2;
-	default:
-		break;
-	}
-
-	m_ground->addMissile(new Missile(m_ground, this, m_power, missilb, m_direction));
+	m_ground->addMissile(new Missile(m_ground, this, m_power));
 
 	m_reload = true;
 }
@@ -224,65 +204,6 @@ void Tank::setFactory(TankFactory * factory)
 
 void Tank::update(Uint32 time)
 {
-#define RECODE
-#ifndef RECODE
-	Mover::DIRECTION direction = m_direction;
-	auto result = m_commander->command(m_ground, this, time, direction);
-
-	if (m_missileFilling) {
-		if (time - m_missileFillingTime >= 300) {
-			m_missileFilling = false;
-		}
-	}
-
-	//如果有移动命令并且坦克不处于stopMoving
-	if (!result && !m_stopMoving) {
-		if (direction != m_direction) {
-			stopMove();
-		}
-		else if (!m_mover.state()) {
-			startMove(direction, time);
-		}
-	}
-
-	if (result == -1 && !m_stopMoving) {
-		stopMove();
-	}
-
-	//处于移动中时，更新坦克位置。
-	if (m_mover.state()) {
-		auto newPos = m_mover.current(time);
-
-		Tank *colDest;
-		auto checkResult = m_ground->positionTest(this, newPos, &colDest);
-		if (!checkResult) {
-			m_position = newPos;
-		}
-		else if (checkResult == -1) {
-			stopMove();
-		}
-		else if (checkResult == -2) {
-			if (colDest->m_direction != m_direction) {
-				stopMove();
-			}
-			else {
-
-			}
-		}
-
-		if (!m_mover.state())
-			m_stopMoving = false;
-
-	}
-
-	//没有移动并且有移动命令时，开始依据命令移动。
-	if (!m_mover.state() && !result) {
-		startMove(direction, time);
-	}
-
-#endif // RECODE
-
-#ifdef RECODE
 	if (m_mover.state()) {
 		auto newPos = m_mover.current(time);
 
@@ -292,9 +213,29 @@ void Tank::update(Uint32 time)
 		r2 = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
 		if (SDL_RectEquals(&r1, &r2) == SDL_FALSE) {
 
+			SDL_Point gridPos;
+			switch (m_direction)
+			{
+			case Mover::UP:
+			case Mover::LEFT:
+				gridPos.x = r2.x;
+				gridPos.y = r2.y;
+				break;
+			case Mover::RIGHT:
+				gridPos.x = r2.x + r2.w - 2;
+				gridPos.y = r2.y;
+				break;
+			case Mover::DOWN:
+				gridPos.x = r2.x;
+				gridPos.y = r2.y + r2.h - 2;
+				break;
+			default:
+				break;
+			}
+
 			//新位置占用的网格与当前网格不同时，检查输入。
 			Mover::DIRECTION direction = m_direction;
-			auto result = m_commander->command(m_ground, this, time, direction);
+			auto result = m_commander->command(m_ground, this, gridPos, time, direction);
 			if (result == 0) { //有移动命令.
 
 				//检查新位置是否碰撞.
@@ -325,10 +266,9 @@ void Tank::update(Uint32 time)
 	}
 	else {
 		Mover::DIRECTION direction = m_direction;
-		auto result = m_commander->command(m_ground, this, time, direction);
+		auto result = m_commander->command(m_ground, this, {m_position.x / GRID_SIZE, m_position.y / GRID_SIZE}, time, direction);
 		startMove(direction, time);
 	}
-#endif // RECODE
 
 }
 

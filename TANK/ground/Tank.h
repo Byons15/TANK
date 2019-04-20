@@ -21,11 +21,18 @@ public:
 	int HP() const {
 		return m_HP;
 	}
-	inline const SDL_Point &position() const {
+	inline const SDL_Point &pixelPosition() const {
 		return m_position;
 	}
-	int setPosition(const SDL_Point &pos);
+	inline SDL_Point position() const {
+		return SDL_Point{m_position.x / GRID_SIZE, m_position.y / GRID_SIZE};
+	}
 
+	//设置坦克位于战场的网格位置。
+	int setGroundPosition(const SDL_Point &pos);   
+	Mover::DIRECTION direction() const {
+		return m_direction;
+	}
 	void fire();
 
 	//开始移动。
@@ -81,7 +88,7 @@ public:
 	//派生类实现此函数以将命令传给坦克，这个函数会在Tank需要命令的时候调用。
 	//direction：派生类返回新的移动方向
 	//返回值：当前不下达移动命令时返回-1，下达了移动命令时返回0.
-	virtual int command(Ground *ground, Tank *tank, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
+	virtual int command(Ground *ground, Tank *tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
 	virtual ~Commander() = default;
 private:
 };

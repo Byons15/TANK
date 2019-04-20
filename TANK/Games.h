@@ -4,7 +4,7 @@
 #include "StartMenu.h"
 #include "Event.h"
 #include "ground\Ground.h"
-#include "games/Normal.h"
+#include "games\Player.h"
 
 class Games :
 	public Director,
@@ -23,6 +23,7 @@ private:
 	Renderer m_renderer;
 	StartMenu m_startMenu;
 	Ground m_ground;
-	Normal m_normal;
+	Player m_P1commander, m_P2commander;
+	Tank *m_P1, *m_P2;
 };
 

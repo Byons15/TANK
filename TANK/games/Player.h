@@ -13,7 +13,7 @@ public:
 
 	Player(PLAYER p);
 	~Player() = default;
-	virtual int command(Ground *ground, Tank *tank, Uint32 timestamp, Mover::DIRECTION &direction) override;
+	virtual int command(Ground *ground, Tank *tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION &direction) override;
 	int inputDirection(Mover::DIRECTION *ret);
 private:
 	std::map<int, Mover::DIRECTION> m_move;

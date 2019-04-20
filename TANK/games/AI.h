@@ -6,8 +6,8 @@ class AI :
 public:
 	AI();
 	~AI();
-	virtual int command(Ground *ground, Tank *tank, Uint32 timestamp, Mover::DIRECTION &direction) override;
-	int navigationToBase(Maps *map, const SDL_Point &beginPos);
+	virtual int command(Ground *ground, Tank *tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION &direction) override;
+	
 private:
 	
 };

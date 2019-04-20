@@ -7,20 +7,8 @@
 #include <list>
 
 Ground::Ground(Renderer * renderer)
-	:Scene(renderer, {0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer)
+	:Scene(renderer, { 0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer), m_maps(this)
 {
-	//载入地形数据
-	std::vector<std::string> data;
-	fileLoad("terrain", &data);
-	for (auto &s : data) {
-		std::istringstream is(s);
-		TERRAIN t;
-		is >> t.name >> t.tankPass >> t.HP;
-		t.spirit.setScene(this);
-		t.spirit.setAnimation(t.name);
-		m_terrains.push_back(t);
-	}
-
 	//设置坦克工厂
 	Tank::setFactory(&m_tankFactory);
 }
@@ -48,10 +36,10 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	//取得复活点的位置。
 	SDL_Point p;
 	if (camp == ALLISE) {
-		p = m_maps.alliesBind(bindIndex);
+		p = m_maps.alliesBindPosition(bindIndex);
 	}
 	else if (camp == ENEMY) {
-		p = m_maps.enemyBind(bindIndex);
+		p = m_maps.enemyBindPosition(bindIndex);
 	}
 	else {
 		throw std::out_of_range("超出阵营选择范围");
@@ -61,7 +49,7 @@ Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
 	Tank *t = new Tank(this, tankModel, p);
 
 	//如果复活点被占用，则生成坦克失败。
-	if (t->setPosition({p.x * GRID_SIZE, p.y * GRID_SIZE}) == -1) {
+	if (t->setGroundPosition(p) == -1) {
 		delete t;
 		return 0;
 	}
@@ -90,7 +78,7 @@ int Ground::attackTerrain(const SDL_Point & pos, int power)
 {
 	auto terrain = m_maps(pos.x, pos.y);
 	if (terrain != 0) {
-		if (m_terrains[terrain - 1].HP <= power && m_terrains[terrain - 1].HP != 0)
+		if (m_maps.terrainData(terrain - 1).HP <= power && m_maps.terrainData(terrain - 1).HP != 0)
 			destoryTerrain(pos);
 		else {
 			return -2;
@@ -116,8 +104,8 @@ void Ground::destoryTank(Tank * tank)
 void Ground::destoryBase()
 {
 	//TODO::
-	foreachRect(2, 2, [this](int x, int y) -> void { m_maps.setTerrain(m_maps.basePosition().x + x, m_maps.basePosition().y + y); });
-
+	//foreachRect(2, 2, [this](int x, int y) -> void { m_maps.setTerrain(m_maps.basePosition().x + x, m_maps.basePosition().y + y); });
+	m_maps.destoryBase();
 	//TODO::
 	//close();
 }
@@ -148,7 +136,7 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 		[this, &rect, &result] (int x, int y) -> void 
 		{
 			if (m_maps(rect.x + x, rect.y + y)) {
-				if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
+				if (m_maps.terrainData(m_maps(rect.x + x, rect.y + y) - 1).tankPass == 0) {
 					result = -1;
 					return;
 				}
@@ -162,8 +150,8 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	SDL_Rect r1 = {pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize};
 	SDL_Rect r2 = {0, 0, Tank::colSize, Tank::colSize };
 	for (auto &t : m_tanks) {
-		r2.x = t.first->position().x;
-		r2.y = t.first->position().y;
+		r2.x = t.first->pixelPosition().x;
+		r2.y = t.first->pixelPosition().y;
 		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t.first != tank) {
 			*retColDest = t.first;
 			return -2;
@@ -174,9 +162,10 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	return 0;
 }
 
-int Ground::positionTest(Missile * m, const SDL_Point & pos)
+int Ground::MissilepositionUpdate(Missile * m)
 {
-	auto rect = pixelToGroundRect({ pos.x, pos.y, Missile::missileSize, Missile::missileSize });
+	
+	auto rect = pixelToGroundRect({ m->position().x, m->position().y, Missile::missileSize, Missile::missileSize });
 
 	//边界检查.
 	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
@@ -189,7 +178,7 @@ int Ground::positionTest(Missile * m, const SDL_Point & pos)
 		[this, &rect, &result, &m](int x, int y) -> void
 	{
 		if (m_maps(rect.x + x, rect.y + y)) {
-			if (m_terrains[m_maps(rect.x + x, rect.y + y) - 1].tankPass == 0) {
+			if (m_maps.terrainData(m_maps(rect.x + x, rect.y + y) - 1).tankPass == 0) {
 				attackTerrain({ rect.x + x, rect.y + y }, m->power());
 				result = -1;
 			}
@@ -197,12 +186,12 @@ int Ground::positionTest(Missile * m, const SDL_Point & pos)
 	});
 
 	//检查坦克碰撞。
-	SDL_Rect r1 = { pos.x, pos.y, Missile::missileSize, Missile::missileSize };
+	SDL_Rect r1 = { m->position().x, m->position().y, Missile::missileSize, Missile::missileSize };
 	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
 	for (auto iter = m_tanks.begin(); iter != m_tanks.end();) {
 		if (iter->first != m->m_sender) {
-			r2.x = iter->first->position().x;
-			r2.y = iter->first->position().y;
+			r2.x = iter->first->pixelPosition().x;
+			r2.y = iter->first->pixelPosition().y;
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
 				auto d = iter;
 				++iter;
@@ -230,7 +219,7 @@ inline void Ground::foreachRect(int maxX, int maxY, std::function<void(int x, in
 
 void Ground::update(Uint32 time)
 {
-	for (auto &t : m_terrains) {
+	for (auto &t : m_maps.m_terrainPool) {
 		t.spirit.updateFrames(time);
 	}
 
@@ -253,14 +242,14 @@ int Ground::render()
 	for (auto x = 0; x != MAP_SIZE; ++x) {
 		for (auto y = 0; y != MAP_SIZE; ++y) {
 			if (m_maps(x, y)) {
-				if (m_terrains[m_maps(x, y) - 1].tankPass == 1) {
+				if (m_maps.terrainData(m_maps(x, y) - 1).tankPass == 1) {
 					lastRender.push_back({ x, y });
 				}
 				else {
 					if (baseRender && m_maps(x, y) == 1)
 						continue;
 					
-					m_terrains[m_maps(x, y) - 1].spirit.renderFrame({ x * GRID_SIZE, y *GRID_SIZE });
+					m_maps.terrainData(m_maps(x, y) - 1).spirit.renderFrame({ x * GRID_SIZE, y *GRID_SIZE });
 					if (m_maps(x, y) == 1)
 						baseRender = true;
 				}
@@ -278,7 +267,7 @@ int Ground::render()
 
 	//渲染位于坦克上方的地形。
 	for (auto &p : lastRender) {
-		m_terrains[m_maps(p.x, p.y) - 1].spirit.renderFrame({ p.x * GRID_SIZE, p.y *GRID_SIZE });
+		m_maps.terrainData(m_maps(p.x, p.y) - 1).spirit.renderFrame({ p.x * GRID_SIZE, p.y *GRID_SIZE });
 	}
 
 	return 0;
@@ -298,6 +287,22 @@ void Ground::userEventHookProc(const SDL_UserEvent & user)
 	default:
 		break;
 	}
+}
+
+int Ground::updateColMap(int x, int y)
+{
+	if (!m_maps(x, y)) {
+		m_colMap[x][y] = false;
+		return 0;
+	}
+	if (m_maps.terrainData(m_maps(x, y)).tankPass) {
+		m_colMap[x][y] = false;
+		return 0;
+	}
+
+	m_colMap[x][y] = true;
+
+	return 1;
 }
 
 void Ground::clearGround()

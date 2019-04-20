@@ -3,10 +3,37 @@
 #include <sstream>
 #include <random>
 #include <SDL_timer.h>
+#include "Ground.h"
 
-Maps::Maps()
+Maps::Maps(Ground *ground)
+	:m_ground(ground)
 {
+	//载入地形数据
+	std::vector<std::string> data;
+	fileLoad("terrain", &data);
+	for (auto &s : data) {
+		std::istringstream is(s);
+		TERRAIN t;
+		is >> t.name >> t.tankPass >> t.HP;
+		t.spirit.setScene(ground);
+		t.spirit.setAnimation(t.name);
+		m_terrainPool.push_back(t);
+	}
+
 	clearMap();
+}
+
+int Maps::createMaps(int level)
+{
+	if (loadMaps(level) == -1)
+		return createMaps();
+	return 0;
+}
+
+inline void Maps::setMap(int x, int y, int index)
+{
+	m_map[x][y] = index;
+	m_ground->updateColMap(x, y);
 }
 
 int Maps::loadMaps(int level)
@@ -20,34 +47,40 @@ int Maps::loadMaps(int level)
 	if (fileLoad(groupName, &data) != MAP_SIZE)
 		return -1;
 	
-	m_basePoint = { -1, -1 };
+	m_reservePoint[0] = { -1, -1 };
 	//读取数据并构造地图。
 	size_t enemyRefreshIndex = 0;
 	for (int ln = 0; ln != MAP_SIZE; ++ln) {
 		std::istringstream is(data[ln]);
 		for (int col = 0; col != MAP_SIZE; ++col) {
-			is >> m_map[col][ln];
-
+			int index;
+			is >> index;
 			//导入的数据标识中-1表示P1刷新点， -2表示P2刷新点， -3表示敌军刷新点。
-			if (m_map[col][ln] < 0) {
-				m_map[col][ln] = 0;
-
+			if (index < 0) {
+				
 				//将坐标的中的标识赋0，并保存这个敌军刷新点。说一下就是敌军刷新点最多有且必须有3个。
 				//赋0表示这个点是空的。
 				//之后的两个if语句是保存P1 P2刷新点的。
-				if (m_map[col][ln] == -3) 
-					m_enemyBind[enemyRefreshIndex++] = { col, ln };
+				if (index == -3) {
+					m_reservePoint[enemyRefreshIndex + alliesBindCount + 1] = { col, ln };
+					enemyRefreshIndex++;
+				}
 
-				if (m_map[col][ln] == -1) 
-					m_alliesBind[0] = { col, ln };
+				if (index == -1)
+					m_reservePoint[1] = { col, ln };
 
-				if (m_map[col][ln] == -2) 
-					m_alliesBind[1] = { col, ln };
+				if (index == -2)
+					m_reservePoint[2] = { col, ln };
+
+				setMap(col, ln, 0);
+			}
+			else {
+				setMap(col, ln, index);
 			}
 
 			//保存基地位置。
-			if (m_basePoint.x == -1 && m_basePoint.y == -1 && m_map[col][ln] == 1) {
-				m_basePoint = { col, ln };
+			if (m_reservePoint[0].x == -1 && m_reservePoint[0].y == -1 && m_map[col][ln] == 1) {
+				m_reservePoint[0] = { col, ln };
 			}
 		}
 	}
@@ -57,13 +90,13 @@ int Maps::loadMaps(int level)
 	return 0;
 }
 
-int Maps::createMaps(Uint32 terrainMaxIndex)
+int Maps::createMaps()
 {
 	clearMap();
 	
 	//简单地随机分布地形。
 	std::default_random_engine e(SDL_GetTicks());
-	std::uniform_int_distribution<> dis(1, terrainMaxIndex);
+	std::uniform_int_distribution<> dis(0, m_terrainPool.size());
 	for (size_t x = 0; x != m_map.size(); ++x) {
 		for (size_t y = 0; y != m_map[x].size(); ++y) {
 			m_map[x][y] = dis(e);
@@ -72,8 +105,8 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 	}
 
 	//平滑两遍地图。
-	natureMap(terrainMaxIndex);
-	natureMap(terrainMaxIndex);
+	smoothMap();
+	smoothMap();
 
 	//TODO：：这里调整地图以保证各个刷新点能到达基地的位置。
 
@@ -88,7 +121,23 @@ int Maps::createMaps(Uint32 terrainMaxIndex)
 	//保留刷新点以及基地位置。
 	initReservePoint();
 
+	//更新碰撞模型。
+	for (auto x = 0; x != m_map.size(); ++x) {
+		for (auto y = 0; y != m_map[x].size(); ++y) {
+			setMap(x, y, m_map[x][y]);
+		}
+	}
+
 	return 0;
+}
+
+void Maps::destoryBase()
+{
+	for (auto x = m_reservePoint[0].x; x != m_reservePoint[0].x + 2; ++x) {
+		for (auto y = m_reservePoint[0].y; y != m_reservePoint[0].y + 2; ++y) {
+			setMap(x, y, 0);
+		}
+	}
 }
 
 int Maps::operator()(int x, int y)
@@ -104,7 +153,14 @@ int Maps::setTerrain(int x, int y, uint32_t terrainIndex)
 	if (x < 0 || x >= MAP_SIZE || y < 0 || y >= MAP_SIZE)
 		throw std::out_of_range("访问地图越界");
 	
-	m_map[x][y] = terrainIndex;
+	for (auto &p : m_reservePoint) {
+		if (x >= p.x  && x < p.x + 2 &&
+			y >= p.y && y < p.y + 2)
+			return -1;
+	}
+
+	setMap(x, y, terrainIndex);
+
 	return 0;
 }
 
@@ -113,58 +169,63 @@ void Maps::initReservePoint()
 	for (auto x = 0; x != 2; ++x) {
 		for (auto y = 0; y != 2; ++y) {
 
-			for (auto &p : m_enemyBind) {
-				m_map[p.x + x][p.y + y] = 0;
+			for (auto i = 1; i != m_reservePoint.size(); ++i) {
+				m_map[m_reservePoint[i].x + x][m_reservePoint[i].y + y] = 0;
 			}
-			for (auto &p : m_alliesBind) {
-				m_map[p.x + x][p.y + y] = 0;
-			}
-			m_map[x + m_basePoint.x][y + m_basePoint.y] = TAG_BASE;
+
+			setMap(x + m_reservePoint[0].x, y + m_reservePoint[0].y, TAG_BASE);
 		}
 	}
 }
 
 void Maps::clearMap()
 {
-	for (auto &iter : m_map) {
-		iter.fill(0);
+	for (int x = 0; x != m_map.size(); ++x) {
+		for (int y = 0; y != m_map[x].size(); ++y) {
+			setMap(x, y, 0);
+		}
 	}
 
-	//默认坦克刷新点。
-	m_enemyBind[0]  = { 0, 0 };
-	m_enemyBind[1]  = { 12, 0 };
-	m_enemyBind[2]  = { 24, 0 };
-	m_alliesBind[0] = { 9, 24 }; 
-	m_alliesBind[1] = { 15, 24 };
+	//默认敌军复活点
+	m_reservePoint[3]  = { 0, 0 };
+	m_reservePoint[4]  = { 12, 0 };
+	m_reservePoint[5]  = { 24, 0 };
+
+	//默认友军复活点
+	m_reservePoint[1] = { 9, 24 };
+	m_reservePoint[2] = { 15, 24 };
 
 	//默认基地位置。
-	m_map[12][24] = m_map[13][24] = m_map[12][25] = m_map[13][25] = TAG_BASE;
-	m_basePoint = { 12, 24 };
+	m_reservePoint[0] = { 12, 24 };
+	setMap(12, 24, TAG_BASE);
+	setMap(13, 24, TAG_BASE);
+	setMap(12, 25, TAG_BASE);
+	setMap(13, 25, TAG_BASE);
 }
 
 Maps::~Maps()
 {
 }
 
-void Maps::natureMap(Uint32 terrainMaxIndex)
+void Maps::smoothMap()
 {	
 	//平滑每个位置。
 	std::array<std::array<int, MAP_SIZE>, MAP_SIZE> dest = m_map;
 	for (auto x = 0; x != MAP_SIZE; ++x) {
 		for (auto y = 0; y != MAP_SIZE; ++y) {
-			smoothPoint(dest, x, y, terrainMaxIndex);
+			smoothPoint(dest, x, y);
 		}
 	}
 
 	m_map = dest;
 }
 
-void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y, int terrainMaxIndex)
+void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap, int x, int y)
 {
 	std::pair<int, int> much{ 0, 0 };
 
 	//找出九宫格中数量最多的地形。
-	for (auto t = 0; t <= terrainMaxIndex; ++t) {
+	for (size_t t = 0; t <= m_terrainPool.size(); ++t) {
 		int weight = 0;
 
 		//遍历以x，y为中心的九宫格。 

@@ -33,13 +33,17 @@ public:
 	virtual void open(void *data, int code) override;
 	virtual void close() override;
 
-	//地形图
 	Maps &maps() {
 		return m_maps;
 	}
+	inline bool colMaps(int x, int y) {
+		return m_colMap[x][y];
+	}
+
 	const TankFactory &tankFactory() {
 		return m_tankFactory;
 	}
+	
 
 	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
 	Tank* addTank(int tankModel, CAMP camp, int bindIndex);
@@ -65,18 +69,13 @@ public:
 
 	//炮弹碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
-	int positionTest(Missile *m, const SDL_Point &pos);
+	int MissilepositionUpdate(Missile *m);
 
 	//投机取巧之作，遍历maxX和maxY组成的矩阵，将每个位置回调p
-	inline static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
+	static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
 
-	size_t terrainItemCount() {
-		return m_terrains.size();
-	}
-
-	const std::map<Tank *, CAMP> &tanks() const {
-		return m_tanks;
-	}
+	//更新地图碰撞映射。
+	int updateColMap(int x, int y);
 
 protected:
 	virtual void update(Uint32 time) override;
@@ -87,13 +86,7 @@ private:
 	void clearGround();
 
 	Maps m_maps;
-	struct TERRAIN
-	{
-		std::string name;
-		Spirit spirit;
-		int tankPass, HP;
-	};
-	std::vector<TERRAIN> m_terrains;
+	std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> m_colMap;  //collision map
 
 	TankFactory m_tankFactory;
 	std::map<Tank *, CAMP> m_tanks;

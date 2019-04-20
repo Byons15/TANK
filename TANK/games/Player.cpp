@@ -51,14 +51,18 @@ Player::Player(PLAYER p)
 	director->monitoringKey(m_B);
 }
 
-int Player::command(Ground * ground, Tank * tank, Uint32 timestamp, Mover::DIRECTION & direction)
+int Player::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
 {
 	auto result = inputDirection(&direction);
 
 	if (director->keyState(m_A)) {
 		tank->fire();
 	}
-
+	static SDL_Point lastPos = { 0, 0 };
+	if (lastPos.x != position.x || position.y != lastPos.y) {
+		printf("%d, %d\n", position.x, position.y);
+		lastPos = position;
+	}
 	return result;
 }
 

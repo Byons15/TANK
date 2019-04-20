@@ -4,37 +4,39 @@
 #include "Tank.h"
 #include "../Director.h"
 
-Missile::Missile(Ground * ground, Tank * sender, int power, const SDL_Point &beginPos, Mover::DIRECTION direction)
+Missile::Missile(Ground * ground, Tank * sender, int power)
 	:Spirit(ground, "missile"), m_sender(sender), m_destory(false), m_boom(false), m_ground(ground), m_power(power)
 {
 	m_startTime = SDL_GetTicks();
 
-	auto endPos = m_position = beginPos;
-
-	if (SDL_PointInRect(&beginPos, &m_ground->rect()) == SDL_FALSE)
-		return;
-
 	int lenght;
 
-	switch (direction)
+	switch (sender->direction())
 	{
 	case Mover::UP:
-		endPos.y = 0;
-		lenght = beginPos.y;
+		m_position.x = sender->pixelPosition().x + Tank::colSize / 2 - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y - Missile::missileSize / 2;
+		lenght = m_position.y;
 		break;
 	case Mover::RIGHT:
-		lenght = (MAP_SIZE * GRID_SIZE) - beginPos.x;
+		m_position.x = sender->pixelPosition().x + Tank::colSize - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y + Tank::colSize / 2 - Missile::missileSize / 2;
+		lenght = (MAP_SIZE * GRID_SIZE) - m_position.x;
 		break;
 	case Mover::DOWN:
-		lenght = (MAP_SIZE * GRID_SIZE) - beginPos.y;
+		m_position.x = sender->pixelPosition().x + Tank::colSize / 2 - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y + Tank::colSize - Missile::missileSize / 2;
+		lenght = (MAP_SIZE * GRID_SIZE) - m_position.y;
 		break;
 	case Mover::LEFT:
-		lenght = beginPos.x;
+		m_position.x = sender->pixelPosition().x - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y + Tank::colSize / 2 - Missile::missileSize / 2;
+		lenght = m_position.x;
 		break;
 	default:
 		break;
 	}
-	m_mover.move(beginPos, direction, lenght, m_startTime, 1);
+	m_mover.move(m_position, sender->direction(), lenght, m_startTime, 1);
 }
 
 void Missile::update(Uint32 time)
@@ -46,7 +48,7 @@ void Missile::update(Uint32 time)
 		m_position = m_mover.current(time);  //更新位置。
 
 		//检查碰撞。
-		auto result = m_ground->positionTest(this, m_position);
+		auto result = m_ground->MissilepositionUpdate(this);
 		if (result) {  //遇到碰撞.
 			m_boomTarget = static_cast<TARGET>(result);
 			m_mover.endMove();
@@ -73,7 +75,7 @@ void Missile::update(Uint32 time)
 	}
 
 	if (m_boom) {
-		if (time - m_startTime >= 500) {
+		if (time - m_startTime >= 250) {
 
 			SDL_UserEvent user;
 			user.type = END_BOOM;
