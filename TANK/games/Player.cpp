@@ -58,11 +58,7 @@ int Player::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 tim
 	if (director->keyState(m_A)) {
 		tank->fire();
 	}
-	static SDL_Point lastPos = { 0, 0 };
-	if (lastPos.x != position.x || position.y != lastPos.y) {
-		printf("%d, %d\n", position.x, position.y);
-		lastPos = position;
-	}
+
 	return result;
 }
 

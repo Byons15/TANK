@@ -41,7 +41,9 @@ public:
 	//stopMove会使坦克进入“结束移动”状态，结束移动状态表示坦克自行移动到最近的下一个网格，同时不接受移动操作。
 	void stopMove();
 	int setCommander(Commander *cmder);
-	bool moveState() const;
+	bool moveState() const {
+		return m_mover.state();
+	}
 	int model() const {
 		return m_model;
 	}
@@ -71,6 +73,7 @@ private:
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
+	SDL_Rect m_lastRect;
 	int m_HP, m_rewarde, m_model, m_power;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;

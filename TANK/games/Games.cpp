@@ -1,6 +1,8 @@
 #include "..\Games.h"
 #include "../TANKS.h"
 
+#include "AI.h"
+
 int main(int argc, char *argv[])
 {
 	Games g;
@@ -21,6 +23,8 @@ Games::Games()
 	m_P1->setCommander(&m_P1commander);
 	m_ground.maps().createMaps(1);
 	m_ground.open(0, 0);
+	auto t = m_ground.addTank(3, Ground::ENEMY, 0);
+	t->setCommander(new AI);
 }
 
 

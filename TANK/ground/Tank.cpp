@@ -38,6 +38,9 @@ int Tank::setGroundPosition(const SDL_Point & pos)
 	auto result = m_ground->positionTest(this, pixel, &colDset);
 	if (!result) {
 		m_position = pixel;
+		m_lastRect.x = pos.x;
+		m_lastRect.y = pos.y;
+		m_lastRect.w = m_lastRect.h = 2;
 	}
 
 	return result;
@@ -192,7 +195,7 @@ int Tank::beHit(Tank *aggressor, int power)
 	}
 	else {
 		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
-		setAnimation(m_form[m_HP - 1]);
+		setAnimation(m_form[m_HP ? m_HP - 1 : 0]);
 	}
 	return m_HP;
 }
@@ -208,26 +211,24 @@ void Tank::update(Uint32 time)
 		auto newPos = m_mover.current(time);
 
 		//检查新旧两个位置的范围，如果两个范围不一样，则坦克准备进入了新的位置，此时要检查输入以及碰撞来确定是否进入新的位置。
-		SDL_Rect r1, r2;
-		r1 = pixelToGroundRect({ newPos.x, newPos.y, colSize, colSize });
-		r2 = pixelToGroundRect({ m_position.x, m_position.y, colSize, colSize });
-		if (SDL_RectEquals(&r1, &r2) == SDL_FALSE) {
+		SDL_Rect r1 = pixelToGroundRect({ newPos.x, newPos.y, colSize, colSize });
+		if (SDL_RectEquals(&r1, &m_lastRect) == SDL_FALSE) {
 
 			SDL_Point gridPos;
 			switch (m_direction)
 			{
 			case Mover::UP:
 			case Mover::LEFT:
-				gridPos.x = r2.x;
-				gridPos.y = r2.y;
+				gridPos.x = m_lastRect.x;
+				gridPos.y = m_lastRect.y;
 				break;
 			case Mover::RIGHT:
-				gridPos.x = r2.x + r2.w - 2;
-				gridPos.y = r2.y;
+				gridPos.x = m_lastRect.x + m_lastRect.w - 2;
+				gridPos.y = m_lastRect.y;
 				break;
 			case Mover::DOWN:
-				gridPos.x = r2.x;
-				gridPos.y = r2.y + r2.h - 2;
+				gridPos.x = m_lastRect.x;
+				gridPos.y = m_lastRect.y + m_lastRect.h - 2;
 				break;
 			default:
 				break;
@@ -246,6 +247,7 @@ void Tank::update(Uint32 time)
 					//没有改变方向时，则继续前进，更新位置。
 					if (m_direction == direction) {
 						m_position = newPos;
+						m_lastRect = r1;
 					}
 					else {  //新命令改变了方向，停止当前移动。
 						stopMove();
@@ -261,6 +263,7 @@ void Tank::update(Uint32 time)
 		}
 		else {
 			m_position = newPos;
+			m_lastRect = r1;
 		}
 		
 	}

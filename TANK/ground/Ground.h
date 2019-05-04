@@ -36,15 +36,14 @@ public:
 	Maps &maps() {
 		return m_maps;
 	}
-	inline bool colMaps(int x, int y) {
-		return m_colMap[x][y];
+	const std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> &colMap() const {
+		return m_colMap;
 	}
 
 	const TankFactory &tankFactory() {
 		return m_tankFactory;
 	}
 	
-
 	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
 	Tank* addTank(int tankModel, CAMP camp, int bindIndex);
 
@@ -63,6 +62,10 @@ public:
 
 	void destoryTerrain(const SDL_Point &pos);
 
+	const std::map<Tank *, CAMP> &tankList() const {
+		return m_tanks;
+	}
+
 	//坦克碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2,并将被撞坦克赋值retColDest
 	int positionTest(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
@@ -74,8 +77,8 @@ public:
 	//投机取巧之作，遍历maxX和maxY组成的矩阵，将每个位置回调p
 	static void foreachRect(int maxX, int maxY, std::function<void(int x, int y)> p);
 
-	//更新地图碰撞映射。
-	int updateColMap(int x, int y);
+	//更新碰撞映射
+	void updateColMap(int x, int y);
 
 protected:
 	virtual void update(Uint32 time) override;
@@ -86,10 +89,10 @@ private:
 	void clearGround();
 
 	Maps m_maps;
-	std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> m_colMap;  //collision map
 
 	TankFactory m_tankFactory;
 	std::map<Tank *, CAMP> m_tanks;
+	std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> m_colMap;
 
 	std::list<Missile *> m_missiles;
 };

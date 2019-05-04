@@ -185,24 +185,32 @@ int Ground::MissilepositionUpdate(Missile * m)
 		}
 	});
 
-	//检查坦克碰撞。
+	//坦克和子弹的碰撞体积。
 	SDL_Rect r1 = { m->position().x, m->position().y, Missile::missileSize, Missile::missileSize };
 	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
-	for (auto iter = m_tanks.begin(); iter != m_tanks.end();) {
+
+	//保存受到攻击的坦克，
+	//子弹爆炸时最多影响4个网格
+	std::array<std::map<Tank *, CAMP>::iterator, 4> fireList{m_tanks.end(), m_tanks.end(), m_tanks.end(), m_tanks.end()};
+	int index = 0;
+
+	//遍历坦克列表检查碰撞，在碰撞时将坦克保存到上面的数组中
+	for (auto iter = m_tanks.begin(); iter != m_tanks.end(); ++iter) {
 		if (iter->first != m->m_sender) {
 			r2.x = iter->first->pixelPosition().x;
 			r2.y = iter->first->pixelPosition().y;
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
-				auto d = iter;
-				++iter;
-				attackTank(d->first, m->power());
-				continue;
+				fireList
 				result = -2;
 			}
 		}
-
-		++iter;
 	}
+
+	//攻击fireList中的坦克。
+	for (auto &f : fireList) {
+		attackTank(f->first, m->power());
+	}
+
 
 	return result;
 }
@@ -215,6 +223,11 @@ inline void Ground::foreachRect(int maxX, int maxY, std::function<void(int x, in
 			p(x, y);
 		}
 	}
+}
+
+void Ground::updateColMap(int x, int y)
+{
+	m_colMap[x][y] = (m_maps(x, y)) ? !m_maps.terrainData(m_maps(x, y) - 1).tankPass : false;
 }
 
 void Ground::update(Uint32 time)
@@ -236,6 +249,7 @@ void Ground::update(Uint32 time)
 
 int Ground::render()
 {
+
 	//渲染位于坦克下方的地形并挑拣出位于坦克上方的地形
 	std::list<SDL_Point> lastRender;
 	bool baseRender = false;
@@ -287,22 +301,6 @@ void Ground::userEventHookProc(const SDL_UserEvent & user)
 	default:
 		break;
 	}
-}
-
-int Ground::updateColMap(int x, int y)
-{
-	if (!m_maps(x, y)) {
-		m_colMap[x][y] = false;
-		return 0;
-	}
-	if (m_maps.terrainData(m_maps(x, y)).tankPass) {
-		m_colMap[x][y] = false;
-		return 0;
-	}
-
-	m_colMap[x][y] = true;
-
-	return 1;
 }
 
 void Ground::clearGround()

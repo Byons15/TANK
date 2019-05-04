@@ -11,9 +11,10 @@ class Ground;
 class Maps
 {
 public:
-	static constexpr int TAG_BASE = 1, 
-					 	 enemyBindCount = 3, 
-					 	 alliesBindCount = 2;
+	static constexpr int TAG_BASE = 1,
+		enemyBindCount = 3,
+		alliesBindCount = 2,
+		TERRAIN_CHANGE = 0x2223;
 	
 	struct TERRAIN
 	{

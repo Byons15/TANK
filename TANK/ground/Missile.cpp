@@ -15,21 +15,21 @@ Missile::Missile(Ground * ground, Tank * sender, int power)
 	{
 	case Mover::UP:
 		m_position.x = sender->pixelPosition().x + Tank::colSize / 2 - Missile::missileSize / 2;
-		m_position.y = sender->pixelPosition().y - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y;
 		lenght = m_position.y;
 		break;
 	case Mover::RIGHT:
-		m_position.x = sender->pixelPosition().x + Tank::colSize - Missile::missileSize / 2;
+		m_position.x = sender->pixelPosition().x + Tank::colSize - Missile::missileSize;
 		m_position.y = sender->pixelPosition().y + Tank::colSize / 2 - Missile::missileSize / 2;
 		lenght = (MAP_SIZE * GRID_SIZE) - m_position.x;
 		break;
 	case Mover::DOWN:
 		m_position.x = sender->pixelPosition().x + Tank::colSize / 2 - Missile::missileSize / 2;
-		m_position.y = sender->pixelPosition().y + Tank::colSize - Missile::missileSize / 2;
+		m_position.y = sender->pixelPosition().y + Tank::colSize - Missile::missileSize;
 		lenght = (MAP_SIZE * GRID_SIZE) - m_position.y;
 		break;
 	case Mover::LEFT:
-		m_position.x = sender->pixelPosition().x - Missile::missileSize / 2;
+		m_position.x = sender->pixelPosition().x;
 		m_position.y = sender->pixelPosition().y + Tank::colSize / 2 - Missile::missileSize / 2;
 		lenght = m_position.x;
 		break;
@@ -57,7 +57,7 @@ void Missile::update(Uint32 time)
 
 	if(!m_mover.state() && !m_boom) {
 		//¿ªÊ¼±¬Õ¨
-
+		m_mover.endMove();
 		m_startTime = time;
 		m_boom = true;
 		m_position.x -= 15;
@@ -72,6 +72,7 @@ void Missile::update(Uint32 time)
 		user.timestamp = time;
 
 		director->userEventTrigger(user);
+		
 	}
 
 	if (m_boom) {
