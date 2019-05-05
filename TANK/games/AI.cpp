@@ -63,8 +63,6 @@ int AI::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 timesta
 		direction = m_currentDirection;
 	}
 
-	//debug
-	//printf("current: %d, %d,  next£º%d, %d\n", position.x, position.y, m_currentPathPoint->x, m_currentPathPoint->y);
 	return 0;
 }
 

@@ -21,7 +21,7 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 
 	m_position = position;
 
-	setUserEventHook(Missile::BEGIN_BOOM);
+	setUserEventHook(Missile::END_BOOM);
 }
 
 Tank::~Tank()
@@ -165,7 +165,7 @@ void Tank::userEventHookProc(const SDL_UserEvent & event)
 {
 	switch (event.type)
 	{
-	case Missile::BEGIN_BOOM:
+	case Missile::END_BOOM:
 		if ((Tank *)event.data2 == this) {
 			m_reload = false;
 		}

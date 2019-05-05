@@ -189,28 +189,20 @@ int Ground::MissilepositionUpdate(Missile * m)
 	SDL_Rect r1 = { m->position().x, m->position().y, Missile::missileSize, Missile::missileSize };
 	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
 
-	//保存受到攻击的坦克，
-	//子弹爆炸时最多影响4个网格
-	std::array<std::map<Tank *, CAMP>::iterator, 4> fireList{m_tanks.end(), m_tanks.end(), m_tanks.end(), m_tanks.end()};
-	int index = 0;
-
-	//遍历坦克列表检查碰撞，在碰撞时将坦克保存到上面的数组中
-	for (auto iter = m_tanks.begin(); iter != m_tanks.end(); ++iter) {
+	for (auto iter = m_tanks.begin(); iter != m_tanks.end();) {
 		if (iter->first != m->m_sender) {
 			r2.x = iter->first->pixelPosition().x;
 			r2.y = iter->first->pixelPosition().y;
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
-				fireList
+				auto d = iter;
+				++iter;
+				attackTank(d->first, m->power());
 				result = -2;
+				continue;
 			}
 		}
+		++iter;
 	}
-
-	//攻击fireList中的坦克。
-	for (auto &f : fireList) {
-		attackTank(f->first, m->power());
-	}
-
 
 	return result;
 }
