@@ -2,6 +2,22 @@
   P1 119 115 97 100 106 107
   P2 1073741906 1073741905 1073741904 1073741903 1073741922 1073741923
 <end>
+  
+ <stateMenuLayout>
+   P1KillCountLabel 40, 80
+   P2KillCountLabel 40, 119
+   P1KillCount 106, 81
+   P2KillCount 106, 121
+   enemyCountIcon 80, 200
+   P1LifeCountLabel 80, 680
+   P1LifeCountIcon 80, 720
+   P1LifeCount 120, 678
+   P2LifeCountLabel 80, 800
+   P2LifeCountIcon 80, 840
+   P2LifeCount 120, 838
+   levelIcon 80, 920
+   lvel 120 952
+ <end>
 
 <texture_old>
   agility texture\agility.png 0 0 79 79 2 80
@@ -50,10 +66,7 @@
   woods 6 4 40 40 1
   missile 0 4 12 12 1
   boom 1 4 42 42 1
-  playerTankCountIcon 4 4 32 34 1
-  enemyCountIcon 2 4 34 27 1
-  levelIcon 3 4 36 68 1
-  LOGO 0 5 797 202 1
+  
 <end>
 
 <tank>
