@@ -15,28 +15,6 @@ void AnimationFactory::createFactory(Renderer * renderer)
 	m_renderer = renderer;
 
 	std::vector<std::string> data;
-	
-#ifdef OLD
-	fileLoad("texture_old", &data);
-	for (auto & line : data) {
-		std::istringstream is(line);
-		std::string name, textureFile;
-		is >> name >> textureFile;
-		if (!m_texturePool[name]) {
-			SDL_Surface *sur = IMG_Load(textureFile.c_str());
-			if (!sur)
-				throw std::runtime_error("打开纹理文件：\"" + textureFile + "\"失败！");
-
-			m_texturePool[name] = SDL_CreateTextureFromSurface(renderer->renderer(), sur);
-			SDL_FreeSurface(sur);
-		}
-		auto &a = m_animationPool[name];
-		a.texture = m_texturePool[name];
-		is >> a.clipRect.x >> a.clipRect.y >> a.clipRect.w >> a.clipRect.h >> a.frameCount >> a.frameInterval;
-	}
-#endif // OLD
-
-#ifdef NEW
 
 	SDL_Surface *sur = IMG_Load("texture\\texture.png");
 	if (!sur)
@@ -53,11 +31,10 @@ void AnimationFactory::createFactory(Renderer * renderer)
 		is >> name;
 		auto &a = m_animationPool[name];
 		a.texture = m_texture;
-		is >> a.clipRect.x >> a.clipRect.y >> a.clipRect.w >> a.clipRect.h >> a.frameCount >> a.frameInterval;
+		is >> a.clipRect.x >> a.clipRect.y >> a.clipRect.w >> a.clipRect.h >> a.frameCount >> a.frameTimeInterval >> a.frameInterval;
 		a.clipRect.x *= 80;
 		a.clipRect.y *= 80;
 	}
-#endif // OLD
 }
 
 const Animation & AnimationFactory::findAnimation(const std::string & name) const

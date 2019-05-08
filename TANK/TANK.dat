@@ -4,43 +4,43 @@
 <end>
   
 <stateMenuLayout>
-  P1ScoreLabel 40, 80
-  P2ScoreLabel 40, 119
-  P1Score 106, 81
-  P2Score 106, 121
-  enemyCountIcon 80, 200
-  P1LifeCountLabel 80, 680
-  P1LifeCountIcon 80, 720
-  P1LifeCount 120, 678
-  P2LifeCountLabel 80, 800
-  P2LifeCountIcon 80, 840
-  P2LifeCount 120, 838
-  levelIcon 80, 920
-  lvel 120 952
-  <end>
+  P1ScoreLabel 40 80
+  P2ScoreLabel 40 119
+  P1LifeCountLabel 80 680
+  P2LifeCountLabel 80 800
+  P1LifeCountIcon 80 720
+  P2LifeCountIcon 80 840
+  levelIcon 80 920
+  P1Score 106 81
+  P2Score 106 121
+  P1LifeCount 120 718
+  P2LifeCount 120 838
+  level 120 952
+  enemyCountIcon 80 200
+<end>
 
 <texture>
-  agility 6 1 79 79 2 80
-  agilityBonus 4 1 79 79 2 80
-  armouredBonus 0 2 79 79 2 80
-  armoured1 2 2 79 79 2 80
-  armoured2 4 2 79 79 2 80
-  armoured3 6 2 79 79 2 80
-  ordinary1Bonus 0 3 79 79 2 80
-  ordinary1 2 3 79 79 2 80
-  ordinary2Bonus 4 3 79 79 2 80
-  ordinary2 6 3 79 79 2 80
-  P1 0 0 79 79 2 80
+  agility 6 1 79 79 2 80 80
+  agilityBonus 4 1 79 79 2 80 80
+  armouredBonus 0 2 79 79 2 80 80
+  armoured1 2 2 79 79 2 80 80
+  armoured2 4 2 79 79 2 80 80
+  armoured3 6 2 79 79 2 80 80
+  ordinary1Bonus 0 3 79 79 2 80 80
+  ordinary1 2 3 79 79 2 80 80
+  ordinary2Bonus 4 3 79 79 2 80 80
+  ordinary2 6 3 79 79 2 80 80
+  P1 0 0 79 79 2 80 80
   P1FastShooting 2 0 79 79 1
   P1SuperPower 3 0 79 79 1
-  P2 0 1 79 79 2 80
+  P2 0 1 79 79 2 80 80
   P2FastShooting 2 1 79 79 1
   P2SuperPower 3 1 79 79 1
-  invincible 4 0 79 79 2 80
+  invincible 4 0 79 79 2 80 80
   base 9 4 80 80 1
   brick 5 4 40 40 1
   rock 7 4 40 40 1
-  water 8 4 40 40 2 1000
+  water 8 4 40 40 2 1000 40
   woods 6 4 40 40 1
   missile 0 4 12 12 1
   boom 1 4 42 42 1
@@ -48,10 +48,12 @@
   P2ScoreLabel 7 0 53 29 1
   enemyCountIcon 2 4 34 27 1
   P1LifeCountLabel 8 0 30 30 1
-  PlayerLifeCountIcon 4 4 32 34 1
+  P1LifeCountIcon 4 4 32 34 1
+  P2LifeCountIcon 4 4 32 34 1
   P2LifeCountLabel 9 0 30 30 1
   levelIcon 3 4 36 68 1
-  <end>
+  LOGO 0 5 797 202 1
+<end>
 
 <tank>
 	P1 0.3 1 P1 DEFAULT DEFAULT

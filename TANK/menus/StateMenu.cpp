@@ -4,65 +4,48 @@
 #include <sstream>
 
 StateMenu::StateMenu(Renderer * renderer)
-	:Scene(renderer, {GRID_SIZE * MAP_SIZE, 0, WINDOW_WIDTH - GRID_SIZE * MAP_SIZE, WINDOW_HEIGHT})
+	:Scene(renderer, {GRID_SIZE * MAP_SIZE, 0, WINDOW_WIDTH - GRID_SIZE * MAP_SIZE, WINDOW_HEIGHT}),
+	m_enemyCount(0)
 {
+	setBackdropColor(SDL_Color{153, 153, 153, SDL_ALPHA_OPAQUE});
 	//导入所有标签或图标的位置。
 	std::vector<std::string> data;
-	if (fileLoad("", &data) == 0)
+	if (fileLoad("stateMenuLayout", &data) != 13)
 		throw std::runtime_error("找不到布局数据");
-	
-	std::map<std::string, SDL_Point> positions;
-	for (auto &line : data) {
-		std::istringstream is(line);
-		SDL_Point p;
+
+	//获取标签的位置及纹理。
+	size_t dataIndex = 0;
+	for (auto & l : m_labels) {
+		std::istringstream is(data[dataIndex++]);
 		std::string name;
-		is >> name >> p.x >> p.y;
-		positions.insert({name, p});
+		l.second.setScene(this);
+		is >> name >> l.first.x >> l.first.y;
+		l.second.setAnimation(name);
 	}
 
-	//将所有标签都绑定到场景中。
-	for (auto &l : m_labels)
-		l.second.setScene(this);
-	m_P1ScoreBox.setScene(this);
-	m_P2ScoreBox.setScene(this);
-	m_P1LifeCountBox.setScene(this);
-	m_P2LifeCountBox.setScene(this);
+	//获取文本框的位置
+	for (auto &t : m_text) {
+		t.box.setScene(this);
+		std::istringstream is(data[dataIndex++]);
+		std::string name;
+		is >> name >> t.position.x >> t.position.y;
+		t.box.setFontColor({ 0, 0, 0, SDL_ALPHA_OPAQUE });
+	}
 
-	//获取所有标签的位置，并设置标签的Sprite。
-	m_labels[0].first = positions["P1ScoreLabel"];
-	m_labels[1].first = positions["P2ScoreLabel"];
-	m_labels[2].first = positions["P1LifeCountLabel"];
-	m_labels[3].first = positions["P2LifeCountLabel"];
-	m_labels[4].first = positions["P1LifeCountIcon"];
-	m_labels[5].first = positions["P2LifeCountIcon"];
-	m_labels[6].first = positions["levelIcon"];
-	m_labels[0].second.setAnimation("P1ScoreLabel");
-	m_labels[1].second.setAnimation("P2ScoreLabel");
-	m_labels[2].second.setAnimation("P1LifeCountLabel");
-	m_labels[3].second.setAnimation("P2LifeCountLabel");
-	m_labels[4].second.setAnimation("P1LifeCountIcon");
-	m_labels[5].second.setAnimation("P2LifeCountIcon");
-	m_labels[6].second.setAnimation("levelIcon");
-	m_P1ScorePosition = positions["P1Score"];
-	m_P2ScorePosition = positions["P2Score"];
-	m_P1LifeCountPosition = positions["P1LifeCount"];
-	m_P2LifeCountPosition = positions["P2LifeCount"];
-	m_P1ScoreBox.setString(std::to_wstring(m_P1Score));
-	m_P2ScoreBox.setString(std::to_wstring(m_P2Score));
-	m_P1LifeCountBox.setString(std::to_wstring(m_P1LifeCount));
-	m_P2LifeCountBox.setString(std::to_wstring(m_P2LifeCount));
+	//设置各个文本框的大小和字体颜色。
+	m_text[0].box.setFontSize(10);
+	m_text[1].box.setFontSize(30);
+	m_text[2].box.setFontSize(40);
+	m_text[3].box.setFontSize(40);
+	m_text[4].box.setFontSize(40);
 
-	//设置各个文本框的大小。
-	m_P1ScoreBox.setFontSize(30);
-	m_P2ScoreBox.setFontSize(30);
-	m_P1LifeCountBox.setFontSize(40);
-	m_P2LifeCountBox.setFontSize(40);
-	
-}
-
-size_t StateMenu::playerLife(Player::PLAYER p)
-{
-	return (p == Player::P1) ? m_P1LifeCount : m_P2LifeCount;
+	//设置敌军计数的图标纹理以及图标排列的起始位置。
+	std::istringstream is(data[dataIndex]);
+	std::string name;
+	is >> name >> m_enemyCountIconBeginPosition.x >> m_enemyCountIconBeginPosition.y;
+	m_enemyCountIcon.setScene(this);
+	m_enemyCountIcon.setAnimation(name);
+	m_enemyCount = 0;
 }
 
 StateMenu::~StateMenu()
@@ -71,17 +54,42 @@ StateMenu::~StateMenu()
 
 void StateMenu::update(Uint32 time)
 {
+	for (auto &t : m_text) {
+		t.box.setString(std::to_wstring(t.data));
+	}
+	for (auto & l : m_labels)
+		l.second.updateFrames(time);
+	for (auto & t : m_text)
+		t.box.updateFrames(time);
+	m_enemyCountIcon.updateFrames(time);
 }
 
 int StateMenu::render()
 {
+	for (auto & l : m_labels) {
+		l.second.renderFrame(l.first);
+	}
+
+	for (auto & t : m_text) {
+		t.box.renderFrame(t.position);
+	}
+
+	int offsetX, offsetY;
+	for (auto i = 0; i != m_enemyCount; ++i) {
+		offsetY = (i / 2) * GRID_SIZE;
+		offsetX = (i % 2) * GRID_SIZE;
+		m_enemyCountIcon.renderFrame({m_enemyCountIconBeginPosition.x + offsetX, m_enemyCountIconBeginPosition.y + offsetY});
+	}
+
 	return 0;
 }
 
 void StateMenu::open(void * data, int code)
 {
+	setState(true);
 }
 
 void StateMenu::close()
 {
+	setState(false);
 }

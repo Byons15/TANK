@@ -3,8 +3,6 @@
 #include <string>
 #include <SDL_rect.h>
 
-#define NEW
-
 struct SDL_Texture;
 class Renderer;
 
@@ -13,6 +11,7 @@ struct Animation
 	SDL_Texture *texture = 0;
 	SDL_Rect clipRect = { 0, 0, 0, 0};
 	Uint32 frameCount = 0;
+	Uint32 frameTimeInterval = 0;
 	Uint32 frameInterval = 0;
 };
 

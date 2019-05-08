@@ -9,6 +9,7 @@
 Ground::Ground(Renderer * renderer)
 	:Scene(renderer, { 0, 0, GRID_SIZE * MAP_SIZE, GRID_SIZE * MAP_SIZE }), m_tankFactory(renderer), m_maps(this)
 {
+	setBackdropColor(SDL_Color{0, 0, 0, SDL_ALPHA_OPAQUE});
 	//设置坦克工厂
 	Tank::setFactory(&m_tankFactory);
 }

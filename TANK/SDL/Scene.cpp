@@ -19,8 +19,10 @@ int Scene::setBackdropColor(const SDL_Color & color)
 	if (m_renderer) {
 		m_backdrop = SDL_CreateTexture(m_renderer->renderer(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, m_rect.w, m_rect.h);
 		SDL_SetRenderTarget(m_renderer->renderer(), m_backdrop);
-		SDL_SetRenderDrawColor(m_renderer->renderer(), color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(m_renderer->renderer(), &m_rect);
+		SDL_SetRenderDrawColor(m_renderer->renderer(), color.r, color.g, color.b, color.a);
+		SDL_Rect fillRect = m_rect;
+		fillRect.x = fillRect.y = 0;
+		SDL_RenderFillRect(m_renderer->renderer(), &fillRect);
 		SDL_SetRenderTarget(m_renderer->renderer(), NULL);
 		return 0;
 	}

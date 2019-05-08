@@ -28,8 +28,8 @@ void Spirit::updateFrames(Uint32 time)
 {
 	m_clipRect = m_animation.clipRect;
 	if (m_animation.frameCount > 1) {
-		int currItem = ((time - m_animationFirstTime) % (m_animation.frameCount * m_animation.frameInterval)) / m_animation.frameInterval;
-		m_clipRect.x = (m_clipRect.w * currItem) + m_animation.clipRect.x;
+		int currItem = ((time - m_animationFirstTime) % (m_animation.frameCount * m_animation.frameTimeInterval)) / m_animation.frameTimeInterval;
+		m_clipRect.x = (m_animation.frameInterval * currItem) + m_animation.clipRect.x;
 	}
 }
 
