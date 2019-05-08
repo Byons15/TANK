@@ -169,6 +169,7 @@ void Tank::userEventHookProc(const SDL_UserEvent & event)
 		if ((Tank *)event.data2 == this) {
 			m_reload = false;
 		}
+		
 		break;
 	default:
 		break;

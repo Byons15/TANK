@@ -5,13 +5,13 @@
 
 TTF_Font *Text::sm_font = 0;
 
-static constexpr int defaultFontSize = 30;
+static constexpr int defaultFontSize = 40;
 
 Text::Text(Scene * scene, const std::wstring & text, RenderFlags rendering)
 	:m_flags(rendering), Spirit(scene), m_textAnimationIndex(0), m_fontSize(defaultFontSize), m_stringColor{255, 255, 255, 0}
 {
 	if (!sm_font) {
-		sm_font = TTF_OpenFont("simkai.ttf", m_fontSize);
+		sm_font = TTF_OpenFont("simkai.ttf", defaultFontSize);
 	}
 
 	m_texture.frameCount = 1;
@@ -29,9 +29,6 @@ int Text::setString(const std::wstring & text)
 
 	if (!scene() || !scene()->renderer())
 		return -1;
-
-	//设置字体大小。
-	TTF_SetFontSize(sm_font, m_fontSize);
 
 	//按照渲染方式生成表面。
 	SDL_Surface* sur;
@@ -60,8 +57,15 @@ int Text::setString(const std::wstring & text)
 	m_texture.clipRect = sur->clip_rect;
 	SDL_FreeSurface(sur);
 
+	auto f1 = (double)(m_fontSize) / (double)defaultFontSize;
+	auto f2 = static_cast<Uint32> ((double)m_fontSize / (double)defaultFontSize * (double)(renderSize().w));
+
 	//将纹理设置到精灵。
 	setAnimation(m_texture);
+	SIZE s;
+	s.h = m_fontSize;
+	s.w = static_cast<Uint32> ((double)m_fontSize / (double)defaultFontSize * (double)(renderSize().w));
+	setRenderSize(s);
 	return 0;
 }
 
@@ -70,9 +74,13 @@ void Text::setTextRenderFlags(RenderFlags flags)
 	m_flags = flags;
 }
 
-void Text::setFontSize(int size)
+void Text::setFontSize(Uint32 size)
 {
 	m_fontSize = size;
+	SIZE s;
+	s.h = m_fontSize;
+	s.w = static_cast<Uint32> ((double)m_fontSize / (double)defaultFontSize * (double)(renderSize().w));
+	setRenderSize(s);
 }
 
 void Text::setFontColor(const SDL_Color & color)

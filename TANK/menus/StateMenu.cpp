@@ -33,7 +33,7 @@ StateMenu::StateMenu(Renderer * renderer)
 	}
 
 	//设置各个文本框的大小和字体颜色。
-	m_text[0].box.setFontSize(10);
+	m_text[0].box.setFontSize(30);
 	m_text[1].box.setFontSize(30);
 	m_text[2].box.setFontSize(40);
 	m_text[3].box.setFontSize(40);

@@ -23,7 +23,7 @@ public:
 	Text(Scene *scene, const std::wstring &text = L"", RenderFlags flags = biend);
 	int setString(const std::wstring &text = L"");
 	void setTextRenderFlags(RenderFlags flags);
-	void setFontSize(int size);
+	void setFontSize(Uint32 size);
 	void setFontColor(const SDL_Color &color);
 	int fontSize() const {
 		return m_fontSize;
@@ -35,6 +35,6 @@ private:
 	size_t m_textAnimationIndex;
 	SDL_Color m_stringColor;
 	RenderFlags m_flags;
-	int m_fontSize;
+	Uint32 m_fontSize;
 };
 
