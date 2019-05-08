@@ -87,6 +87,7 @@ void Missile::update(Uint32 time)
 
 			director->userEventTrigger(user);
 			m_destory = true;  //生命期结束，等待对象被销毁。
+			m_sender->reload();
 		}
 	}
 }

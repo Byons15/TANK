@@ -20,8 +20,6 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 	setAnimation(m_form[m_HP - 1]);
 
 	m_position = position;
-
-	setUserEventHook(Missile::END_BOOM);
 }
 
 Tank::~Tank()
@@ -52,8 +50,12 @@ void Tank::fire()
 		return;
 
 	m_ground->addMissile(new Missile(m_ground, this, m_power));
-
 	m_reload = true;
+}
+
+void Tank::reload()
+{
+	m_reload = false;
 }
 
 int Tank::startMove(Mover::DIRECTION direction, Uint32 time)
@@ -124,6 +126,9 @@ void Tank::stopMove()
 
 int Tank::setCommander(Commander * cmder)
 {
+	if (cmder->drive(this) == -1)
+		return -1;
+
 	m_commander = cmder;
 	return 0;
 }
@@ -161,21 +166,6 @@ void Tank::unInvincible()
 	setAnimation(m_form[m_HP - 1]);
 }
 
-void Tank::userEventHookProc(const SDL_UserEvent & event)
-{
-	switch (event.type)
-	{
-	case Missile::END_BOOM:
-		if ((Tank *)event.data2 == this) {
-			m_reload = false;
-		}
-		
-		break;
-	default:
-		break;
-	}
-}
-
 int Tank::beHit(Tank *aggressor, int power)
 {
 	if (m_invincible) {
@@ -208,6 +198,9 @@ void Tank::setFactory(TankFactory * factory)
 
 void Tank::update(Uint32 time)
 {
+	if (m_commander->requestFire())
+		fire();
+
 	if (m_mover.state()) {
 		auto newPos = m_mover.current(time);
 
@@ -237,7 +230,7 @@ void Tank::update(Uint32 time)
 
 			//新位置占用的网格与当前网格不同时，检查输入。
 			Mover::DIRECTION direction = m_direction;
-			auto result = m_commander->command(m_ground, this, gridPos, time, direction);
+			auto result = m_commander->command(gridPos, time, direction);
 			if (result == 0) { //有移动命令.
 
 				//检查新位置是否碰撞.
@@ -270,7 +263,7 @@ void Tank::update(Uint32 time)
 	}
 	else {
 		Mover::DIRECTION direction = m_direction;
-		auto result = m_commander->command(m_ground, this, {m_position.x / GRID_SIZE, m_position.y / GRID_SIZE}, time, direction);
+		auto result = m_commander->command({m_position.x / GRID_SIZE, m_position.y / GRID_SIZE}, time, direction);
 		startMove(direction, time);
 	}
 
@@ -287,4 +280,18 @@ bool Tank::onGrid()
 		return false;
 
 	return true;
+}
+
+Commander::Commander()
+	:m_tank(nullptr)
+{
+	
+}
+
+int Commander::drive(Tank * tank)
+{
+	if (m_tank)
+		return -1;
+	m_tank = tank;
+	return 0;
 }

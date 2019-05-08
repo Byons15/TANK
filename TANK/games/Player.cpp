@@ -3,6 +3,11 @@
 #include "../FileLoader.h"
 #include <sstream>
 
+bool Player::requestFire()
+{
+	return director->keyState(m_A);;
+}
+
 Player::Player(PLAYER p)
 {
 
@@ -51,25 +56,14 @@ Player::Player(PLAYER p)
 	director->monitoringKey(m_B);
 }
 
-int Player::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
-{
-	auto result = inputDirection(&direction);
-
-	if (director->keyState(m_A)) {
-		tank->fire();
-	}
-
-	return result;
-}
-
-int Player::inputDirection(Mover::DIRECTION *ret)
+int Player::command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
 {
 	int maxTime = 0;
 	int result = -1;
-	for(auto &k : m_move) {
+	for (auto &k : m_move) {
 		if (director->keyState(k.first) > maxTime) {
 			maxTime = director->keyState(k.first);
-			*ret = m_move[k.first];
+			direction = m_move[k.first];
 			result = 0;
 		}
 	}

@@ -18,12 +18,10 @@ AI::~AI()
 {
 }
 
-int AI::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
+int AI::command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
 {
-	m_ground = ground;
-
 	if (m_path.empty()) {
-		newTarget(tank, position, timestamp);
+		newTarget(tank(), position, timestamp);
 		m_currentPathPoint = m_path.begin();
 		m_nextPoint = position;
 	}
@@ -66,6 +64,12 @@ int AI::command(Ground * ground, Tank * tank, SDL_Point position, Uint32 timesta
 	return 0;
 }
 
+bool AI::requestFire()
+{
+	//TODO::
+	return false;
+}
+
 int AI::findWay(const SDL_Point & p1, const SDL_Point & p2)
 {
 	if (p1.x == p2.x && p1.y == p2.y) {
@@ -105,7 +109,7 @@ bool AI::collisionCheck(const SDL_Point & p)
 {
 	for (auto x = p.x; x != p.x + 2; ++x) {
 		for (auto y = p.y; y != p.y + 2; ++y) {
-			if (m_ground->colMap()[x][y])
+			if (tank()->ground()->colMap()[x][y])
 				return false;
 		}
 	}
@@ -196,7 +200,7 @@ void AI::newTarget(Tank * tank, const SDL_Point & position, Uint32 timestamp)
 			if (!borderCheck({ x, y }))
 				continue;
 
-			if (m_ground->maps().operator()(x, y) == Maps::TAG_BASE)
+			if (tank()->ground()->maps().operator()(x, y) == Maps::TAG_BASE)
 				if (findWay(position, { x, y }))
 					if (!m_path.empty())
 						return;
