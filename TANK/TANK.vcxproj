@@ -224,9 +224,6 @@
   <ItemGroup>
     <Font Include="simkai.ttf" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="状态菜单布局.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
