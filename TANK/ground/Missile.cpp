@@ -48,9 +48,6 @@ void Missile::update(Uint32 time)
 
 	if (m_mover.state()) { //飞弹移动中。
 		m_position = m_mover.current(time);  //更新位置。
-
-		if (m_position.x < 0 || m_position.y < 0 || m_position.x > MAP_SIZE * GRID_SIZE || m_position.y > MAP_SIZE * GRID_SIZE)
-			__debugbreak();
 		//检查碰撞。
 		auto result = m_ground->MissilepositionUpdate(this);
 		if (result) {  //遇到碰撞.

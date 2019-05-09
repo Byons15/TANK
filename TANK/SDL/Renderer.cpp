@@ -103,8 +103,14 @@ void Renderer::eventHookProc(const SDL_Event & event)
 		}
 		break;
 	case SDL_KEYDOWN: {
-		if (event.key.keysym.sym == SDLK_p)
+		if (event.key.keysym.sym == SDLK_p) {
 			m_pause = !m_pause;
+			if (m_pause)
+				m_pauseStartTime = SDL_GetTicks() - m_pausedTime;
+			else {
+				m_pausedTime += SDL_GetTicks() - m_pauseStartTime;
+			}
+		}
 	}
 
 	default:
@@ -115,13 +121,6 @@ void Renderer::eventHookProc(const SDL_Event & event)
 void Renderer::render()
 {
 	auto time = SDL_GetTicks();
-	if (!m_pause) {
-		time -= m_pausedTime;
-	}
-
-	if (SDL_RenderClear(m_renderer)) {
-		return;
-	}
 	
 	for (auto &s : m_renderQueue) {
 		if (s->state()) {
