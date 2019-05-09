@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DebugView.cpp" />
     <ClCompile Include="file\FileLoader.cpp" />
     <ClCompile Include="games\AI.cpp" />
     <ClCompile Include="games\Games.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="SDL\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DebugView.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="FileLoader.h" />
     <ClInclude Include="Director.h" />
