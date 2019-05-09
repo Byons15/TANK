@@ -61,6 +61,9 @@ SDL_Point Mover::current(unsigned timestamp)
 	if (!m_moving)
 		return m_dest;
 
+	if (timestamp <= m_startTimestamp)
+		return m_origin;
+
 	SDL_Point p = m_origin;
 
 	int pixelCount = static_cast<int>((timestamp - m_startTimestamp) * m_speeds);

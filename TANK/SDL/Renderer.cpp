@@ -5,9 +5,36 @@
 #include "../Scene.h"
 
 Renderer::Renderer(SDL_Window * window, bool VSync)
-	:m_rending(false), m_renderer(0), m_window(window)
+	:m_window(window), m_pause(false)
 {
-	setWindow(window, VSync);
+	if (m_renderer)
+		return;
+
+	//从窗口创建渲染器，依据参数决定是否开启垂直同步。
+	Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
+	flags = VSync ? flags | SDL_RENDERER_PRESENTVSYNC : flags;
+
+	m_renderer = SDL_CreateRenderer(window, -1, flags);
+	if (!m_renderer)
+		return;
+
+	//创建适用于这个渲染器的纹理工厂。
+	m_animationFactory.createFactory(this);
+
+	//获取窗口并hook窗口大小更改事件，使最终的渲染画面适应窗口。
+	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
+	m_windowWidthScale = m_windowHeightScale = 1;
+
+	setEventHook(SDL_KEYDOWN);
+	m_pausedTime = 0;
+
+	setEventHook(SDL_WINDOWEVENT);
+
+	//将渲染工作加入事件队列。
+	setUserEventHook(RENDER);
+	SDL_UserEvent user;
+	user.type = RENDER;
+	userEventTrigger(user);
 }
 
 Renderer::~Renderer()
@@ -18,37 +45,6 @@ Renderer::~Renderer()
 Renderer::Renderer()
 	:m_renderer(0), m_window(0)
 {
-}
-
-int Renderer::setWindow(SDL_Window * window, bool VSync)
-{
-	if (m_renderer)
-		return -1;
-
-	//从窗口创建渲染器，依据参数决定是否开启垂直同步。
-	Uint32 flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE;
-	flags = VSync ? flags | SDL_RENDERER_PRESENTVSYNC : flags;
-
-	m_renderer = SDL_CreateRenderer(window, -1, flags);
-	if (!m_renderer)
-		return -1;
-
-	//创建适用于这个渲染器的纹理工厂。
-	m_animationFactory.createFactory(this);
-
-	//获取窗口并hook窗口大小更改事件，使最终的渲染画面适应窗口。
-	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
-	m_windowWidthScale = m_windowHeightScale = 1;
-
-	setEventHook(SDL_WINDOWEVENT);
-
-	//将渲染工作加入事件队列。
-	setUserEventHook(RENDER);
-	SDL_UserEvent user;
-	user.type = RENDER;
-	userEventTrigger(user);
-
-	return 0;
 }
 
 void Renderer::addScene(Scene * s)
@@ -106,6 +102,11 @@ void Renderer::eventHookProc(const SDL_Event & event)
 			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
 		}
 		break;
+	case SDL_KEYDOWN: {
+		if (event.key.keysym.sym == SDLK_p)
+			m_pause = !m_pause;
+	}
+
 	default:
 		break;
 	}
@@ -114,6 +115,7 @@ void Renderer::eventHookProc(const SDL_Event & event)
 void Renderer::render()
 {
 	auto time = SDL_GetTicks();
+	if(m_pause)
 
 	if (SDL_RenderClear(m_renderer)) {
 		return;

@@ -29,10 +29,6 @@ public:
 		return m_renderer;
 	}
 
-	//设置渲染窗口。
-	//成功返回0，返回-1表示渲染器已经设置了窗口，不可再次设置。
-	int setWindow(SDL_Window *window, bool VSync = false);
-
 	//获取渲染器的目标窗口。
 	SDL_Window *window() {
 		return m_window;
@@ -54,7 +50,8 @@ private:
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
 	SIZE m_windowOriginalSize;
+	Uint32 m_startTime, m_pausedTime;
 	float m_windowWidthScale, m_windowHeightScale;
-	bool m_rending;
+	bool m_rending, m_pause;
 };
 
