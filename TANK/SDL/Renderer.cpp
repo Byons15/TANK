@@ -5,7 +5,7 @@
 #include "../Scene.h"
 
 Renderer::Renderer(SDL_Window * window, bool VSync)
-	:m_window(window), m_pause(false)
+	:m_window(window), m_pause(false), m_pauseStartTime(0)
 {
 	if (m_renderer)
 		return;
@@ -115,7 +115,9 @@ void Renderer::eventHookProc(const SDL_Event & event)
 void Renderer::render()
 {
 	auto time = SDL_GetTicks();
-	if(m_pause)
+	if (!m_pause) {
+		time -= m_pausedTime;
+	}
 
 	if (SDL_RenderClear(m_renderer)) {
 		return;

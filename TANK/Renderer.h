@@ -50,8 +50,8 @@ private:
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
 	SIZE m_windowOriginalSize;
-	Uint32 m_startTime, m_pausedTime;
+	Uint32 m_pauseStartTime, m_pausedTime;
 	float m_windowWidthScale, m_windowHeightScale;
-	bool m_rending, m_pause;
+	bool m_rending, m_pause, m_pausing;
 };
 
