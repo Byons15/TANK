@@ -27,5 +27,6 @@ private:
 	Ground m_ground;
 	Player m_P1commander, m_P2commander;
 	Tank *m_P1, *m_P2;
+
 };
 
