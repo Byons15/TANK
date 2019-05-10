@@ -16,7 +16,7 @@ class Spirit
 {
 public:
 	Spirit()
-		:m_angle(0), m_alpha(SDL_ALPHA_OPAQUE), m_scene(0) {}
+		:m_angle(0), m_alpha(SDL_ALPHA_OPAQUE), m_scene(0), m_flicker(false) {}
 	Spirit(Scene *scene, const std::string &animationName = "");
 	virtual ~Spirit();
 
@@ -50,12 +50,18 @@ public:
 		m_angle = a;
 	}
 
+	void startFlicker(Uint32 showTime, Uint32 hideTime);
+	void stopFlicker() {
+		m_flicker = false;
+	}
+
 private:
 	Animation m_animation;
 	SDL_Rect m_clipRect;
 	SIZE m_renderSize;
-	Uint32 m_angle, m_animationFirstTime;
+	Uint32 m_angle, m_animationFirstTime, m_flickerShowTime, m_flickerHideTime, m_startFlickerTime;
 	Scene *m_scene;
 	Uint8 m_alpha;
+	bool m_flicker;
 };
 

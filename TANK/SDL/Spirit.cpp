@@ -32,6 +32,12 @@ void Spirit::updateFrames(Uint32 time)
 		int currItem = ((time - m_animationFirstTime) % (m_animation.frameCount * m_animation.frameTimeInterval)) / m_animation.frameTimeInterval;
 		m_clipRect.x = (m_animation.frameInterval * currItem) + m_animation.clipRect.x;
 	}
+
+	if (m_flicker) {
+		auto t = SDL_abs(time - m_startFlickerTime) % (m_flickerHideTime + m_flickerShowTime);
+		Uint8 alpha= (t > m_flickerShowTime) ? 0 : 255;
+		setAlpha(alpha);
+	}
 }
 
 void Spirit::renderFrame(const SDL_Point & position) const
@@ -58,4 +64,12 @@ void Spirit::setAnimation(const Animation & a)
 void Spirit::setAnimation(const std::string & name)
 {
 	setAnimation(m_scene->renderer()->animationFactory().findAnimation(name));
+}
+
+void Spirit::startFlicker(Uint32 showTime, Uint32 hideTime)
+{
+	m_startFlickerTime = timer.current();
+	m_flickerShowTime = showTime;
+	m_flickerHideTime = hideTime;
+	m_flicker = true;
 }

@@ -31,6 +31,7 @@ Games::Games()
 	m_stateMenu.setPlayerLife(Player::P2, 3);
 	m_stateMenu.setLevel(3);
 	m_stateMenu.open(0, 0);
+
 }
 
 
@@ -48,8 +49,12 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 {
 	switch (user.type)
 	{
-	case StartMenu::CLOSE:
+	case StartMenu::CLOSE: {
+		int model = reinterpret_cast<int>(user.data1);
+		int playerNumber = reinterpret_cast<int> (user.data2);
+
 		//TODO::
+	}
 		break;
 	default:
 		break;

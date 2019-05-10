@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="file\FileLoader.cpp" />
     <ClCompile Include="games\AI.cpp" />
+    <ClCompile Include="games\CustomMap.cpp" />
     <ClCompile Include="games\Games.cpp" />
     <ClCompile Include="games\Player.cpp" />
     <ClCompile Include="ground\Ground.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Director.h" />
     <ClInclude Include="Games.h" />
     <ClInclude Include="games\AI.h" />
+    <ClInclude Include="games\CustomMap.h" />
     <ClInclude Include="games\Player.h" />
     <ClInclude Include="ground\Ground.h" />
     <ClInclude Include="ground\Maps.h" />

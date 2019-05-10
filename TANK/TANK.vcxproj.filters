@@ -75,6 +75,9 @@
     <ClCompile Include="SDL\Timer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="games\CustomMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -138,6 +141,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="games\CustomMap.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
