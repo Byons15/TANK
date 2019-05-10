@@ -1,6 +1,25 @@
 <control>
   P1 119 115 97 100 106 107
   P2 1073741906 1073741905 1073741904 1073741903 1073741922 1073741923
+  
+<end>
+  
+<P1control>
+  A
+  D
+  W
+  S
+  J
+  K
+<end>
+  
+<P2control>
+    Left
+    Right
+    Up
+    Down
+    Keypad 0
+    Keypad .
 <end>
   
 <stateMenuLayout>

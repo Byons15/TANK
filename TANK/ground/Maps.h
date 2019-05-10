@@ -33,7 +33,7 @@ public:
 	int setTerrain(int x, int y, uint32_t type = 0);
 	int createMaps(int level);
 
-	const TERRAIN &terrainData(size_t index) {
+	TERRAIN &terrainData(size_t index) {
 		return m_terrainPool[index];
 	}
 	size_t terrainTypeMember() {

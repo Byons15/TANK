@@ -32,6 +32,8 @@ Games::Games()
 	m_stateMenu.setLevel(3);
 	m_stateMenu.open(0, 0);
 
+
+	printf("%s, %s, %s, %s, %s\n,", SDL_GetKeyName(SDLK_a), SDL_GetKeyName(SDLK_DOWN), SDL_GetKeyName(SDLK_LEFT), SDL_GetKeyName(SDLK_KP_PERIOD), SDL_GetKeyName(SDLK_KP_0));
 }
 
 
