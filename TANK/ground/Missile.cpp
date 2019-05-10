@@ -7,7 +7,7 @@
 Missile::Missile(Ground * ground, Tank * sender, int power)
 	:Spirit(ground, "missile"), m_sender(sender), m_destory(false), m_boom(false), m_ground(ground), m_power(power)
 {
-	m_startTime = SDL_GetTicks();
+	m_startTime = timer.current();
 
 	int lenght;
 
@@ -37,8 +37,6 @@ Missile::Missile(Ground * ground, Tank * sender, int power)
 		break;
 	}
 	m_mover.move(m_position, sender->direction(), lenght, m_startTime, 1);
-	static int c = 0;
-	printf("new Missile: %d\n", ++c);
 }
 
 void Missile::update(Uint32 time)
@@ -78,7 +76,6 @@ void Missile::update(Uint32 time)
 
 	if (m_boom) {
 		if (time - m_startTime >= 250) {
-			printf("boom start: %d, current: %d\n", m_startTime, time);
 			SDL_UserEvent user;
 			user.type = END_BOOM;
 			user.code = m_boomTarget;

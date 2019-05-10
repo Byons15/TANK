@@ -181,6 +181,7 @@
     <ClCompile Include="SDL\Scene.cpp" />
     <ClCompile Include="SDL\Spirit.cpp" />
     <ClCompile Include="SDL\Text.cpp" />
+    <ClCompile Include="SDL\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="StateMenu.h" />
     <ClInclude Include="TANKS.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

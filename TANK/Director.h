@@ -3,6 +3,7 @@
 #include <map>
 #include <initializer_list>
 #include "Scene.h"
+#include "Timer.h"
 
 class EventInterface;
 
@@ -27,7 +28,7 @@ public:
 	Director &operator = (const Director &&) = delete;
 
 	virtual ~Director();
-	
+
 	int monitoringKey(SDL_Keycode key);
 	int monitoringKey(std::initializer_list<SDL_Keycode> keyList);
 
@@ -61,7 +62,9 @@ private:
 	std::map<SDL_Keycode, int> m_monitoringKey;
 	std::multimap<int, EventInterface *> m_eventHook;
 	std::multimap<int, EventInterface *> m_userEventHook;
+
 };
 
 //µ¼ÑÝ
 extern Director *director;
+extern Timer timer;

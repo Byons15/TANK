@@ -3,9 +3,10 @@
 #include <SDL_timer.h>
 #include <SDL_render.h>
 #include "../Scene.h"
+#include "../Director.h"
 
 Renderer::Renderer(SDL_Window * window, bool VSync)
-	:m_window(window), m_pause(false), m_pauseStartTime(0)
+	:m_window(window)
 {
 	if (m_renderer)
 		return;
@@ -24,9 +25,6 @@ Renderer::Renderer(SDL_Window * window, bool VSync)
 	//获取窗口并hook窗口大小更改事件，使最终的渲染画面适应窗口。
 	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
 	m_windowWidthScale = m_windowHeightScale = 1;
-
-	setEventHook(SDL_KEYDOWN);
-	m_pausedTime = 0;
 
 	setEventHook(SDL_WINDOWEVENT);
 
@@ -102,17 +100,6 @@ void Renderer::eventHookProc(const SDL_Event & event)
 			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
 		}
 		break;
-	case SDL_KEYDOWN: {
-		if (event.key.keysym.sym == SDLK_p) {
-			m_pause = !m_pause;
-			if (m_pause)
-				m_pauseStartTime = SDL_GetTicks() - m_pausedTime;
-			else {
-				m_pausedTime += SDL_GetTicks() - m_pauseStartTime;
-			}
-		}
-	}
-
 	default:
 		break;
 	}
@@ -120,7 +107,7 @@ void Renderer::eventHookProc(const SDL_Event & event)
 
 void Renderer::render()
 {
-	auto time = SDL_GetTicks();
+	auto time = timer.current();
 	
 	for (auto &s : m_renderQueue) {
 		if (s->state()) {

@@ -8,6 +8,7 @@
 #define USER_EVENT 0x4000
 
 Director *director = nullptr;
+Timer timer;
 
 Director::Director()
 {
@@ -18,10 +19,13 @@ Director::Director()
 
 	SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER);
 	TTF_Init();
+
+	timer.start();
 }
 
 Director::~Director()
 {
+	timer.unsetEventHook(SDL_KEYDOWN);
 	TTF_Quit();
 	SDL_Quit();
 }
@@ -50,7 +54,7 @@ int Director::keyState(SDL_Keycode key, int *retkeyDownTime)
 		return 0;
 
 	if (retkeyDownTime)
-		*retkeyDownTime = SDL_GetTicks() - iter->second;
+		*retkeyDownTime = timer.SDLTimer() - iter->second;
 
 	return iter->second;
 }

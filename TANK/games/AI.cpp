@@ -1,6 +1,6 @@
 #include "AI.h"
 #include <random>
-#include <SDL_timer.h>
+#include "../Director.h"
 
 AI *colMapsUpdater = nullptr;
 std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> AI::sm_visiteSign;
@@ -226,18 +226,18 @@ void AI::newTarget(Tank * tank, const SDL_Point & position, Uint32 timestamp)
 #endif // OLDCOE
 
 #ifdef OLDCODE
-	std::default_random_engine eX(SDL_GetTicks() + tank->pixelPosition().x + position.y);
-	std::default_random_engine eY(SDL_GetTicks() + tank->pixelPosition().y + position.x);
+	std::default_random_engine eX(timer.SDLTimer() + tank->pixelPosition().x + position.y);
+	std::default_random_engine eY(timer.SDLTimer() + tank->pixelPosition().y + position.x);
 	std::uniform_int_distribution<> disX(0, MAP_SIZE - 2);
 	std::uniform_int_distribution<> disY(0, MAP_SIZE - 2);
-
+		
 	SDL_Point target;
 	do {
 		m_path.clear();
 		do {
 		//	std::srand(SDL_GetTicks() + tank->pixelPosition().x + position.y);
 			target.x = disX(eX);
-			std::srand(SDL_GetTicks() + tank->pixelPosition().y + position.x);
+			std::srand(timer.SDLTimer() + tank->pixelPosition().y + position.x);
 			target.y = std::rand() % (MAP_SIZE - 2);
 		} while (!collisionCheck(target));
 	} while (findWay(position, target));

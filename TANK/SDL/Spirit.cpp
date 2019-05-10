@@ -2,6 +2,7 @@
 #include "../Scene.h"
 #include "../Renderer.h"
 #include <SDL_timer.h>
+#include "../Director.h"
 
 Spirit::Spirit(Scene * scene, const std::string & animationName)
 	:Spirit()
@@ -51,7 +52,7 @@ void Spirit::setAnimation(const Animation & a)
 	m_renderSize.h = a.clipRect.h;
 
 	if(a.frameCount > 1)
-		m_animationFirstTime = SDL_GetTicks();
+		m_animationFirstTime = timer.current();
 }
 
 void Spirit::setAnimation(const std::string & name)
