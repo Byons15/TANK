@@ -50,10 +50,12 @@ CustomMap::~CustomMap()
 void CustomMap::open(void * data, int code)
 {
 	setState(true);
+	setEventHook(SDL_KEYDOWN);
 }
 
 void CustomMap::close()
 {
+	unsetEventHook(SDL_KEYDOWN);
 	setState(false);
 }
 
