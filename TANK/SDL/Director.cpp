@@ -141,12 +141,14 @@ int Director::exec()
 			{
 			case USER_EVENT:
 			{
-
 				//分发用户事件。
 				auto user = (SDL_UserEvent *)event.user.data1;
 				auto &range = m_userEventHook.equal_range(user->type);
-				for (auto iter = range.first; iter != range.second && iter != m_userEventHook.end(); ++iter)
-					iter->second->userEventHookProc(*user);
+				for (auto iter = range.first; iter != range.second;) {
+					auto i = iter;
+					++iter;
+					i->second->userEventHookProc(*user);
+				}
 
 				delete user;
 			}
@@ -182,8 +184,10 @@ int Director::exec()
 		{
 			//分发SDL事件。
 			auto &range = m_eventHook.equal_range(event.type);
-			for (auto iter = range.first; iter != range.second && iter != m_eventHook.end(); ++iter) {
-				iter->second->eventHookProc(event);
+			for (auto iter = range.first; iter != range.second;) {
+				auto i = iter;
+				++iter;
+				i->second->eventHookProc(event);
 			}
 
 			break;

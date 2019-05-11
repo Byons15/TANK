@@ -1,20 +1,20 @@
 #include "CustomMap.h"
 #include "../TANKS.h"
 #include "../FileLoader.h"
+#include <SDL_events.h>
+
 constexpr int BOX_A = 0x7FFFFF8F;
 constexpr int BOX_B = 0x7FFFFF88;
 
 CustomMap::CustomMap(Renderer * renderer, Ground *ground)
 	:Scene(renderer, {0, 0, MAP_SIZE * GRID_SIZE, MAP_SIZE * GRID_SIZE}), m_ground(ground), m_currentTerrainIndex(Maps::TAG_BASE)
 {
-	setBackdropColor({0, 0, 0, SDL_ALPHA_OPAQUE});
-	
 	std::vector<std::string> data;
 	if (fileLoad("P1control", &data) != 6)
 		throw std::runtime_error("‘ÿ»Î∞¥º¸≈‰÷√¥ÌŒÛ");
 	
 	SDL_Keycode keys[4], boxA, boxB;
-	for (size_t i = 0; i != 5; ++i) {
+	for (size_t i = 0; i != 6; ++i) {
 		auto code = SDL_GetKeyFromName(data[i].c_str());
 		if (code == SDLK_UNKNOWN)
 			throw std::runtime_error("‘ÿ»Î∞¥º¸¥ÌŒÛ");
@@ -57,6 +57,10 @@ void CustomMap::close()
 {
 	unsetEventHook(SDL_KEYDOWN);
 	setState(false);
+	
+	SDL_UserEvent user;
+	user.type = CLOSE;
+	
 }
 
 void CustomMap::eventHookProc(const SDL_Event & event)
@@ -77,14 +81,17 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 				m_currentTerrainIndex = Maps::TAG_BASE;
 			break;
 			case Mover::UP:
-				m_curosrPosition.y = (m_curosrPosition.y - 1 < 0) ? m_curosrPosition.y : m_curosrPosition.x - 1;
+				m_curosrPosition.y = (m_curosrPosition.y - 1 < 0) ? m_curosrPosition.y : m_curosrPosition.y - 1;
 				m_currentTerrainIndex = Maps::TAG_BASE;
 			break;
 			case Mover::DOWN:
-				m_curosrPosition.y = (m_curosrPosition.y + 1 > MAP_SIZE) ? m_curosrPosition.y : m_curosrPosition.x + 1;
+				m_curosrPosition.y = (m_curosrPosition.y + 1 > MAP_SIZE) ? m_curosrPosition.y : m_curosrPosition.y + 1;
 				m_currentTerrainIndex = Maps::TAG_BASE;
 				break;
 			case BOX_A:  //boxA
+
+				m_currentTerrainIndex = (m_currentTerrainIndex + 1 <= m_ground->maps().terrainTypeMember()) ?
+					m_currentTerrainIndex + 1 : Maps::TAG_BASE;
 				for (auto x = m_curosrPosition.x; x != m_curosrPosition.x + 2; ++x) {
 					for (auto y = m_curosrPosition.y; y != m_curosrPosition.y + 2; ++y) {
 						if(m_currentTerrainIndex == Maps::TAG_BASE)
@@ -93,8 +100,8 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 							m_ground->maps().setTerrain(x, y, m_currentTerrainIndex);
 					}
 				}
-				m_currentTerrainIndex = (m_currentTerrainIndex + 1 >= m_ground->maps().terrainTypeMember() - 1) ? 
-													Maps::TAG_BASE : m_currentTerrainIndex + 1;
+				
+
 				break;
 			case BOX_B:
 				close();
@@ -119,19 +126,6 @@ void CustomMap::update(Uint32 time)
 
 int CustomMap::render()
 {
-	auto & maps = m_ground->maps();
-
-	bool baseRended = false;
-	for (int x = 0; x != MAP_SIZE; ++x) {
-		for (int y = 0; y != MAP_SIZE; ++y) {
-			if (maps(x, y) == Maps::TAG_BASE && baseRended) {
-				continue;
-			}
-			maps.terrainData(maps(x, y)).spirit.renderFrame({ x * GRID_SIZE, y * GRID_SIZE });
-			if(maps(x, y) == Maps::TAG_BASE)
-				baseRended = true;
-		}
-	}
-
-	m_curosr.renderFrame(m_curosrPosition);
+	m_curosr.renderFrame({m_curosrPosition.x * GRID_SIZE, m_curosrPosition.y * GRID_SIZE});
+	return 0;
 }

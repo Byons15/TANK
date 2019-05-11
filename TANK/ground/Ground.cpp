@@ -105,7 +105,6 @@ void Ground::destoryTank(Tank * tank)
 void Ground::destoryBase()
 {
 	//TODO::
-	//foreachRect(2, 2, [this](int x, int y) -> void { m_maps.setTerrain(m_maps.basePosition().x + x, m_maps.basePosition().y + y); });
 	m_maps.destoryBase();
 	//TODO::
 	//close();
@@ -242,7 +241,6 @@ void Ground::update(Uint32 time)
 
 int Ground::render()
 {
-
 	//渲染位于坦克下方的地形并挑拣出位于坦克上方的地形
 	std::list<SDL_Point> lastRender;
 	bool baseRender = false;

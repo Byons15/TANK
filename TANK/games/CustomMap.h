@@ -9,6 +9,8 @@ class CustomMap :
 	public EventInterface
 {
 public:
+	static constexpr int CLOSE = 0x53243;
+
 	CustomMap(Renderer *renderer, Ground *ground);
 	virtual ~CustomMap();
 	

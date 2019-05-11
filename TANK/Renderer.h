@@ -1,6 +1,6 @@
 #pragma once
 #include "Event.h"
-#include <set>
+#include <list>
 #include "SDL\AnimationFactory.h"
 
 struct SDL_Window;
@@ -45,7 +45,7 @@ private:
 	virtual void eventHookProc(const SDL_Event & event) override;
 	void render();
 
-	std::set<Scene *> m_renderQueue;
+	std::list<Scene *> m_renderQueue;
 	SDL_Window *m_window;
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;

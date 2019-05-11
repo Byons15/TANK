@@ -149,6 +149,10 @@ void StartMenu::eventHookProc(const SDL_Event & event)
 
 void StartMenu::close()
 {
+	unsetEventHook(SDL_KEYDOWN);
+	unsetEventHook(SDL_MOUSEMOTION);
+	unsetEventHook(SDL_MOUSEBUTTONUP);
+
 	setState(false);
 
 	SDL_UserEvent user;

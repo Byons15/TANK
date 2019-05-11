@@ -47,7 +47,7 @@ Renderer::Renderer()
 
 void Renderer::addScene(Scene * s)
 {
-	m_renderQueue.insert(s);
+	m_renderQueue.push_back(s);
 }
 																																				     
 void Renderer::renderTexture(SDL_Texture * texture, const SDL_Rect & destRect, const SDL_Rect & srcRect, Uint32 angle, Uint8 alpha, int flip)
@@ -109,6 +109,8 @@ void Renderer::render()
 {
 	auto time = timer.current();
 	
+	SDL_RenderClear(m_renderer);
+
 	for (auto &s : m_renderQueue) {
 		if (s->state()) {
 
