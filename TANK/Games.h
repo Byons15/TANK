@@ -7,6 +7,7 @@
 #include "games\Player.h"
 #include "StateMenu.h"
 #include "games/CustomMap.h"
+#include "AI.h"
 
 class Games :
 	public Director,
@@ -26,8 +27,8 @@ private:
 	StartMenu m_startMenu;
 	StateMenu m_stateMenu;
 	Ground m_ground;
-	Player m_P1commander, m_P2commander;
 	Tank *m_P1, *m_P2;
 	CustomMap m_customMap;
+	int m_playerNumber, m_gameModel;
 };
 

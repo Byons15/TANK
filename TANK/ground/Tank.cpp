@@ -6,7 +6,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
-	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -24,6 +24,8 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 
 Tank::~Tank()
 {
+	if (m_commander)
+		delete m_commander;
 }
 
 int Tank::setGroundPosition(const SDL_Point & pos)
