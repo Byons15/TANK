@@ -118,9 +118,6 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 
 void CustomMap::update(Uint32 time)
 {
-	for (auto i = 0; i != m_ground->maps().terrainTypeMember(); ++i) {
-		m_ground->maps().terrainData(i).spirit.updateFrames(time);
-	}
 	m_curosr.updateFrames(time);
 }
 

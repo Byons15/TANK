@@ -50,6 +50,6 @@ private:
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
 	SIZE m_windowOriginalSize;
-	float m_windowWidthScale, m_windowHeightScale;
+	float m_windowWidthScale, m_windowHeightScale, m_windowWHScale;
 };
 

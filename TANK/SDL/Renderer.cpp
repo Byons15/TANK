@@ -24,6 +24,7 @@ Renderer::Renderer(SDL_Window * window, bool VSync)
 
 	//获取窗口并hook窗口大小更改事件，使最终的渲染画面适应窗口。
 	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
+	m_windowWHScale = (float)m_windowOriginalSize.h / (float)m_windowOriginalSize.w;
 	m_windowWidthScale = m_windowHeightScale = 1;
 
 	setEventHook(SDL_WINDOWEVENT);
@@ -95,9 +96,15 @@ void Renderer::eventHookProc(const SDL_Event & event)
 	{
 	case SDL_WINDOWEVENT:
 		//处理窗口大小更改事件以更改比例。
+		if (event.window.event == SDL_WINDOWEVENT_RESIZED && event.window.windowID == SDL_GetWindowID(m_window)) {
+			m_windowHeightScale = (float)event.window.data2 / (float)m_windowOriginalSize.h;
+			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
+			SDL_SetWindowSize(m_window, (int)((float)(event.window.data2 / m_windowWHScale)), (int)((float)(event.window.data2)));
+		}
 		if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED && event.window.windowID == SDL_GetWindowID(m_window)) {
 			m_windowHeightScale = (float)event.window.data2 / (float)m_windowOriginalSize.h;
 			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
+	//		SDL_SetWindowSize(m_window, (int)((float)(event.window.data2 / m_windowWHScale)), (int)((float)(event.window.data2)));
 		}
 		break;
 	default:
