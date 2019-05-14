@@ -49,7 +49,7 @@ private:
 	SDL_Window *m_window;
 	SDL_Renderer *m_renderer;
 	AnimationFactory m_animationFactory;
-	SIZE m_windowOriginalSize;
+	SIZE m_windowOriginalSize, m_windowSize;
 	float m_windowWidthScale, m_windowHeightScale, m_windowWHScale;
 };
 

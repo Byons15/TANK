@@ -26,6 +26,7 @@ Renderer::Renderer(SDL_Window * window, bool VSync)
 	SDL_GetWindowSize(window, (int *)&m_windowOriginalSize.w, (int *)&m_windowOriginalSize.h);
 	m_windowWHScale = (float)m_windowOriginalSize.h / (float)m_windowOriginalSize.w;
 	m_windowWidthScale = m_windowHeightScale = 1;
+	m_windowSize = m_windowOriginalSize;
 
 	setEventHook(SDL_WINDOWEVENT);
 
@@ -99,12 +100,19 @@ void Renderer::eventHookProc(const SDL_Event & event)
 		if (event.window.event == SDL_WINDOWEVENT_RESIZED && event.window.windowID == SDL_GetWindowID(m_window)) {
 			m_windowHeightScale = (float)event.window.data2 / (float)m_windowOriginalSize.h;
 			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
-			SDL_SetWindowSize(m_window, (int)((float)(event.window.data2 / m_windowWHScale)), (int)((float)(event.window.data2)));
+			if (m_windowSize.w != (int)event.window.data1 && m_windowSize.h == (int)event.window.data2) {
+				SDL_SetWindowSize(m_window, (int)event.window.data1, (int)((float)(event.window.data1) * m_windowWHScale));
+			}
+			else {
+				SDL_SetWindowSize(m_window, (int)((float)(event.window.data2 / m_windowWHScale)), (int)(event.window.data2));
+			}
+
+			m_windowSize.w = (int)event.window.data1;
+			m_windowSize.h = (int)event.window.data2;
 		}
 		if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED && event.window.windowID == SDL_GetWindowID(m_window)) {
 			m_windowHeightScale = (float)event.window.data2 / (float)m_windowOriginalSize.h;
 			m_windowWidthScale = (float)event.window.data1 / (float)m_windowOriginalSize.w;
-	//		SDL_SetWindowSize(m_window, (int)((float)(event.window.data2 / m_windowWHScale)), (int)((float)(event.window.data2)));
 		}
 		break;
 	default:
