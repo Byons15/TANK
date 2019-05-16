@@ -28,7 +28,7 @@ private:
 	{
 		std::vector<Animation> form;
 		Animation rewardForm, invincibleForm;
-		int maxHP;
+		int maxHP, killScore;
 		float speeds;
 	};
 

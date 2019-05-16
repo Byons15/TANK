@@ -7,6 +7,7 @@
 #include "TankFactory.h"
 #include <functional>
 #include "Missile.h"
+#include "Tank.h"
 
 class Tank;
 
@@ -25,6 +26,7 @@ public:
 	enum EVENT
 	{
 		DESTORYTANK = 0x999,
+		ATTACKTANK,
 	};
 
 	Ground(Renderer *renderer);
@@ -45,7 +47,7 @@ public:
 	}
 	
 	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
-	Tank* addTank(int tankModel, CAMP camp, int bindIndex);
+	Tank* addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex);
 
 	void addMissile(Missile *m);
 

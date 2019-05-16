@@ -1,10 +1,11 @@
 #pragma once
 #include "..\Spirit.h"
 #include "TankFactory.h"
-#include "Ground.h"
 #include "Mover.h"
+#include "../TANKS.h"
 
 class Commander;
+class Ground;
 
 class Tank :
 	public Spirit
@@ -14,6 +15,18 @@ public:
 	enum EVENT
 	{
 		BONUSCHEST = 0x300,
+	};
+
+	enum MODEL
+	{
+		P1,
+		P2,
+		AGILITY,
+		ARMOURED1,
+		ARMOURED2,
+		ARMOURED3,
+		ORDINARY1,
+		ORDINARY2,
 	};
 	
 	int HP() const {
@@ -43,7 +56,7 @@ public:
 	bool moveState() const {
 		return m_mover.state();
 	}
-	int model() const {
+	MODEL model() const {
 		return m_model;
 	}
 	Ground *ground() {
@@ -59,7 +72,7 @@ public:
 	int invincible();
 
 private: friend class Ground;
-	Tank(Ground * ground, int &model, const SDL_Point &position);
+	Tank(Ground * ground, MODEL &model, const SDL_Point &position);
 	~Tank();
 	int beHit(Tank *aggressor, int power);
 	static void setFactory(TankFactory *factory);
@@ -75,7 +88,8 @@ private:
 	Mover m_mover;
 	SDL_Point m_position;
 	SDL_Rect m_lastRect;
-	int m_HP, m_rewarde, m_model, m_power;
+	MODEL m_model;
+	int m_HP, m_rewarde, m_power, m_killScore;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;

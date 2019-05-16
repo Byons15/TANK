@@ -31,7 +31,7 @@ void Ground::close()
 	setState(false);
 }
 
-Tank* Ground::addTank(int tankModel, CAMP camp, int bindIndex)
+Tank* Ground::addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex)
 {
 
 	//取得复活点的位置。
@@ -69,6 +69,12 @@ void Ground::addMissile(Missile * m)
 int Ground::attackTank(Tank * tank, int power)
 {
 	auto result = tank->beHit(tank, power);
+
+	SDL_UserEvent user;
+	user.type = ATTACKTANK;
+	user.code = m_tanks[tank];
+	user.data1 = reinterpret_cast<void *> (tank->model());
+	userEventTrigger(user);
 	if (!result)
 		destoryTank(tank);
 
@@ -97,6 +103,7 @@ void Ground::destoryTank(Tank * tank)
 	user.type = DESTORYTANK;
 	user.code = m_tanks[tank];
 	user.data1 = reinterpret_cast<void *>(tank->model());
+	userEventTrigger(user);
 
 	m_tanks.erase(tank);
 	delete tank;

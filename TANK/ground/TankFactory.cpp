@@ -15,7 +15,7 @@ TankFactory::TankFactory(Renderer *renderer)
 		auto &dat = m_pool[name];
 		m_modelIndex.push_back(name);
 
-		is >> dat.speeds >> dat.maxHP;
+		is >> dat.speeds >> dat.killScore >> dat.maxHP;
 
 		std::string str;
 		for (int i = 0; i != dat.maxHP; ++i) {

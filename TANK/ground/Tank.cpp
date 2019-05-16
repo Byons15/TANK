@@ -2,10 +2,11 @@
 #include "../Scene.h"
 #include "../TANKS.h"
 #include "../Director.h"
+#include "Ground.h"
 
 TankFactory *Tank::sm_factory = 0;
 
-Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
+Tank::Tank(Ground * ground, MODEL &model, const SDL_Point &position)
 	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0)
 {
 	//从工厂查找并构造参数。
@@ -13,6 +14,7 @@ Tank::Tank(Ground * ground, int &model, const SDL_Point &position)
 	m_form = dat.form;
 	m_rewardsForm = dat.rewardForm;
 	m_invincibleForm = dat.invincibleForm;
+	m_killScore = dat.killScore;
 	m_HP = dat.maxHP;
 	m_defaultSpeeds = m_speeds = dat.speeds;
 
