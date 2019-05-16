@@ -53,10 +53,10 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 
 			//²¼ÖÃÕ½³¡¡£
 			m_ground.maps().createMaps(1);
-			m_P1 = m_ground.addTank(0, Ground::ALLISE, 0);
+			m_P1 = m_ground.addTank(Tank::P1, Ground::ALLISE, 0);
 			m_P1->setCommander(new Player(Player::P1));
 			if (m_playerNumber == 2) {
-				m_P2 = m_ground.addTank(1, Ground::ALLISE, 1);
+				m_P2 = m_ground.addTank(Tank::P2, Ground::ALLISE, 1);
 				m_P2->setCommander(new Player(Player::P2));
 				m_stateMenu.setPlayerLife(Player::P2, 4);
 			}
