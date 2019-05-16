@@ -25,8 +25,10 @@ public:
 
 	enum EVENT
 	{
+		//坦克被销毁，这个事件一定是跟着Tank::ATTACKTANK事件的。
+		//code：被摧毁的坦克的阵营。
+		//data1：被摧毁的坦克型号。
 		DESTORYTANK = 0x999,
-		ATTACKTANK,
 	};
 
 	Ground(Renderer *renderer);

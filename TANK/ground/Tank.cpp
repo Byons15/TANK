@@ -191,10 +191,20 @@ int Tank::beHit(Tank *aggressor, int power)
 	else {
 		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
 		setAnimation(m_form[m_HP ? m_HP - 1 : 0]);
+		SDL_UserEvent user;
+		user.type = ATTACKTANK;
+		user.data1 = reinterpret_cast<void *> (aggressor);
+		user.data2 = reinterpret_cast<void *> (this);
 	}
 
-	if (!m_HP)
+	if (!m_HP) {
 		aggressor->m_score += m_killScore;
+		SDL_UserEvent user;
+		user.type = KILLEDTANK;
+		user.code = m_killScore;
+		user.data1 = reinterpret_cast<void *> (aggressor);
+		director->userEventTrigger(user);
+	}
 
 	return m_HP;
 }

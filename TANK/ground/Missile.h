@@ -15,7 +15,18 @@ public:
 
 	enum EVENT
 	{
+		//跑弹开始爆炸。
+		//code：被炸目标 见：TARGET
+		//data1：炮弹。
+		//data2：发射炮弹的tank。
+		//timestamp：发生的时间戳。
 		BEGIN_BOOM = 0x91222,
+
+		//炮弹结束爆炸
+		//code：被炸目标 见：TARGET
+		//data1：炮弹。
+		//data2：发射炮弹的tank。
+		//timestamp：发生的时间戳。
 		END_BOOM,
 	};
 

@@ -14,7 +14,21 @@ public:
 	static constexpr int colSize = GRID_SIZE * 2 - 1;
 	enum EVENT
 	{
+		//奖励箱触发。
+		//code：奖品
+		//data1：攻击者
+		//data2：被攻击者，携带奖励箱的tank
 		BONUSCHEST = 0x300,
+
+		//击杀tank
+		//code：分数。
+		//data1：攻击者。
+		KILLEDTANK,
+
+		//坦克被击中（不一定摧毁了）。
+		//data1：攻击者
+		//data2：被攻击者（使用这个指针前请确保坦克还没有被销毁）
+		ATTACKTANK,
 	};
 
 	enum MODEL
@@ -61,6 +75,10 @@ public:
 	}
 	Ground *ground() {
 		return m_ground;
+	}
+
+	int killScore() {
+		return m_killScore;
 	}
 
 	//设置奖励箱

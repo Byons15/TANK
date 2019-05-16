@@ -70,11 +70,6 @@ int Ground::attackTank(Tank * aggressor, Tank * tank, int power)
 {
 	auto result = tank->beHit(aggressor, power);
 
-	SDL_UserEvent user;
-	user.type = ATTACKTANK;
-	user.code = m_tanks[tank];
-	user.data1 = reinterpret_cast<void *> (tank->model());
-	userEventTrigger(user);
 	if (!result) 
 		destoryTank(tank);
 
