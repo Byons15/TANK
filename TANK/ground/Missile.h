@@ -34,6 +34,10 @@ public:
 		return m_position;
 	}
 
+	Tank *sender() {
+		return m_sender;
+	}
+
 private: friend class Tank;
 		 friend class Ground;
 	Missile(Ground *ground, Tank *sender, int power);

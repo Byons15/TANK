@@ -7,7 +7,7 @@
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, MODEL &model, const SDL_Point &position)
-	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0), m_score(0)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -192,6 +192,10 @@ int Tank::beHit(Tank *aggressor, int power)
 		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
 		setAnimation(m_form[m_HP ? m_HP - 1 : 0]);
 	}
+
+	if (!m_HP)
+		aggressor->m_score += m_killScore;
+
 	return m_HP;
 }
 

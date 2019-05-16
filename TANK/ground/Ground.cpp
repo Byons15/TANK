@@ -66,16 +66,16 @@ void Ground::addMissile(Missile * m)
 	m->setDestoryIterator(--m_missiles.end());
 }
 
-int Ground::attackTank(Tank * tank, int power)
+int Ground::attackTank(Tank * aggressor, Tank * tank, int power)
 {
-	auto result = tank->beHit(tank, power);
+	auto result = tank->beHit(aggressor, power);
 
 	SDL_UserEvent user;
 	user.type = ATTACKTANK;
 	user.code = m_tanks[tank];
 	user.data1 = reinterpret_cast<void *> (tank->model());
 	userEventTrigger(user);
-	if (!result)
+	if (!result) 
 		destoryTank(tank);
 
 	return result;
@@ -203,7 +203,7 @@ int Ground::MissilepositionUpdate(Missile * m)
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
 				auto d = iter;
 				++iter;
-				attackTank(d->first, m->power());
+				attackTank(m->sender(), d->first, m->power());
 				result = -2;
 				continue;
 			}

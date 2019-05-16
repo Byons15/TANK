@@ -68,7 +68,20 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 	}
 		break;
 	case CustomMap::CLOSE:
-		
+		//设置状态栏
+		m_stateMenu.setEnemyCount(17);
+		m_stateMenu.setLevel(1);
+		m_stateMenu.setPlayerLife(Player::P1, 4);
+
+		//布置战场。
+		m_ground.maps().createMaps(1);
+		m_P1 = m_ground.addTank(Tank::P1, Ground::ALLISE, 0);
+		m_P1->setCommander(new Player(Player::P1));
+		if (m_playerNumber == 2) {
+			m_P2 = m_ground.addTank(Tank::P2, Ground::ALLISE, 1);
+			m_P2->setCommander(new Player(Player::P2));
+			m_stateMenu.setPlayerLife(Player::P2, 4);
+		}
 		break;
 	default:
 		break;

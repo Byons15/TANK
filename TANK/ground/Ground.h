@@ -53,7 +53,7 @@ public:
 
 	//攻击坦克。
 	//坦克已摧毁返回0， 坦克已受伤返回1， 坦克处在无敌状态返回-1
-	int attackTank(Tank *tank, int power);
+	int attackTank(Tank * aggressor, Tank *tank, int power);
 
 	int attackTerrain(const SDL_Point &pos, int power);
 

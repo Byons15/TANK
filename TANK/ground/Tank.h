@@ -89,7 +89,7 @@ private:
 	SDL_Point m_position;
 	SDL_Rect m_lastRect;
 	MODEL m_model;
-	int m_HP, m_rewarde, m_power, m_killScore;
+	int m_HP, m_rewarde, m_power, m_killScore, m_score;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;
