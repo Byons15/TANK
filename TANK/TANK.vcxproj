@@ -173,6 +173,7 @@
     <ClCompile Include="ground\Mover.cpp" />
     <ClCompile Include="ground\Tank.cpp" />
     <ClCompile Include="ground\TankFactory.cpp" />
+    <ClCompile Include="menus\ResultView.cpp" />
     <ClCompile Include="menus\StartMenu.cpp" />
     <ClCompile Include="menus\StateMenu.cpp" />
     <ClCompile Include="SDL\EventInterface.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="ground\Tank.h" />
     <ClInclude Include="ground\TankFactory.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="ResultView.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SDL\AnimationFactory.h" />
     <ClInclude Include="Spirit.h" />
