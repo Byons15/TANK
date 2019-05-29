@@ -8,6 +8,7 @@
 #include "StateMenu.h"
 #include "games/CustomMap.h"
 #include "AI.h"
+#include "ResultView.h"
 
 class Games :
 	public Director,
@@ -29,6 +30,7 @@ private:
 	Ground m_ground;
 	Tank *m_P1, *m_P2;
 	CustomMap m_customMap;
+	ResultView m_resultView;
 	int m_playerNumber, m_gameModel;
 };
 

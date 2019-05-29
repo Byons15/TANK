@@ -17,10 +17,13 @@ Games::Games()
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)),
 	m_renderer(m_window, true), m_startMenu(&m_renderer), m_ground(&m_renderer),
-	m_stateMenu(&m_renderer), m_customMap(&m_renderer, &m_ground)
+	m_stateMenu(&m_renderer), m_customMap(&m_renderer, &m_ground), m_resultView(&m_renderer)
 {
 	EventInterface::setUserEventHook(StartMenu::CLOSE);
-	m_startMenu.open(0, 0);
+	//m_startMenu.open(0, 0);
+
+	ResultView::RESULT r;
+	m_resultView.open(reinterpret_cast<void *>(&r), 1);
 }
 
 

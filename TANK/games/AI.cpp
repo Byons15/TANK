@@ -1,6 +1,7 @@
 #include "AI.h"
 #include <random>
 #include "../Director.h"
+#include "../ground/Ground.h"
 
 AI *colMapsUpdater = nullptr;
 std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> AI::sm_visiteSign;

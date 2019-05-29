@@ -5,7 +5,7 @@
 #include <sstream>
 
 ResultView::ResultView(Renderer * renderer)
-	:Scene(renderer, { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT })
+	:Scene(renderer, { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT }), m_resetView(false)
 {
 
 	setBackdropColor({ 0, 0, 9, 255 });
@@ -110,6 +110,28 @@ void ResultView::open(void * data, int code)
 	setEventHook(SDL_KEYDOWN);
 	setEventHook(SDL_MOUSEMOTION);
 	setState(true);
+	
+	auto r = reinterpret_cast<RESULT *>(data);
+	if (!r)
+		return;
+
+	m_result[0] = *r;
+	for (auto i = 0; i != 4; ++i) {
+		m_result[0].killCount += r->lists[i][0];
+		m_result[0].total += r->lists[i][1];
+	}
+
+	if (code == 2) {
+		m_result[1] = *(++r);
+		for (auto i = 0; i != 4; ++i) {
+			m_result[0].killCount += r->lists[i][0];
+			m_result[0].total += r->lists[i][1];
+		}
+	}
+	else {
+		m_result[1] = RESULT{};
+	}
+	m_resetView = true;
 }
 
 void ResultView::close()
@@ -146,6 +168,43 @@ int ResultView::render()
 
 void ResultView::update(Uint32 time)
 {
+	if (m_resetView) {
+		m_currentList.fill(RESULT{});
+		m_resetView = false;
+		m_lastUpdateTime = 0;
+	}
+
+	if (time - m_lastUpdateTime >= updateInterval) {
+		m_lastUpdateTime = time;
+	}
+	else {
+		return;
+	}
+
+	for (size_t c = 0; c != 2; ++c) {
+		if (m_currentList[c].killCount < m_result[c].killCount) {
+			for (size_t i = 0; i != 4; ++i) {
+				++m_currentList[c].lists[i][0];
+				m_currentList[c].lists[i][1] += m_result[c].lists[i][1] / m_result[c].lists[i][0];
+				++m_currentList[c].killCount;
+				m_currentList[c].total += m_result[c].lists[i][1] / m_result[c].lists[i][0];
+			}
+		}
+	}
+
+	//更新列表
+	for (auto c = 0; c != 2; ++c) {
+		for (auto i = 0; i != 4; ++i) {
+			m_lists[c][i].killCountBox.setString(L"× " + std::to_wstring(m_currentList[c].lists[i][0]));
+			m_lists[c][i].scoreBox.setString(L"= " + std::to_wstring(m_currentList[c].lists[i][1]));
+		}
+	}
+
+	//更新统计表
+	m_countBox[0].numberBox.setString(std::to_wstring(m_currentList[0].killCount));
+	m_countBox[1].numberBox.setString(std::to_wstring(m_currentList[0].total));
+	m_countBox[2].numberBox.setString(std::to_wstring(m_currentList[1].killCount));
+	m_countBox[3].numberBox.setString(std::to_wstring(m_currentList[1].total));
 }
 
 void ResultView::eventHookProc(const SDL_Event & event)

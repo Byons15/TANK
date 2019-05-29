@@ -1,6 +1,8 @@
 #pragma once
 #include "..\ground\Tank.h"
 #include "../Event.h"
+#include <array>
+
 class AI :
 	public Commander
 {
