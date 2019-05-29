@@ -59,6 +59,8 @@ void Spirit::setAnimation(const Animation & a)
 
 	if(a.frameCount > 1)
 		m_animationFirstTime = timer.current();
+
+	updateFrames(Timer::current());
 }
 
 void Spirit::setAnimation(const std::string & name)

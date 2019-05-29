@@ -34,7 +34,7 @@ Keypad .
 
 <resultViewLayout>
   200 67 795 67
-  561 40 103 188 ordinary1 oridnary2 agility armoured3
+  561 40 103 188 ordinary1 ordinary2 agility armoured3
   194 202 385 207
   167 120 804 735 729 735 682 804
   574 957 622 952 962 957 1010 952
@@ -84,7 +84,7 @@ Keypad .
   armoured2 0.2 400 2 armoured2 armoured1 DEFAULT DEFAULT
   armoured3 0.2 400 3 armoured3 armoured2 armoured1 DEFAULT DEFAULT
   ordinary1 0.2 100 1 ordinary1 DEFAULT DEFAULT
-  ordinary2 0.2 200 ordinary2 DEFAULT DEFAULT
+  ordinary2 0.2 200 1 ordinary2 DEFAULT DEFAULT
 <end>
 
 <terrain>

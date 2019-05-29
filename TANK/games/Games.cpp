@@ -23,6 +23,14 @@ Games::Games()
 	//m_startMenu.open(0, 0);
 
 	ResultView::RESULT r;
+	r.lists[0][0] = 5;
+	r.lists[0][1] = 500;
+	r.lists[1][0] = 3;
+	r.lists[1][1] = 300;
+	r.lists[2][0] = 2;
+	r.lists[2][1] = 600;
+	r.lists[3][0] = 3;
+	r.lists[3][1] = 900;
 	m_resultView.open(reinterpret_cast<void *>(&r), 1);
 }
 

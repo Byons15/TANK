@@ -33,19 +33,23 @@ ResultView::ResultView(Renderer * renderer)
 	//准备列表。
 	SDL_Point layoutOffset, modelIconPos, killCountPos, scorePos;
 	stream[1] >> layoutOffset.x >> layoutOffset.y >> modelIconPos.x >> modelIconPos.y;
+	std::array<std::string, 4> iconName;
+	int ij = 0;
+	std::string word;
+	while (stream[1] >> word)
+		iconName[ij++] = word;
+
 	stream[2] >> killCountPos.x >> killCountPos.y >> scorePos.x >> scorePos.y;
 	for (auto i = 0; i != m_lists.size(); ++i) {
 		for (auto j = 0; j != m_lists[i].size(); ++j) {
-			std::string iconName;
-			stream[1] >> iconName;
-			auto a = renderer->animationFactory().findAnimation(iconName);
+			auto a = renderer->animationFactory().findAnimation(iconName[j]);
 			a.frameCount = 1;
 
 			m_lists[i][j].icon.setScene(this);
 			m_lists[i][j].killCountBox.setScene(this);
 			m_lists[i][j].scoreBox.setScene(this);
 			m_lists[i][j].icon.setAnimation(a);
-			m_lists[i][j].iconPosition = modelIconPos;
+			m_lists[i][j].icon.setRenderSize({ 30, 30 });
 			m_lists[i][j].killCountBox.setTextRenderFlags(Text::biend);
 			m_lists[i][j].killCountBox.setFontSize(dataFontSize);
 			m_lists[i][j].killCountBox.setFontColor(color);
@@ -54,6 +58,7 @@ ResultView::ResultView(Renderer * renderer)
 			m_lists[i][j].scoreBox.setFontSize(30);
 			m_lists[i][j].scoreBox.setFontColor(color);
 			m_lists[i][j].scoreBox.setString(L"= " + std::to_wstring(m_lists[i][j].score));
+			m_lists[i][j].iconPosition = { modelIconPos.x + i * layoutOffset.x, modelIconPos.y + j * layoutOffset.y };
 			m_lists[i][j].killCountPosition = { killCountPos.x, killCountPos.y + (i * layoutOffset.y) };
 			m_lists[i][j].scorePosition = { scorePos.x + (i * layoutOffset.x), scorePos.y + (j * layoutOffset.y) };
 		}
@@ -84,6 +89,7 @@ ResultView::ResultView(Renderer * renderer)
 	m_next.text.setScene(this);
 	m_cursor.setAnimation("P1");
 	m_cursor.setAngle(90);
+	m_cursor.setRenderSize({ 30, 30 });
 	stream[4] >> m_home.cursorPosition.x >> m_home.cursorPosition.y >> m_home.position.x >> m_home.position.y
 		>> m_next.cursorPosition.x >> m_next.cursorPosition.y >> m_next.position.x >> m_next.position.y;
 	m_home.text.setTextRenderFlags(Text::biend);
