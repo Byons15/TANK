@@ -176,6 +176,7 @@ int ResultView::render()
 
 void ResultView::update(Uint32 time)
 {
+	return;
 	if (m_resetView) {
 		m_currentList.fill(RESULT{});
 		m_resetView = false;
