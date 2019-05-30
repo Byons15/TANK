@@ -21,9 +21,10 @@ Text::Text(Scene * scene, const std::wstring & text, RenderFlags rendering)
 int Text::setString(const std::wstring & text)
 {
 	//²ÎÊý¼ì²é¡£
-	if (m_texture.texture)
+	if (m_texture.texture) {
 		SDL_DestroyTexture(m_texture.texture);
-
+		m_texture.texture = nullptr;
+	}
 	if (text.empty())
 		return 0;
 

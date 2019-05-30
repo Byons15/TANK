@@ -20,7 +20,7 @@ ResultView::ResultView(Renderer * renderer)
 	//准备标题。
 	stream[0] >> m_title1Position.x >> m_title1Position.y >> m_title2Position.x >> m_title2Position.y;
 	m_title1.setScene(this);
-	m_title1.setScene(this);
+	m_title2.setScene(this);
 	m_title1.setTextRenderFlags(Text::biend);
 	m_title2.setTextRenderFlags(Text::biend);
 	m_title1.setFontColor(title1Color);
@@ -49,20 +49,21 @@ ResultView::ResultView(Renderer * renderer)
 			m_lists[i][j].killCountBox.setScene(this);
 			m_lists[i][j].scoreBox.setScene(this);
 			m_lists[i][j].icon.setAnimation(a);
-			m_lists[i][j].icon.setRenderSize({ 30, 30 });
+			m_lists[i][j].icon.setRenderSize({ 60, 60 });
 			m_lists[i][j].killCountBox.setTextRenderFlags(Text::biend);
 			m_lists[i][j].killCountBox.setFontSize(dataFontSize);
 			m_lists[i][j].killCountBox.setFontColor(color);
 			m_lists[i][j].killCountBox.setString(L"× " + std::to_wstring(m_lists[i][j].killCount));
 			m_lists[i][j].scoreBox.setTextRenderFlags(Text::biend);
-			m_lists[i][j].scoreBox.setFontSize(30);
+			m_lists[i][j].scoreBox.setFontSize(dataFontSize);
 			m_lists[i][j].scoreBox.setFontColor(color);
 			m_lists[i][j].scoreBox.setString(L"= " + std::to_wstring(m_lists[i][j].score));
 			m_lists[i][j].iconPosition = { modelIconPos.x + i * layoutOffset.x, modelIconPos.y + j * layoutOffset.y };
-			m_lists[i][j].killCountPosition = { killCountPos.x, killCountPos.y + (i * layoutOffset.y) };
+			m_lists[i][j].killCountPosition = { killCountPos.x + i * layoutOffset.x, killCountPos.y + (j * layoutOffset.y) };
 			m_lists[i][j].scorePosition = { scorePos.x + (i * layoutOffset.x), scorePos.y + (j * layoutOffset.y) };
 		}
 	}
+
 
 	//准备统计框。
 	for (auto &c : m_countBox) {
@@ -89,7 +90,7 @@ ResultView::ResultView(Renderer * renderer)
 	m_next.text.setScene(this);
 	m_cursor.setAnimation("P1");
 	m_cursor.setAngle(90);
-	m_cursor.setRenderSize({ 30, 30 });
+	m_cursor.setRenderSize({ 40, 40 });
 	stream[4] >> m_home.cursorPosition.x >> m_home.cursorPosition.y >> m_home.position.x >> m_home.position.y
 		>> m_next.cursorPosition.x >> m_next.cursorPosition.y >> m_next.position.x >> m_next.position.y;
 	m_home.text.setTextRenderFlags(Text::biend);
@@ -162,6 +163,7 @@ int ResultView::render()
 
 	m_home.text.renderFrame(m_home.position);
 	m_next.text.renderFrame(m_next.position);
+
 	m_cursor.renderFrame((!m_select) ? m_home.cursorPosition : m_next.cursorPosition);
 
 	for (auto c : m_countBox) {
@@ -182,35 +184,32 @@ void ResultView::update(Uint32 time)
 
 	if (time - m_lastUpdateTime >= updateInterval) {
 		m_lastUpdateTime = time;
-	}
-	else {
-		return;
-	}
 
-	for (size_t c = 0; c != 2; ++c) {
-		if (m_currentList[c].killCount < m_result[c].killCount) {
-			for (size_t i = 0; i != 4; ++i) {
-				++m_currentList[c].lists[i][0];
-				m_currentList[c].lists[i][1] += m_result[c].lists[i][1] / m_result[c].lists[i][0];
-				++m_currentList[c].killCount;
-				m_currentList[c].total += m_result[c].lists[i][1] / m_result[c].lists[i][0];
+		for (size_t c = 0; c != 2; ++c) {
+			if (m_currentList[c].killCount < m_result[c].killCount) {
+				for (size_t i = 0; i != 4; ++i) {
+					++m_currentList[c].lists[i][0];
+					m_currentList[c].lists[i][1] += m_result[c].lists[i][1] / m_result[c].lists[i][0];
+					++m_currentList[c].killCount;
+					m_currentList[c].total += m_result[c].lists[i][1] / m_result[c].lists[i][0];
+				}
 			}
 		}
-	}
 
-	//更新列表
-	for (auto c = 0; c != 2; ++c) {
-		for (auto i = 0; i != 4; ++i) {
-			m_lists[c][i].killCountBox.setString(L"× " + std::to_wstring(m_currentList[c].lists[i][0]));
-			m_lists[c][i].scoreBox.setString(L"= " + std::to_wstring(m_currentList[c].lists[i][1]));
+		//更新列表
+		for (auto c = 0; c != 2; ++c) {
+			for (auto i = 0; i != 4; ++i) {
+				m_lists[c][i].killCountBox.setString(L"× " + std::to_wstring(m_currentList[c].lists[i][0]));
+				m_lists[c][i].scoreBox.setString(L"= " + std::to_wstring(m_currentList[c].lists[i][1]));
+			}
 		}
-	}
 
-	//更新统计表
-	m_countBox[0].numberBox.setString(std::to_wstring(m_currentList[0].killCount));
-	m_countBox[1].numberBox.setString(std::to_wstring(m_currentList[0].total));
-	m_countBox[2].numberBox.setString(std::to_wstring(m_currentList[1].killCount));
-	m_countBox[3].numberBox.setString(std::to_wstring(m_currentList[1].total));
+		//更新统计表
+		m_countBox[0].numberBox.setString(std::to_wstring(m_currentList[0].killCount));
+		m_countBox[1].numberBox.setString(std::to_wstring(m_currentList[0].total));
+		m_countBox[2].numberBox.setString(std::to_wstring(m_currentList[1].killCount));
+		m_countBox[3].numberBox.setString(std::to_wstring(m_currentList[1].total));
+	}
 }
 
 void ResultView::eventHookProc(const SDL_Event & event)

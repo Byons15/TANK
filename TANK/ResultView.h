@@ -33,7 +33,7 @@ private:
 	static constexpr SDL_Color title1Color{ 56, 217, 123, 255}, 
 							   title2Color{252, 194,  13, 255}, 
 							   color      {224, 222, 222, 255};
-	static constexpr size_t titleFontSize = 40, dataFontSize = 30, buttonFontSize = 40;
+	static constexpr size_t titleFontSize = 60, dataFontSize = 40, buttonFontSize = 40;
 	static constexpr Uint32 updateInterval = 1000;
 	Text m_title1, m_title2;
 	SDL_Point m_title1Position, m_title2Position;
