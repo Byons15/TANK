@@ -40,6 +40,17 @@ public:
 		return m_state;
 	}
 
+	void show(void *data, int code)
+	{
+		setState(true);
+		open(data, code);
+	}
+	void hide()
+	{
+		setState(false);
+		close();
+	}
+
 protected:
 	virtual void update(Uint32 time) = 0;
 

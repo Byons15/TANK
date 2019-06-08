@@ -15,16 +15,15 @@ Text::Text(Scene * scene, const std::wstring & text, RenderFlags rendering)
 	}
 
 	m_texture.frameCount = 1;
+	m_texture.texture = nullptr;
 	setString(text);
 }
 
 int Text::setString(const std::wstring & text)
 {
 	//参数检查。
-	if (m_texture.texture) {
-		SDL_DestroyTexture(m_texture.texture);
-		m_texture.texture = nullptr;
-	}
+	SDL_DestroyTexture(m_texture.texture);
+
 	if (text.empty())
 		return 0;
 
@@ -51,15 +50,12 @@ int Text::setString(const std::wstring & text)
 		throw std::runtime_error("class \"Text\" error");
 		break;
 	}
-	TTF_SetFontSize(sm_font, defaultFontSize);   //复原字体大小。
+	//TTF_SetFontSize(sm_font, defaultFontSize);   //复原字体大小。
 
 	//从表面生成纹理并释放表面对象。
 	m_texture.texture = SDL_CreateTextureFromSurface(scene()->renderer()->renderer(), sur);
 	m_texture.clipRect = sur->clip_rect;
 	SDL_FreeSurface(sur);
-
-	auto f1 = (double)(m_fontSize) / (double)defaultFontSize;
-	auto f2 = static_cast<Uint32> ((double)m_fontSize / (double)defaultFontSize * (double)(renderSize().w));
 
 	//将纹理设置到精灵。
 	setAnimation(m_texture);

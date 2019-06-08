@@ -176,7 +176,6 @@
     <ClCompile Include="menus\ResultView.cpp" />
     <ClCompile Include="menus\StartMenu.cpp" />
     <ClCompile Include="menus\StateMenu.cpp" />
-    <ClCompile Include="SDL\EventInterface.cpp" />
     <ClCompile Include="SDL\Director.cpp" />
     <ClCompile Include="SDL\Renderer.cpp" />
     <ClCompile Include="SDL\AnimationFactory.cpp" />

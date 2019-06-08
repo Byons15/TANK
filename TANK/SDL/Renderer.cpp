@@ -3,7 +3,7 @@
 #include <SDL_timer.h>
 #include <SDL_render.h>
 #include "../Scene.h"
-#include "../Director.h"
+#include "../Timer.h"
 
 Renderer::Renderer(SDL_Window * window, bool VSync)
 	:m_window(window)
@@ -28,18 +28,20 @@ Renderer::Renderer(SDL_Window * window, bool VSync)
 	m_windowWidthScale = m_windowHeightScale = 1;
 	m_windowSize = m_windowOriginalSize;
 
-	setEventHook(SDL_WINDOWEVENT);
-
 	//将渲染工作加入事件队列。
-	setUserEventHook(RENDER);
 	SDL_UserEvent user;
 	user.type = RENDER;
 	userEventTrigger(user);
+
+	installEventHook();
+	installUserEventHook();
 }
 
 Renderer::~Renderer()
 {
 	SDL_DestroyRenderer(m_renderer);
+	uninstallEventHook();
+	uninstallUserEventHook();
 }
 
 Renderer::Renderer()
@@ -122,7 +124,7 @@ void Renderer::eventHookProc(const SDL_Event & event)
 
 void Renderer::render()
 {
-	auto time = timer.current();
+	auto time = Timer::current();
 	
 	SDL_RenderClear(m_renderer);
 

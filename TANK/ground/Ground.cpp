@@ -21,14 +21,12 @@ Ground::~Ground()
 
 void Ground::open(void * data, int code)
 {
-	setUserEventHook(Missile::END_BOOM);
-	setState(true);
+	installUserEventHook();
 }
 
 void Ground::close()
 {
-	unsetUserEventHook(Missile::END_BOOM);
-	setState(false);
+	uninstallUserEventHook();
 }
 
 Tank* Ground::addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex)

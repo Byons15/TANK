@@ -13,10 +13,11 @@ public:
 
 	CustomMap(Renderer *renderer, Ground *ground);
 	virtual ~CustomMap();
-	
 
+protected:
 	virtual void open(void *data, int code) override;
 	virtual void close() override;
+
 private:
 	virtual void eventHookProc(const SDL_Event & event) override;
 	virtual void update(Uint32 time) override;

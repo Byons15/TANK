@@ -1,4 +1,6 @@
 #include "..\Timer.h"
+#include <stdexcept>
+
 Timer *Timer::onlyInstance = nullptr;
 
 Timer::Timer()
@@ -8,7 +10,6 @@ Timer::Timer()
 		onlyInstance = this;
 	else
 		throw std::runtime_error("Timer是单例模式");
-
 
 }
 
@@ -26,12 +27,10 @@ void Timer::eventHookProc(const SDL_Event & event)
 			if (!m_keyDown) {
 				m_pauseTime = SDL_GetTicks();
 				m_keyDown = true;
-				//printf("pause current timer： %d,  SDLTime: %d, pausedTime: %d\n", current(), SDLTimer(), m_pausedTime);
 			}
 			else {
 				m_pausedTime += SDL_GetTicks() - m_pauseTime;
 				m_keyDown = false;
-				//printf("Not current timer： %d,  SDLTime: %d, pausedTime: %d\n", current(), SDLTimer(), m_pausedTime);
 			}
 		}
 			break;
@@ -42,5 +41,5 @@ void Timer::eventHookProc(const SDL_Event & event)
 
 void Timer::start()
 {
-	setEventHook(SDL_KEYDOWN);
+	installEventHook();
 }

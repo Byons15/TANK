@@ -34,9 +34,6 @@ public:
 	Ground(Renderer *renderer);
 	~Ground();
 
-	virtual void open(void *data, int code) override;
-	virtual void close() override;
-
 	Maps &maps() {
 		return m_maps;
 	}
@@ -88,6 +85,8 @@ protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
 	virtual void userEventHookProc(const SDL_UserEvent &user) override;
+	virtual void open(void *data, int code) override;
+	virtual void close() override;
 
 private:
 	void clearGround();

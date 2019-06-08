@@ -75,11 +75,7 @@ int StartMenu::render()
 void StartMenu::open(void * data, int code)
 {
 	//接收键盘和鼠标输入以提供选项。
-	setEventHook(SDL_KEYDOWN);
-	setEventHook(SDL_MOUSEMOTION);
-	setEventHook(SDL_MOUSEBUTTONUP);
-
-	setState(true);
+	installEventHook();
 }
 
 void StartMenu::eventHookProc(const SDL_Event & event)
@@ -110,7 +106,7 @@ void StartMenu::eventHookProc(const SDL_Event & event)
 				}
 				else {
 					m_playerMember = m_currItem + 1;
-					close();
+					hide();
 				}
 				break;
 
@@ -149,17 +145,13 @@ void StartMenu::eventHookProc(const SDL_Event & event)
 
 void StartMenu::close()
 {
-	unsetEventHook(SDL_KEYDOWN);
-	unsetEventHook(SDL_MOUSEMOTION);
-	unsetEventHook(SDL_MOUSEBUTTONUP);
-
-	setState(false);
-
 	SDL_UserEvent user;
 	user.type = CLOSE;
 	user.data1 = reinterpret_cast<void *> (m_gameModel);
 	user.data2 = reinterpret_cast<void *> (m_playerMember);
 	director->userEventTrigger(user);
+
+	uninstallEventHook();
 }
 
 void StartMenu::switchMenu(int layer)

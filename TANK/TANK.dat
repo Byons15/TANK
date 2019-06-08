@@ -36,7 +36,7 @@ Keypad .
   200 67 785 67
   561 80 103 188 ordinary1 ordinary2 agility armoured3
   194 202 385 202
-  167 737 260 737 120 804 260 819 729 737 822 737 682 804 822 819
+  150 737 260 737 130 804 260 804 712 737 822 737 692 804 822 804
   574 957 622 952 962 957 1010 952
 <end>
 
@@ -58,10 +58,10 @@ Keypad .
   P2FastShooting 2 1 79 79 1
   P2SuperPower 3 1 79 79 1
   invincible 4 0 79 79 2 80 80
-  base 9 4 80 80 1
+  base 9 3 80 80 1
   brick 5 4 41 41 1
   rock 7 4 41 41 1
-  water 8 4 41 41 2 1000 40
+  water 8 4 41 41 2 1000 41
   woods 6 4 41 41 1
   missile 0 4 12 12 1
   boom 1 4 42 42 1
@@ -80,8 +80,8 @@ Keypad .
   P1 0.3 0 1 P1 DEFAULT DEFAULT
   P2 0.3 0 1 P2 DEFAULT DEFAULT
   agility 0.3 300 1 agility DEFAULT DEFAULT
-  armoured1 0.2 400 1 armoured1 DEFAULT DEFAULT
-  armoured2 0.2 400 2 armoured2 armoured1 DEFAULT DEFAULT
+  armoured1 0.2 400 1 armoured3 DEFAULT DEFAULT
+  armoured2 0.2 400 2 armoured3 armoured2 DEFAULT DEFAULT
   armoured3 0.2 400 3 armoured3 armoured2 armoured1 DEFAULT DEFAULT
   ordinary1 0.2 100 1 ordinary1 DEFAULT DEFAULT
   ordinary2 0.2 200 1 ordinary2 DEFAULT DEFAULT

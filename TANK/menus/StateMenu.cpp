@@ -86,10 +86,11 @@ int StateMenu::render()
 
 void StateMenu::open(void * data, int code)
 {
-	setState(true);
+	STATE *s = reinterpret_cast<STATE *> (data);
+	if(data)
+		setPlayerLife(Player::P1, s->playerLife[0]);
 }
 
 void StateMenu::close()
 {
-	setState(false);
 }

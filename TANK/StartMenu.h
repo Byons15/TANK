@@ -24,14 +24,14 @@ public:
 	StartMenu(Renderer *renderer);
 	~StartMenu();
 
-	virtual void open(void *data, int code) override;
-	virtual void close() override;
 
 protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
-
+	virtual void open(void *data, int code) override;
+	virtual void close() override;
 	virtual void eventHookProc(const SDL_Event & event) override;
+
 private:
 	void switchMenu(int menuLayer);
 	

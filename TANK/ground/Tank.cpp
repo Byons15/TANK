@@ -1,7 +1,7 @@
 #include "Tank.h"
 #include "../Scene.h"
 #include "../TANKS.h"
-#include "../Director.h"
+#include "../Timer.h"
 #include "Ground.h"
 
 TankFactory *Tank::sm_factory = 0;

@@ -2,13 +2,15 @@
 #include <SDL_ttf.h>
 #include "../Event.h"
 #include <stdexcept>
-
+#include "../Timer.h"
 #include <SDL_image.h>
 
 #define USER_EVENT 0x4000
 
 Director *director = nullptr;
-Timer timer;
+
+//为防止头文件交叉包含，我只能无奈地将这个计时器以指针的方式放在这里。
+Timer *timer;   
 
 Director::Director()
 {
@@ -20,12 +22,13 @@ Director::Director()
 	SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER);
 	TTF_Init();
 
-	timer.start();
+	timer = new Timer;
+	timer->start();
 }
 
 Director::~Director()
 {
-	timer.unsetEventHook(SDL_KEYDOWN);
+	delete timer;
 	TTF_Quit();
 	SDL_Quit();
 }
@@ -54,65 +57,11 @@ int Director::keyState(SDL_Keycode key, int *retkeyDownTime)
 		return 0;
 
 	if (retkeyDownTime)
-		*retkeyDownTime = timer.SDLTimer() - iter->second;
+		*retkeyDownTime = Timer::SDLTimer() - iter->second;
 
 	return iter->second;
 }
 
-int Director::setEventHook(EventInterface * event, int type)
-{
-	auto &range = m_eventHook.equal_range(type);
-	for (auto iter = range.first; iter != m_eventHook.end() && iter != range.second; ++iter) {
-		if (event == iter->second)
-			return -1;
-	}
-
-	m_eventHook.insert({type, event});
-	return 0;
-}
-
-void Director::unsetEventHook(EventInterface * event, int type)
-{
-	auto beg = m_eventHook.lower_bound(type);
-	auto end = m_eventHook.upper_bound(type);
-	if (beg == m_eventHook.end())
-		return;
-	
-
-	for (auto iter = beg; iter != m_eventHook.end() && iter != end; ++iter) {
-		if (event == iter->second) {
-			m_eventHook.erase(iter);
-			break;
-		}
-	}
-}
-
-int Director::setUserEventHook(EventInterface * event, int type)
-{
-	auto &range = m_userEventHook.equal_range(type);
-	for (auto iter = range.first; iter != m_userEventHook.end() && iter != range.second; ++iter) {
-		if (event == iter->second)
-			return -1;
-	}
-
-	m_userEventHook.insert({ type, event });
-	return 0;
-}
-
-void Director::unsetUserEventHook(EventInterface * event, int type)
-{
-	auto &range = m_userEventHook.equal_range(type);
-
-	if (range.first == m_userEventHook.end())
-		return;
-
-	for (auto iter = range.first; iter != m_userEventHook.end() && iter != range.second; ++iter) {
-		if (event == iter->second) {
-			m_userEventHook.erase(iter);
-			break;
-		}
-	}
-}
 
 int Director::userEventTrigger(const SDL_UserEvent & user)
 {
@@ -142,15 +91,10 @@ int Director::exec()
 			case USER_EVENT:
 			{
 				//分发用户事件。
-				auto user = (SDL_UserEvent *)event.user.data1;
-				auto &range = m_userEventHook.equal_range(user->type);
-				for (auto iter = range.first; iter != range.second;) {
-					auto i = iter;
-					++iter;
-					i->second->userEventHookProc(*user);
+				for (auto iter = m_userEventHook.begin(); iter != m_userEventHook.end();) {
+					auto temp = iter++;
+					(*temp)->userEventHookProc(*((SDL_UserEvent *)event.user.data1));
 				}
-
-				delete user;
 			}
 			}
 		}
@@ -183,11 +127,9 @@ int Director::exec()
 		default:
 		{
 			//分发SDL事件。
-			auto &range = m_eventHook.equal_range(event.type);
-			for (auto iter = range.first; iter != range.second;) {
-				auto i = iter;
-				++iter;
-				i->second->eventHookProc(event);
+			for (auto iter = m_eventHook.begin(); iter != m_eventHook.end();) {
+				auto temp = iter++;
+				(*temp)->eventHookProc(event);
 			}
 
 			break;

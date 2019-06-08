@@ -109,15 +109,11 @@ ResultView::ResultView(Renderer * renderer)
 
 ResultView::~ResultView()
 {
-	close();
+	hide();
 }
 
 void ResultView::open(void * data, int code)
 {
-	setEventHook(SDL_KEYDOWN);
-	setEventHook(SDL_MOUSEMOTION);
-	setState(true);
-	
 	auto r = reinterpret_cast<RESULT *>(data);
 	if (!r)
 		return;
@@ -139,13 +135,13 @@ void ResultView::open(void * data, int code)
 		m_result[1] = RESULT{};
 	}
 	m_resetView = true;
+
+	installUserEventHook();
 }
 
 void ResultView::close()
 {
-	setState(false);
-	unsetEventHook(SDL_KEYDOWN);
-	unsetEventHook(SDL_MOUSEMOTION);
+	uninstallUserEventHook();
 }
 
 int ResultView::render()
@@ -166,7 +162,7 @@ int ResultView::render()
 
 	m_cursor.renderFrame((!m_select) ? m_home.cursorPosition : m_next.cursorPosition);
 
-	for (auto c : m_countBox) {
+	for (auto &c : m_countBox) {
 		c.label.renderFrame(c.labelPosition);
 		c.numberBox.renderFrame(c.numberBoxPosition);
 	}
@@ -176,7 +172,7 @@ int ResultView::render()
 
 void ResultView::update(Uint32 time)
 {
-	return;
+//	return;
 	if (m_resetView) {
 		m_currentList.fill(RESULT{});
 		m_resetView = false;
@@ -218,9 +214,56 @@ void ResultView::eventHookProc(const SDL_Event & event)
 	switch (event.type)
 	{
 	case SDL_KEYDOWN:
+		if (m_switchKeys.find(event.key.keysym.sym) != m_switchKeys.end()) {
+			m_select = !m_select;
+		}
+		else if (m_selectKeys.find(event.key.keysym.sym) != m_selectKeys.end()) {
+			SDL_UserEvent user;
+			user.type = CLOSE;
+			user.data1 = reinterpret_cast<void *>(this);
+			user.code = static_cast<Sint32>(m_select);
+			userEventTrigger(user);
+			hide();
+		}
 		break;
-	case SDL_MOUSEMOTION:
-		//TODO::添加鼠标选择选项的功能。
+	case SDL_MOUSEMOTION: 
+	{
+		SDL_Rect r1 = { m_home.position.x, m_home.position.y, m_home.text.renderSize().w, m_home.text.renderSize().h };
+		SDL_Rect r2 = { m_next.position.x, m_next.position.y, m_next.text.renderSize().w, m_next.text.renderSize().h };
+		SDL_Point p = {event.motion.x, event.motion.y};
+		if (SDL_PointInRect(&p, &r1))
+			m_select = false;
+		else if (SDL_PointInRect(&p, &r2))
+			m_select = true;
+	}
+		break;
+	case SDL_MOUSEBUTTONUP:
+	{
+		if (event.button.button != SDL_BUTTON_LEFT)
+			break;
+
+		SDL_Rect r1 = { m_home.position.x, m_home.position.y, m_home.text.renderSize().w, m_home.text.renderSize().h };
+		SDL_Rect r2 = { m_next.position.x, m_next.position.y, m_next.text.renderSize().w, m_next.text.renderSize().h };
+		SDL_Point p = { event.button.x, event.button.y };
+		if (SDL_PointInRect(&p, &r1)) {
+			m_select = false;
+			SDL_UserEvent user;
+			user.type = CLOSE;
+			user.data1 = reinterpret_cast<void *>(this);
+			user.code = static_cast<Sint32>(m_select);
+			userEventTrigger(user);
+			hide();
+		}
+		else if (SDL_PointInRect(&p, &r2)) {
+			m_select = true;
+			SDL_UserEvent user;
+			user.type = CLOSE;
+			user.data1 = reinterpret_cast<void *>(this);
+			user.code = static_cast<Sint32>(m_select);
+			userEventTrigger(user);
+			hide();
+		}
+	}
 		break;
 	default:
 		break;

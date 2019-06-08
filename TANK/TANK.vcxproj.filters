@@ -33,9 +33,6 @@
     <ClCompile Include="SDL\Text.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SDL\EventInterface.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="SDL\Director.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

@@ -4,7 +4,7 @@
 #include <random>
 #include <SDL_timer.h>
 #include "Ground.h"
-#include "../Director.h"
+#include "../Timer.h"
 
 Maps::Maps(Ground *ground)
 	:m_ground(ground)
@@ -96,7 +96,7 @@ int Maps::createMaps()
 	clearMap();
 	
 	//简单地随机分布地形。
-	std::default_random_engine e(timer.SDLTimer());
+	std::default_random_engine e(Timer::SDLTimer());
 	std::uniform_int_distribution<> dis(0, m_terrainPool.size());
 	for (size_t x = 0; x != m_map.size(); ++x) {
 		for (size_t y = 0; y != m_map[x].size(); ++y) {
@@ -246,7 +246,7 @@ void Maps::smoothPoint(std::array<std::array<int, MAP_SIZE>, MAP_SIZE> & destMap
 			much = {t, weight };
 		}
 		else if(much.second == weight){
-			std::default_random_engine e(timer.SDLTimer());
+			std::default_random_engine e(Timer::SDLTimer());
 			std::uniform_int_distribution<> dis(1, 10);
 			if (dis(e) > 5) {
 				much = { t, weight };

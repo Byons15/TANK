@@ -49,18 +49,16 @@ CustomMap::~CustomMap()
 
 void CustomMap::open(void * data, int code)
 {
-	setState(true);
-	setEventHook(SDL_KEYDOWN);
+	installEventHook();
 }
 
 void CustomMap::close()
 {
-	unsetEventHook(SDL_KEYDOWN);
-	setState(false);
+	uninstallEventHook();
 	
 	SDL_UserEvent user;
 	user.type = CLOSE;
-	
+	userEventTrigger(user);
 }
 
 void CustomMap::eventHookProc(const SDL_Event & event)
@@ -104,7 +102,7 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 
 				break;
 			case BOX_B:
-				close();
+				hide();
 				break;
 			default:
 				break;

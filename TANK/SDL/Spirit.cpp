@@ -2,7 +2,7 @@
 #include "../Scene.h"
 #include "../Renderer.h"
 #include <SDL_timer.h>
-#include "../Director.h"
+#include "../Timer.h"
 
 Spirit::Spirit(Scene * scene, const std::string & animationName)
 	:Spirit()
@@ -58,7 +58,7 @@ void Spirit::setAnimation(const Animation & a)
 	m_renderSize.h = a.clipRect.h;
 
 	if(a.frameCount > 1)
-		m_animationFirstTime = timer.current();
+		m_animationFirstTime = Timer::current();
 
 	updateFrames(Timer::current());
 }
@@ -70,7 +70,7 @@ void Spirit::setAnimation(const std::string & name)
 
 void Spirit::startFlicker(Uint32 showTime, Uint32 hideTime)
 {
-	m_startFlickerTime = timer.current();
+	m_startFlickerTime = Timer::current();
 	m_flickerShowTime = showTime;
 	m_flickerHideTime = hideTime;
 	m_flicker = true;

@@ -2,12 +2,12 @@
 #include "Ground.h"
 #include <SDL_timer.h>
 #include "Tank.h"
-#include "../Director.h"
+#include "../Timer.h"
 
 Missile::Missile(Ground * ground, Tank * sender, int power)
 	:Spirit(ground, "missile"), m_sender(sender), m_destory(false), m_boom(false), m_ground(ground), m_power(power)
 {
-	m_startTime = timer.current();
+	m_startTime = Timer::current();
 
 	int lenght;
 

@@ -9,6 +9,10 @@ class StateMenu :
 	public Scene
 {
 public:
+	struct STATE
+	{
+		int playerLife[2], plyaerScore[2], level, enemyCount;
+	};
 	StateMenu(Renderer *renderer);
 	size_t playerLife(Player::PLAYER p) const {
 		return (p == Player::P1) ? m_text[2].data : m_text[3].data;
@@ -35,14 +39,17 @@ public:
 		m_enemyCount = count;
 	}
 
-	virtual void open(void *data, int code) override;
-	virtual void close() override;
+
 	virtual ~StateMenu();
 
 protected:
 	virtual void update(Uint32 time) override;
 	virtual int render() override;
-	
+
+	//data：接收一个STATE的指针。
+	//code：保留，未使用。
+	virtual void open(void *data, int code) override;
+	virtual void close() override;
 
 private:
 	struct TextBox

@@ -3,13 +3,13 @@
 #include <map>
 #include <initializer_list>
 #include "Scene.h"
-#include "Timer.h"
+#include <set>
 
 class EventInterface;
 
 class Director
 {
-	friend class EventInterface;
+	
 public:
 
 	struct KeyState
@@ -45,26 +45,36 @@ public:
 
 protected:
 
-private:
+private: friend class EventInterface;
 	
 	//设置SDL事件钩子，这个钩子不能拦截SDL_user事件，要拦截user事件，请用setUserEventHook。
 	//EventInterface派生类重新实现eventHookProc以接收并处理事件。
 	//设置成功返回0， 返回-1表示事件类型已经设置了，请直接在eventHookProc中处理。
-	int setEventHook(EventInterface *event, int type);
-	void unsetEventHook(EventInterface *event, int type);
+	void setEventHook(EventInterface *event)
+	{
+		m_eventHook.insert(event);
+	}
+	void unsetEventHook(EventInterface *event)
+	{
+		m_eventHook.erase(event);
+	}
 
 	//设置SDL_user事件钩子。
 	//EventInterface派生类重新实现userEventHookProc以接收并处理事件。
 	//设置成功返回0， 返回-1表示事件类型已经设置了，请直接在userEventHookProc中处理。
-	int setUserEventHook(EventInterface *event, int type);
-	void unsetUserEventHook(EventInterface *event, int type);
+	void setUserEventHook(EventInterface *event)
+	{
+		m_userEventHook.insert(event);
+	}
+	void unsetUserEventHook(EventInterface *event)
+	{
+		m_userEventHook.erase(event);
+	}
 
+private:
 	std::map<SDL_Keycode, int> m_monitoringKey;
-	std::multimap<int, EventInterface *> m_eventHook;
-	std::multimap<int, EventInterface *> m_userEventHook;
-
+	std::set<EventInterface *> m_eventHook, m_userEventHook;
 };
 
 //导演
 extern Director *director;
-extern Timer timer;
