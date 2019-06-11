@@ -123,7 +123,7 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 {
 	*retColDest = 0;
 
-	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize});
+	SDL_Rect rect = pixelToGroundRect({pixelPos.x, pixelPos.y, Tank::colSize + 1, Tank::colSize + 1});
 
 	//±ß½ç¼ì²é.
 	if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > MAP_SIZE || rect.y + rect.h > MAP_SIZE) {
@@ -304,22 +304,18 @@ void Ground::clearGround()
 
 SDL_Point pixelToGroundPoint(const SDL_Point & pixelPoint)
 {
-	SDL_Point  ret;
-	ret.y = pixelPoint.y / GRID_SIZE;
-	ret.x = pixelPoint.x / GRID_SIZE;
-	return ret;
+	return { pixelPoint.x / GRID_SIZE, pixelPoint.y / GRID_SIZE };
 }
 
 SDL_Rect pixelToGroundRect(const SDL_Rect & pixelRect)
 {
-	SDL_Point upperLeft = pixelToGroundPoint({ pixelRect.x, pixelRect.y });
-	SDL_Point lowRight = pixelToGroundPoint({ pixelRect.x + pixelRect.w, pixelRect.y + pixelRect.h });
-
 	SDL_Rect rect;
-	rect.x = upperLeft.x;
-	rect.y = upperLeft.y;
-	rect.w = ++lowRight.x - upperLeft.x;
-	rect.h = ++lowRight.y - upperLeft.y;
+	rect.x = pixelRect.x / GRID_SIZE;
+	rect.y = pixelRect.y / GRID_SIZE;
+	rect.w = (pixelRect.x + pixelRect.w) % GRID_SIZE ? 
+			 (pixelRect.x + pixelRect.w) / GRID_SIZE + 1 - rect.x : (pixelRect.x + pixelRect.w) / GRID_SIZE - rect.x;
+	rect.h = (pixelRect.y + pixelRect.h) % GRID_SIZE ?
+			 (pixelRect.y + pixelRect.h) / GRID_SIZE + 1 - rect.y : (pixelRect.y + pixelRect.h) / GRID_SIZE - rect.y;
 
 	return rect;
 }

@@ -8,6 +8,7 @@
 #include <functional>
 #include "Missile.h"
 #include "Tank.h"
+#include "../games/Navigator.h"
 
 class Tank;
 
@@ -37,7 +38,7 @@ public:
 	Maps &maps() {
 		return m_maps;
 	}
-	const std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> &colMap() const {
+	const ROAD &colMap() const {
 		return m_colMap;
 	}
 
@@ -71,6 +72,8 @@ public:
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2,并将被撞坦克赋值retColDest
 	int positionTest(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
 
+	int collisionCheck(Tank *tank, const SDL_Rect colRect, Tank ** retCOlDest);
+
 	//炮弹碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
 	int MissilepositionUpdate(Missile *m);
@@ -95,7 +98,8 @@ private:
 
 	TankFactory m_tankFactory;
 	std::map<Tank *, CAMP> m_tanks;
-	std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> m_colMap;
+	ROAD m_colMap;
+	std::array<std::array<Tank *, MAP_SIZE>, MAP_SIZE> m_tanksMap;
 
 	std::list<Missile *> m_missiles;
 };

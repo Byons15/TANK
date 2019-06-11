@@ -78,6 +78,9 @@
     <ClCompile Include="menus\ResultView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Games\Navigator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h">
@@ -147,6 +150,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ResultView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Navigator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

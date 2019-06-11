@@ -166,6 +166,7 @@
     <ClCompile Include="games\AI.cpp" />
     <ClCompile Include="games\CustomMap.cpp" />
     <ClCompile Include="games\Games.cpp" />
+    <ClCompile Include="Games\Navigator.cpp" />
     <ClCompile Include="games\Player.cpp" />
     <ClCompile Include="ground\Ground.cpp" />
     <ClCompile Include="ground\Maps.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Games.h" />
     <ClInclude Include="games\AI.h" />
     <ClInclude Include="games\CustomMap.h" />
+    <ClInclude Include="Games\Navigator.h" />
     <ClInclude Include="games\Player.h" />
     <ClInclude Include="ground\Ground.h" />
     <ClInclude Include="ground\Maps.h" />

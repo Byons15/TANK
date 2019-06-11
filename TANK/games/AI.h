@@ -1,30 +1,25 @@
 #pragma once
 #include "..\ground\Tank.h"
+#include "../ground/Ground.h"
 #include "../Event.h"
 #include <array>
+#include "Navigator.h"
 
 class AI :
 	public Commander
 {
 public:
-	AI();
+	AI(Tank *tank, int level);
 	~AI();
 	virtual int command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION &direction) override;
 	
 private:
 	virtual bool requestFire() override;
-	int findWay(const SDL_Point &p1, const SDL_Point &p2);
-	bool collisionCheck(const SDL_Point &p);
-	bool borderCheck(const SDL_Point &p);
-	void createDirection(const SDL_Point &p1, const SDL_Point &p2, std::array<SDL_Point, 4> &direction);
-	Mover::DIRECTION nextDirection();
-	void newTarget(Tank *tank, const SDL_Point &position, Uint32 timestamp);
+	bool collisionCheck(const SDL_Point & p);
+	void newTarget(const SDL_Point &position, Uint32 timestamp);
 
-	static std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> sm_visiteSign;
-	std::list<SDL_Point> m_path;
-	std::list<SDL_Point>::iterator m_currentPathPoint;
-	SDL_Point m_nextPoint;
-	Mover::DIRECTION m_currentDirection;
+	Tank *m_tank;
+	Navigator m_gps;
 	size_t m_viewRange;
 };
 

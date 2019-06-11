@@ -52,7 +52,8 @@ void Games::startGame(int palyerCount, int level)
 	}
 
 	for (size_t i = 0; i != 3; ++i) {
-		(m_ground.addTank(Tank::ARMOURED1, Ground::ENEMY, i))->setCommander(new AI);
+		auto t = m_ground.addTank(Tank::ARMOURED1, Ground::ENEMY, i);
+		t->setCommander(new AI(t, 1));
 	}
 }
 
