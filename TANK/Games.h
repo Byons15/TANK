@@ -20,6 +20,7 @@ public:
 
 	//level: 要开启的关卡。0表示不设置关卡（这意味着之前已经运行过自定义地图环节了）。
 	void startGame(int palyerCount, int level);
+	Ground::CAMP camp(Tank *tank);
 
 protected:
 	virtual void eventHookProc(const SDL_Event &event) override;

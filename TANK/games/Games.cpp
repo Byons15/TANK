@@ -57,6 +57,11 @@ void Games::startGame(int palyerCount, int level)
 	}
 }
 
+Ground::CAMP Games::camp(Tank * tank)
+{
+	return m_ground.tankList().find(tank)->second;
+}
+
 void Games::eventHookProc(const SDL_Event & event)
 {
 	//TODO

@@ -216,8 +216,9 @@ void Tank::setFactory(TankFactory * factory)
 
 void Tank::update(Uint32 time)
 {
-	if (m_commander->requestFire())
-		fire();
+	if(!m_reload)
+		if (m_commander->requestFire())
+			fire();
 
 	if (m_mover.state()) {
 		auto newPos = m_mover.current(time);

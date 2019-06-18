@@ -43,7 +43,6 @@ private:
 	std::list<SDL_Point>::iterator m_currentPosition;
 	std::array<SDL_Point, 4> m_preferredDirection;
 	Mover::DIRECTION m_currentDirection;
-	SDL_Point m_lastPosition;
 	static ROAD sm_visiteSign;
 	const ROAD *m_road;
 };

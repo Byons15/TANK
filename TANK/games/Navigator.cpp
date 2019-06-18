@@ -1,10 +1,21 @@
 #include "Navigator.h"
 
 ROAD Navigator::sm_visiteSign;
+Navigator *firstOnly = nullptr;
 
 Navigator::Navigator(const ROAD * road)
 	:m_road(road)
 {
+	if (!firstOnly) {
+		for (auto &l : sm_visiteSign) {
+			for (auto &b : l) {
+				b = false;
+			}
+		}
+		firstOnly = this;
+	}
+
+	m_currentPosition = m_path.end();
 }
 
 int Navigator::startNavigation(const SDL_Point & p1, const SDL_Point & p2)
@@ -121,41 +132,39 @@ void Navigator::createpreferredDirection(const SDL_Point & p1, const SDL_Point &
 
 int Navigator::nextPosition(const SDL_Point & current, Mover::DIRECTION & outDirection)
 {
-
-	if (current.x == m_lastPosition.x && current.y == m_lastPosition.y) {
-		outDirection = m_currentDirection;
-		return 0;
-	}
-
-	if (current.x != m_currentPosition->x || current.y != m_currentPosition->y) {
-		resetNavigator();
-		if (startNavigation(current, m_path.back()) == -1) {
-			resetNavigator();
-			return -2;
-		}
-	}
-
-	const SDL_Point &p1 = current;
-	if (++m_currentPosition == m_path.end()) {
-		resetNavigator();
+	if (m_path.empty())
 		return -1;
+
+	if (current.x == m_currentPosition->x && current.y == m_currentPosition->y) {
+
+		const SDL_Point &p1 = current;
+		if (++m_currentPosition == m_path.end()) {
+			resetNavigator();
+			return -1;
+		}
+		else {
+			const SDL_Point &p2 = *m_currentPosition;
+			//走到下一个位置应该往哪个方向走。
+			if (p2.x - p1.x != 0) {
+				if (p2.x - p1.x < 0)
+					outDirection = m_currentDirection = Mover::LEFT;
+				else
+					outDirection = m_currentDirection = Mover::RIGHT;
+			}
+			else if (p2.y - p1.y != 0) {
+				if (p2.y - p1.y < 0)
+					outDirection = m_currentDirection = Mover::UP;
+				else
+					outDirection = m_currentDirection = Mover::DOWN;
+			}
+		}
 	}
 	else {
-		const SDL_Point &p2 = *m_currentPosition;
-		//走到下一个位置应该往哪个方向走。
-		if (p2.x - p1.x != 0) {
-			if (p2.x - p1.x < 0)
-				outDirection = m_currentDirection = Mover::LEFT;
-			else
-				outDirection = m_currentDirection = Mover::RIGHT;
-		}
-		else if (p2.y - p1.y != 0) {
-			if (p2.y - p1.y < 0)
-				outDirection = m_currentDirection = Mover::UP;
-			else
-				outDirection = m_currentDirection = Mover::DOWN;
-		}
+		outDirection = m_currentDirection;
+		//TODO:: 这里可能需要添加一份处理tank脱离路线的代码。
 	}
+
+	
 	return 0;
 }
 
