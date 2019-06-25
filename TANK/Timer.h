@@ -18,6 +18,14 @@ public:
 	static Uint32 SDLTimer() {
 		return SDL_GetTicks();
 	}
+	static int addTimer(Uint32 interval, SDL_TimerCallback callbackFun, void *param) 
+	{
+		return SDL_AddTimer(interval, callbackFun, param);
+	}
+	static void removeTimer(int timerID)
+	{
+		SDL_RemoveTimer(timerID);
+	}
 	~Timer();
 private:
 	virtual void eventHookProc(const SDL_Event & event);

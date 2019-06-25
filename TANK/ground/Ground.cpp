@@ -162,6 +162,19 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	return 0;
 }
 
+int Ground::findTankOnRect(Tank * tank, const SDL_Rect & rect, std::vector<Tank*>& outResult)
+{
+	outResult.clear();
+
+	for (auto &t : m_tanks) {
+		if (SDL_PointInRect(&t.first->position(), &rect))
+			if (t.second != m_tanks[tank])
+				outResult.push_back(t.first);
+	}
+
+	return outResult.size();
+}
+
 int Ground::MissilepositionUpdate(Missile * m)
 {
 	

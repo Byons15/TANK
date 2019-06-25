@@ -16,7 +16,9 @@ public:
 	//p1 : 开始位置
 	//p2 : 目的地
 	//返回：0开始导航， !0没有找到路线。
-	int startNavigation(const SDL_Point &p1, const SDL_Point &p2);
+	int navigation(const SDL_Point &p1, const SDL_Point &p2);
+
+	int navigationToCollimationLine(const SDL_Point &p1, const SDL_Point &CollimationLine);
 
 	//重置导航器。
 	void resetNavigator();
@@ -27,12 +29,17 @@ public:
 	//返回 ：0成功， -1导航已经结束了，outDirection没有意义。 -2情况不妙。
 	int nextPosition(const SDL_Point &current, Mover::DIRECTION& outDirection);
 
+	size_t lenght() {
+		return m_path.size();
+	}
+
 	bool state() {
 		return !m_path.empty();
 	}
 	~Navigator();
 
 private:
+	int findLine(const SDL_Point &p1, const SDL_Point &line);
 	int findWay(const SDL_Point &p1, const SDL_Point &p2);
 	void createDirection(const SDL_Point & p1, const SDL_Point & p2);
 	bool collisionCheck(const SDL_Point &p);

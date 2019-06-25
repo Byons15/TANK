@@ -4,14 +4,11 @@
 #include "../Event.h"
 #include <array>
 #include "Navigator.h"
+#include <random>
 
 class Driver
 {
-public:
-	Driver(Tank *tank, int level);
-	void run(const SDL_Point &position, Uint32 timestamp, Mover::DIRECTION &outDirection);
 private:
-
 	class Action
 	{
 	public:
@@ -21,6 +18,10 @@ private:
 		//返回-1表示动作已经做完，Action可以被delete。
 		virtual int action(const SDL_Point position, Uint32 timestamp, Mover::DIRECTION &outDirection) = 0;
 	};
+
+public:
+	Driver(Tank *tank, int level);
+	void run(const SDL_Point &position, Uint32 timestamp, Mover::DIRECTION &outDirection);
 
 	class Stay
 		:Action
@@ -41,10 +42,14 @@ private:
 	private:
 		Navigator m_gps;
 	};
+
+private:
+	
 };
 
 class AI :
-	public Commander
+	public Commander,
+	public EventInterface
 {
 public:
 	AI(Tank *tank, int level);
@@ -56,19 +61,23 @@ private:
 	int m_level;
 
 private: //driver
+
+#pragma region OldCode
 	SDL_Point random(const SDL_Rect & range);
-	int intoCollimationLine(const SDL_Point &target);
 	SDL_Rect createViewRange(const SDL_Point &center, int viewRange);
-	int newTarget(const SDL_Rect &viewRange);
+	int newTarget(const SDL_Point &current, const SDL_Rect &viewRange);
+
 	//move
 	bool collisionCheck(const SDL_Point & p);
 	void newTarget(const SDL_Point &position, Uint32 timestamp);
 	Navigator m_gps;
-	
-	//stay
-	Uint32 m_startTimestamp;
-	Uint32 m_stayTime;
+
+#pragma endregion
 
 private: //gunner
+	virtual void userEventHookProc(const SDL_UserEvent &event);
+	static Uint32 fireTimerCallback(Uint32 interval, void *param);
+	
 	virtual bool requestFire() override;
+	int m_timerID, m_fireIntervalMin, m_fireIntervalMax;
 };

@@ -18,7 +18,7 @@ Navigator::Navigator(const ROAD * road)
 	m_currentPosition = m_path.end();
 }
 
-int Navigator::startNavigation(const SDL_Point & p1, const SDL_Point & p2)
+int Navigator::navigation(const SDL_Point & p1, const SDL_Point & p2)
 {
 	resetNavigator();
 	createpreferredDirection(p1, p2);
@@ -30,9 +30,55 @@ int Navigator::startNavigation(const SDL_Point & p1, const SDL_Point & p2)
 	return result;
 }
 
+int Navigator::navigationToCollimationLine(const SDL_Point & p1, const SDL_Point & CollimationLine)
+{
+	resetNavigator();
+	createpreferredDirection(p1, CollimationLine);
+	
+	auto result = findLine(p1, CollimationLine);
+	if (!result) {
+		m_currentPosition = m_path.begin();
+	}
+
+	return result;
+}
+
 void Navigator::resetNavigator()
 {
 	m_path.clear();
+}
+
+int Navigator::findLine(const SDL_Point & p1, const SDL_Point & line)
+{
+	if ((p1.x == line.x || p1.y == line.y) && collisionCheck(p1)) {
+		m_path.push_front(line);
+		return 0;
+	}
+
+	if (!borderCheck(p1))
+		return -1;
+
+	if (!collisionCheck(p1)) {
+		sm_visiteSign[p1.x][p1.y] = true;
+		return -1;
+	}
+
+	if (sm_visiteSign[p1.x][p1.y]) {
+		return -2;
+	}
+
+	auto result = -1;
+	for (auto &d : m_preferredDirection) {
+		sm_visiteSign[p1.x][p1.y] = true;
+		result = findLine({ p1.x + d.x, p1.y + d.y }, line);
+		sm_visiteSign[p1.x][p1.y] = false;
+		if (result == 0) {
+			m_path.push_front(p1);
+			return 0;
+		}
+	}
+
+	return result;
 }
 
 int Navigator::findWay(const SDL_Point & p1, const SDL_Point & p2)

@@ -74,7 +74,7 @@ public:
 
 	int collisionCheck(Tank *tank, const SDL_Rect colRect, Tank ** retCOlDest);
 
-	int findTankOnRect(Tank *tank, const SDL_Rect &rect, std::vector<Tank *>& outrResult);
+	int findTankOnRect(Tank *tank, const SDL_Rect &rect, std::vector<Tank *>& outResult);
 
 	//炮弹碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与坦克发生碰撞则返回-2, 边界碰撞返回-3
