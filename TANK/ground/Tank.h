@@ -7,6 +7,12 @@
 class Commander;
 class Ground;
 
+struct SCORECARD
+{
+	unsigned kill = 0;
+	unsigned score = 0;
+};
+
 class Tank :
 	public Spirit
 {
@@ -20,15 +26,16 @@ public:
 		//data2：被攻击者，携带奖励箱的tank
 		BONUSCHEST = 0x300,
 
-		//击杀tank
-		//code：分数。
-		//data1：攻击者。
-		KILLEDTANK,
-
 		//坦克被击中（不一定摧毁了）。
 		//data1：攻击者
 		//data2：被攻击者（使用这个指针前请确保坦克还没有被销毁）
-		ATTACKTANK,
+		ATTACK,
+
+		//坦克被销毁，这个事件一定是跟着Tank::ATTACKTANK事件的。
+		//code：被摧毁的坦克的阵营。
+		//data1：被摧毁的坦克型号。
+		//data2: 被摧毁的坦克的计分板..
+		KILLED,
 	};
 
 	enum MODEL
@@ -41,6 +48,12 @@ public:
 		ARMOURED3,
 		ORDINARY1,
 		ORDINARY2,
+	};
+
+	enum CAMP
+	{
+		ALLISE,
+		ENEMY,
 	};
 	
 	int HP() const {
@@ -77,22 +90,28 @@ public:
 		return m_ground;
 	}
 
-	int killScore() {
-		return m_killScore;
-	}
+	int killScore() { return m_killScore; }
+
+	CAMP camp() const { return m_camp; }
 
 	//设置奖励箱
 	//rewarde是用户定义的参数，这个参数会在坦克触发奖励箱时传到事件队列，一般用于标识奖励类型，传入0则取消奖励箱。
 	//成功返回0， 坦克处在无敌状态则返回-1
 	int setRewards(int rewarde);
 
+	std::map<Tank::MODEL, SCORECARD> *scorecard()
+	{
+		return m_scorecard;
+	}
+
 	//成功返回0， 坦克当前携带有奖励箱则返回-1
 	int invincible();
 
 private: friend class Ground;
-	Tank(Ground * ground, MODEL &model, const SDL_Point &position);
+	Tank(Ground * ground, CAMP camp, MODEL &model, const SDL_Point &position);
 	~Tank();
 	int beHit(Tank *aggressor, int power);
+
 	static void setFactory(TankFactory *factory);
 	void update(Uint32 time);
 	void render();
@@ -102,12 +121,15 @@ private:
 	void unInvincible();
 
 	std::vector<Animation> m_form;
+
+	std::map<Tank::MODEL, SCORECARD> *m_scorecard;
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
 	SDL_Rect m_lastRect;
+	CAMP m_camp;
 	MODEL m_model;
-	int m_HP, m_rewarde, m_power, m_killScore, m_score;
+	int m_HP, m_rewarde, m_power, m_killScore;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;

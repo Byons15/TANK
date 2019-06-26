@@ -29,6 +29,7 @@ public:
 		//坦克被销毁，这个事件一定是跟着Tank::ATTACKTANK事件的。
 		//code：被摧毁的坦克的阵营。
 		//data1：被摧毁的坦克型号。
+		//data2: 被摧毁的坦克的计分板..
 		DESTORYTANK = 0x999,
 	};
 
@@ -47,7 +48,7 @@ public:
 	}
 	
 	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
-	Tank* addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex);
+	Tank* addTank(Tank::MODEL tankModel, Tank::CAMP camp, int bindIndex);
 
 	void addMissile(Missile *m);
 
@@ -58,13 +59,13 @@ public:
 	int attackTerrain(const SDL_Point &pos, int power);
 
 	//摧毁坦克， 这个是强制的
-	void destoryTank(Tank *tank);
+	void destoryTank(Tank * target);
 
 	void destoryBase();
 
 	void destoryTerrain(const SDL_Point &pos);
 
-	const std::map<Tank *, CAMP> &tankList() const {
+	const std::set<Tank *> &tankList() const {
 		return m_tanks;
 	}
 
@@ -99,7 +100,7 @@ private:
 	Maps m_maps;
 
 	TankFactory m_tankFactory;
-	std::map<Tank *, CAMP> m_tanks;
+	std::set<Tank *> m_tanks;
 	ROAD m_colMap;
 	std::array<std::array<Tank *, MAP_SIZE>, MAP_SIZE> m_tanksMap;
 

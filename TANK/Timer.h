@@ -32,6 +32,7 @@ private:
 	void start();
 	friend class Director;
 	
+	
 	static Timer *onlyInstance;
 	Uint32 m_pauseTime, m_pausedTime;
 	bool m_keyDown;

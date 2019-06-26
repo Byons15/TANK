@@ -164,7 +164,7 @@ int AI::newTarget(const SDL_Point &current, const SDL_Rect & range)
 	if (m_tank->ground()->findTankOnRect(m_tank, range, result) != 0) {
 		for (auto &t : result) {
 			Games *g = (Games *)director;
-			if (((Games *)director)->camp(t) != ((Games *)director)->camp(m_tank))
+			if (t->camp() != m_tank->camp())
 				if (!m_gps.navigationToCollimationLine(current, t->position()))
 					return 0;
 		}

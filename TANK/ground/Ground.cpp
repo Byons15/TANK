@@ -29,7 +29,7 @@ void Ground::close()
 	uninstallUserEventHook();
 }
 
-Tank* Ground::addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex)
+Tank* Ground::addTank(Tank::MODEL tankModel, Tank::CAMP camp, int bindIndex)
 {
 
 	//取得复活点的位置。
@@ -45,7 +45,7 @@ Tank* Ground::addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex)
 	}
 	
 	//注意转换成像素位置
-	Tank *t = new Tank(this, tankModel, p);
+	Tank *t = new Tank(this, camp, tankModel, p);
 
 	//如果复活点被占用，则生成坦克失败。
 	if (t->setGroundPosition(p) == -1) {
@@ -53,7 +53,7 @@ Tank* Ground::addTank(Tank::MODEL tankModel, CAMP camp, int bindIndex)
 		return 0;
 	}
 
-	m_tanks[t] = camp;
+	m_tanks.insert(t);
 
 	return t;
 }
@@ -90,16 +90,10 @@ int Ground::attackTerrain(const SDL_Point & pos, int power)
 	return 0;
 }
 
-void Ground::destoryTank(Tank * tank)
+void Ground::destoryTank(Tank * target)
 {
-	SDL_UserEvent user;
-	user.type = DESTORYTANK;
-	user.code = m_tanks[tank];
-	user.data1 = reinterpret_cast<void *>(tank->model());
-	userEventTrigger(user);
-
-	m_tanks.erase(tank);
-	delete tank;
+	m_tanks.erase(target);
+	delete target;
 }
 
 void Ground::destoryBase()
@@ -150,10 +144,10 @@ int Ground::positionTest(Tank * tank, const SDL_Point & pixelPos, Tank ** retCol
 	SDL_Rect r1 = {pixelPos.x, pixelPos.y, Tank::colSize, Tank::colSize};
 	SDL_Rect r2 = {0, 0, Tank::colSize, Tank::colSize };
 	for (auto &t : m_tanks) {
-		r2.x = t.first->pixelPosition().x;
-		r2.y = t.first->pixelPosition().y;
-		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t.first != tank) {
-			*retColDest = t.first;
+		r2.x = t->pixelPosition().x;
+		r2.y = t->pixelPosition().y;
+		if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE && t != tank) {
+			*retColDest = t;
 			return -2;
 		}
 	}
@@ -167,9 +161,9 @@ int Ground::findTankOnRect(Tank * tank, const SDL_Rect & rect, std::vector<Tank*
 	outResult.clear();
 
 	for (auto &t : m_tanks) {
-		if (SDL_PointInRect(&t.first->position(), &rect))
-			if (t.second != m_tanks[tank])
-				outResult.push_back(t.first);
+		if (SDL_PointInRect(&t->position(), &rect))
+			if (t != *m_tanks.find(tank))
+				outResult.push_back(t);
 	}
 
 	return outResult.size();
@@ -203,13 +197,13 @@ int Ground::MissilepositionUpdate(Missile * m)
 	SDL_Rect r2 = { 0, 0, Tank::colSize, Tank::colSize };
 
 	for (auto iter = m_tanks.begin(); iter != m_tanks.end();) {
-		if (iter->first != m->m_sender) {
-			r2.x = iter->first->pixelPosition().x;
-			r2.y = iter->first->pixelPosition().y;
+		if (*iter != m->sender()) {
+			r2.x = (*iter)->pixelPosition().x;
+			r2.y = (*iter)->pixelPosition().y;
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
 				auto d = iter;
 				++iter;
-				attackTank(m->sender(), d->first, m->power());
+				attackTank(m->sender(), *d, m->power());
 				result = -2;
 				continue;
 			}
@@ -242,8 +236,8 @@ void Ground::update(Uint32 time)
 	}
 
 	for (auto &t : m_tanks) {
-		t.first->update(time);
-		t.first->updateFrames(time);
+		t->update(time);
+		t->updateFrames(time);
 	}
 
 	for (auto &m : m_missiles) {
@@ -276,7 +270,7 @@ int Ground::render()
 	}
 
 	for (auto &t : m_tanks) {
-		t.first->render();
+		t->render();
 	}
 
 	for (auto &m : m_missiles) {
@@ -310,7 +304,7 @@ void Ground::userEventHookProc(const SDL_UserEvent & user)
 void Ground::clearGround()
 {
 	for (auto &iter : m_tanks) {
-		delete iter.first;
+		delete iter;
 	}
 	m_tanks.clear();
 }

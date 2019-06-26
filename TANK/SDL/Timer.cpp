@@ -3,6 +3,8 @@
 
 Timer *Timer::onlyInstance = nullptr;
 
+#define TIMER 0x12343245
+
 Timer::Timer()
 	:m_keyDown(false), m_pausedTime(0), m_pauseTime(0)
 {
@@ -16,6 +18,8 @@ Timer::Timer()
 
 Timer::~Timer()
 {
+	uninstallEventHook();
+	uninstallUserEventHook();
 }
 
 void Timer::eventHookProc(const SDL_Event & event)

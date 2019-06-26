@@ -6,8 +6,8 @@
 
 TankFactory *Tank::sm_factory = 0;
 
-Tank::Tank(Ground * ground, MODEL &model, const SDL_Point &position)
-	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0), m_score(0)
+Tank::Tank(Ground * ground, CAMP camp, MODEL &model, const SDL_Point &position)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0), m_camp(camp)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
@@ -22,6 +22,9 @@ Tank::Tank(Ground * ground, MODEL &model, const SDL_Point &position)
 	setAnimation(m_form[m_HP - 1]);
 
 	m_position = position;
+
+	//创建计分板
+	m_scorecard = new std::map<MODEL, SCORECARD>;
 }
 
 Tank::~Tank()
@@ -192,17 +195,21 @@ int Tank::beHit(Tank *aggressor, int power)
 		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
 		setAnimation(m_form[m_HP ? m_HP - 1 : 0]);
 		SDL_UserEvent user;
-		user.type = ATTACKTANK;
+		user.type = ATTACK;
 		user.data1 = reinterpret_cast<void *> (aggressor);
 		user.data2 = reinterpret_cast<void *> (this);
+		director->userEventTrigger(user);
 	}
 
 	if (!m_HP) {
-		aggressor->m_score += m_killScore;
+		(*aggressor->m_scorecard)[m_model].kill++;
+		(*aggressor->m_scorecard)[m_model].score += m_killScore;
+
 		SDL_UserEvent user;
-		user.type = KILLEDTANK;
-		user.code = m_killScore;
-		user.data1 = reinterpret_cast<void *> (aggressor);
+		user.type = KILLED;
+		user.code = m_camp;
+		user.data1 = reinterpret_cast<void *>(m_model);
+		user.data1 = m_scorecard;
 		director->userEventTrigger(user);
 	}
 

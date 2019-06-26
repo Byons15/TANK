@@ -20,13 +20,22 @@ public:
 
 	//level: 要开启的关卡。0表示不设置关卡（这意味着之前已经运行过自定义地图环节了）。
 	void startGame(int palyerCount, int level);
-	Ground::CAMP camp(Tank *tank);
+	int createEnemy();
 
 protected:
 	virtual void eventHookProc(const SDL_Event &event) override;
 	virtual void userEventHookProc(const SDL_UserEvent &user) override;
 
 private:
+
+	enum EVENT
+	{
+		CREATE_ENEMY = 0x6513331,
+		GAME_OVER,
+	};
+
+	static Uint32 enemyCreateTimeCallback(Uint32 interval, void *param);
+
 	SDL_Window *m_window;
 	Renderer m_renderer;
 	StartMenu m_startMenu;
@@ -35,6 +44,7 @@ private:
 	CustomMap m_customMap;
 	ResultView m_resultView;
 	int m_playerNumber, m_gameModel;
+	Uint32 m_EnemyCreateTimerID;
 	
 	struct PLAYERSTATE 
 	{
