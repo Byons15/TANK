@@ -3,18 +3,18 @@
 #include "../TANKS.h"
 #include "../Timer.h"
 #include "Ground.h"
+#include <sstream>
 
 TankFactory *Tank::sm_factory = 0;
 
 Tank::Tank(Ground * ground, CAMP camp, MODEL &model, const SDL_Point &position)
-	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_commander(0), m_camp(camp)
+	:Spirit(ground), m_invincible(false), m_model(model), m_ground(ground), m_power(1), m_reload(false), m_driver(0), m_camp(camp)
 {
 	//从工厂查找并构造参数。
 	auto &dat = sm_factory->findTankData(model);
 	m_form = dat.form;
 	m_rewardsForm = dat.rewardForm;
 	m_invincibleForm = dat.invincibleForm;
-	m_killScore = dat.killScore;
 	m_HP = dat.maxHP;
 	m_defaultSpeeds = m_speeds = dat.speeds;
 
@@ -22,15 +22,12 @@ Tank::Tank(Ground * ground, CAMP camp, MODEL &model, const SDL_Point &position)
 	setAnimation(m_form[m_HP - 1]);
 
 	m_position = position;
-
-	//创建计分板
-	m_scorecard = new std::map<MODEL, SCORECARD>;
 }
 
 Tank::~Tank()
 {
-	if (m_commander)
-		delete m_commander;
+	if (m_driver)
+		m_driver->drive(nullptr);
 }
 
 int Tank::setGroundPosition(const SDL_Point & pos)
@@ -131,12 +128,11 @@ void Tank::stopMove()
 	m_mover.endMove();
 }
 
-int Tank::setCommander(Commander * cmder)
+int Tank::setDriver(Driver * cmder)
 {
-	if (cmder->drive(this) == -1)
-		return -1;
+	cmder->drive(this);
 
-	m_commander = cmder;
+	m_driver = cmder;
 	return 0;
 }
 
@@ -167,53 +163,48 @@ int Tank::invincible()
 	return 0;
 }
 
+int Tank::attack(Driver * aggressor, Tank * target, int power)
+{
+	if (target->m_invincible) {
+		return target->m_HP;
+	}
+
+	SDL_UserEvent user;
+	user.data1 = aggressor;
+	//如果坦克携带有奖励箱，则触发奖励, 而不是减HP。
+	if (target->m_rewarde != 0) {
+		user.type = BONUSCHEST;
+		user.code = target->m_rewarde;
+		user.data2 = target;
+		director->userEventTrigger(user);
+
+		target->setRewards(0);
+	}
+	else {
+		target->m_HP = (target->m_HP - power <= 0) ? 0 : target->m_HP - power;
+		target->setAnimation(target->m_form[target->m_HP ? target->m_HP - 1 : 0]);
+		user.type = ATTACK;
+		user.code = target->m_camp;
+		user.data2 = reinterpret_cast<void *> (target);
+		director->userEventTrigger(user);
+	}
+
+	if (!target->m_HP) {
+
+		user.type = KILLED;
+		user.code = target->m_camp;
+		user.data2 = target->driver();
+		user.timestamp = target->m_model;
+		director->userEventTrigger(user);
+	}
+
+	return target->m_HP;
+}
+
 void Tank::unInvincible()
 {
 	m_invincible = false;
 	setAnimation(m_form[m_HP - 1]);
-}
-
-int Tank::beHit(Tank *aggressor, int power)
-{
-	if (m_invincible) {
-		return m_HP;
-	}
-
-	//如果坦克携带有奖励箱，则触发奖励, 而不是减HP。
-	if (m_rewarde != 0) {
-		
-		SDL_UserEvent user;
-		user.type = BONUSCHEST;
-		user.code = m_rewarde;
-		user.data1 = aggressor;
-		user.data2 = this;
-		director->userEventTrigger(user);
-
-		setRewards(0);
-	}
-	else {
-		m_HP = (m_HP - power <= 0) ? 0 : m_HP - power;
-		setAnimation(m_form[m_HP ? m_HP - 1 : 0]);
-		SDL_UserEvent user;
-		user.type = ATTACK;
-		user.data1 = reinterpret_cast<void *> (aggressor);
-		user.data2 = reinterpret_cast<void *> (this);
-		director->userEventTrigger(user);
-	}
-
-	if (!m_HP) {
-		(*aggressor->m_scorecard)[m_model].kill++;
-		(*aggressor->m_scorecard)[m_model].score += m_killScore;
-
-		SDL_UserEvent user;
-		user.type = KILLED;
-		user.code = m_camp;
-		user.data1 = reinterpret_cast<void *>(m_model);
-		user.data1 = m_scorecard;
-		director->userEventTrigger(user);
-	}
-
-	return m_HP;
 }
 
 void Tank::setFactory(TankFactory * factory)
@@ -224,7 +215,7 @@ void Tank::setFactory(TankFactory * factory)
 void Tank::update(Uint32 time)
 {
 	if(!m_reload)
-		if (m_commander->requestFire())
+		if (m_driver->requestFire())
 			fire();
 
 	if (m_mover.state()) {
@@ -256,7 +247,10 @@ void Tank::update(Uint32 time)
 
 			//新位置占用的网格与当前网格不同时，检查输入。
 			Mover::DIRECTION direction = m_direction;
-			auto result = m_commander->command(gridPos, time, direction);
+
+			if (m_driver->tank() != this)
+				__debugbreak;
+			auto result = m_driver->command(gridPos, time, direction);
 			if (result == 0) { //有移动命令.
 
 				//检查新位置是否碰撞.
@@ -289,7 +283,7 @@ void Tank::update(Uint32 time)
 	}
 	else {
 		Mover::DIRECTION direction = m_direction;
-		auto result = m_commander->command({m_position.x / GRID_SIZE, m_position.y / GRID_SIZE}, time, direction);
+		auto result = m_driver->command({m_position.x / GRID_SIZE, m_position.y / GRID_SIZE}, time, direction);
 		startMove(direction, time);
 	}
 
@@ -308,16 +302,22 @@ bool Tank::onGrid()
 	return true;
 }
 
-Commander::Commander()
+Driver::Driver()
 	:m_tank(nullptr)
 {
-	
+	if (sm_scoreTable.empty()) {
+		std::vector<std::string> data;
+		sm_scoreTable.resize(8, 0);
+		fileLoad("scoreTable", &data);
+		std::istringstream is(data[0]);
+		for (int i = 0; i != 8; ++i) {
+			is >> sm_scoreTable[i];
+		}
+	}
 }
 
-int Commander::drive(Tank * tank)
+void Driver::record(Tank::MODEL model)
 {
-	if (m_tank)
-		return -1;
-	m_tank = tank;
-	return 0;
+	m_socrecards[model].killCount++;
+	m_socrecards[model].total += sm_scoreTable[model];
 }

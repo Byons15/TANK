@@ -5,6 +5,7 @@
 
 class Ground;
 class Tank;
+class Driver;
 
 class Missile :
 	public Spirit
@@ -38,26 +39,16 @@ public:
 	};
 
 	Missile() = delete;
-	int power() {
-		return m_power;
-	}
-	const SDL_Point &position() const {
-		return m_position;
-	}
-
-	Tank *sender() {
-		return m_sender;
-	}
+	int power() {return m_power;}
+	const SDL_Point &position() const {return m_position;}
+	Driver *driver() { return m_driver; }
+	Tank *sender() {return m_sender;}
 
 private: friend class Tank;
 		 friend class Ground;
 	Missile(Ground *ground, Tank *sender, int power);
-	void setDestoryIterator(std::list<Missile *>::iterator iter) {
-		m_destoryIterator = iter;
-	}
-	std::list<Missile *>::iterator destoryIterator() {
-		return m_destoryIterator;
-	}
+	void setDestoryIterator(std::list<Missile *>::iterator iter) {m_destoryIterator = iter;}
+	std::list<Missile *>::iterator destoryIterator() {return m_destoryIterator;}
 	void update(Uint32 time);
 	void render();
 private:
@@ -66,6 +57,7 @@ private:
 	int m_power;
 	SDL_Point m_position;
 	Tank *m_sender;
+	Driver *m_driver;
 	Ground *m_ground;
 	Mover m_mover;
 	TARGET m_boomTarget;

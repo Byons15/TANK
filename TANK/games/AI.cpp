@@ -5,14 +5,14 @@
 
 #define FIRE 0x56111
 
-AI::AI(Tank * tank, int level)
-	:m_tank(tank), m_level(level), m_gps(&tank->ground()->colMap())
+AI::AI()
+	:m_level(1)
 {
 	m_fireIntervalMin = 1000;
 	m_fireIntervalMax = 5000;
 
 	std::random_device rd;
-	std::mt19937 gen(rd());
+	std::mt19937 gen(rd() + reinterpret_cast<int>(this));
 	std::uniform_int_distribution<> uid(m_fireIntervalMin, m_fireIntervalMax);
 	m_timerID = Timer::addTimer(uid(gen), fireTimerCallback, this);
 	installUserEventHook();
@@ -26,10 +26,14 @@ AI::~AI()
 
 int AI::command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION & direction)
 {
+	if (!tank()) {
+		return -1;
+	}
+
 	int defaultWeight = 8;
 	int offsetWeight = 100 - defaultWeight * 4;
 	std::array<double, 4> weights{ defaultWeight, defaultWeight, defaultWeight, defaultWeight };
-	switch (m_tank->direction())
+	switch (tank()->direction())
 	{
 	case Mover::LEFT:
 		weights[0] += offsetWeight;
@@ -47,10 +51,9 @@ int AI::command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION & directi
 		break;
 	}
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	std::default_random_engine rd((int)tank() % (int)tank() / 2 + Timer::current());
 	std::discrete_distribution<> dd(weights.begin(), weights.end());
-	switch (dd(gen))
+	switch (dd(rd))
 	{
 	case 0:
 		direction = Mover::LEFT;
@@ -100,7 +103,8 @@ void AI::userEventHookProc(const SDL_UserEvent & event)
 	switch (event.type)
 	{
 	case FIRE:
-		m_tank->fire();
+		if(tank())
+			tank()->fire();
 		break;
 	default: 
 		break;
@@ -123,6 +127,8 @@ Uint32 AI::fireTimerCallback(Uint32 interval, void * param)
 
 bool AI::requestFire()
 {
+	if(!tank())
+		return false;
 
 	return false;
 }
@@ -131,7 +137,7 @@ bool AI::requestFire()
 #pragma region OldCode
 SDL_Point AI::random(const SDL_Rect & range)
 {
-	std::srand(Timer::current() + m_tank->pixelPosition().x + range.x / (range.y + 1));
+	std::srand(Timer::current() + tank()->pixelPosition().x + range.x / (range.y + 1));
 	std::uniform_int_distribution<> disX(range.x, range.x + range.w - 1);
 	std::random_device rd;  // 将用于为随机数引擎获得种子
 	std::mt19937 gen(rd()); // 以播种标准 mersenne_twister_engine
@@ -153,18 +159,18 @@ int AI::newTarget(const SDL_Point &current, const SDL_Rect & range)
 {
 	for (auto x = range.x; x != range.x + range.w; ++x) {
 		for (auto y = range.y; y != range.y + range.h; ++y) {
-			if (m_tank->ground()->maps()(x, y) == Maps::TAG_BASE) {
-				if (!m_gps.navigationToCollimationLine(current, m_tank->ground()->maps().basePosition()))
+			if (tank()->ground()->maps()(x, y) == Maps::TAG_BASE) {
+				if (!m_gps.navigationToCollimationLine(current, tank()->ground()->maps().basePosition()))
 					return 0;
 			}
 		}
 	}
 
 	std::vector<Tank *> result;
-	if (m_tank->ground()->findTankOnRect(m_tank, range, result) != 0) {
+	if (tank()->ground()->findTankOnRect(tank(), range, result) != 0) {
 		for (auto &t : result) {
 			Games *g = (Games *)director;
-			if (t->camp() != m_tank->camp())
+			if (t->camp() != tank()->camp())
 				if (!m_gps.navigationToCollimationLine(current, t->position()))
 					return 0;
 		}
@@ -186,14 +192,14 @@ bool AI::collisionCheck(const SDL_Point & p)
 
 void AI::newTarget(const SDL_Point & position, Uint32 timestamp)
 {
-	std::default_random_engine eX(Timer::SDLTimer() + m_tank->pixelPosition().x + position.y);
+	std::default_random_engine eX(Timer::SDLTimer() + tank()->pixelPosition().x + position.y);
 	std::uniform_int_distribution<> disX(0, MAP_SIZE - 2);
 
 	SDL_Point target;
 	do {
 		do {
 			target.x = disX(eX);
-			std::srand(Timer::SDLTimer() + m_tank->pixelPosition().y + position.x);
+			std::srand(Timer::SDLTimer() + tank()->pixelPosition().y + position.x);
 			target.y = std::rand() % (MAP_SIZE - 2);
 		} while (!collisionCheck(target));
 	} while (m_gps.navigation(position, target));

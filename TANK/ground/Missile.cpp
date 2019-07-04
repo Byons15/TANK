@@ -37,6 +37,8 @@ Missile::Missile(Ground * ground, Tank * sender, int power)
 		break;
 	}
 	m_mover.move(m_position, sender->direction(), lenght, m_startTime, 1);
+
+	m_driver = m_sender->driver();
 }
 
 void Missile::update(Uint32 time)

@@ -20,6 +20,9 @@ Navigator::Navigator(const ROAD * road)
 
 int Navigator::navigation(const SDL_Point & p1, const SDL_Point & p2)
 {
+	if (!m_road)
+		return -2;
+
 	resetNavigator();
 	createpreferredDirection(p1, p2);
 	auto result = findWay(p1, p2);
@@ -32,6 +35,9 @@ int Navigator::navigation(const SDL_Point & p1, const SDL_Point & p2)
 
 int Navigator::navigationToCollimationLine(const SDL_Point & p1, const SDL_Point & CollimationLine)
 {
+	if (!m_road)
+		return -2;
+
 	resetNavigator();
 	createpreferredDirection(p1, CollimationLine);
 	

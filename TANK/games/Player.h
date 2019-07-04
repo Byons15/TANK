@@ -3,7 +3,7 @@
 #include "../ground/Mover.h"
 #include "../Event.h"
 class Player :
-	public Commander
+	public Driver
 {
 public:
 	enum PLAYER

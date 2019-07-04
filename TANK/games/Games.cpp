@@ -17,7 +17,7 @@ Games::Games()
 		WINDOW_WIDTH, WINDOW_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)),
 	m_renderer(m_window, true), m_startMenu(&m_renderer), m_ground(&m_renderer),
-	m_stateMenu(&m_renderer), m_customMap(&m_renderer, &m_ground), m_resultView(&m_renderer)
+	m_stateMenu(&m_renderer), m_customMap(&m_renderer, &m_ground), m_resultView(&m_renderer), m_players{ Player::P1, Player::P2 }
 {
 	installEventHook();
 	installUserEventHook();
@@ -37,43 +37,53 @@ void Games::startGame(int palyerCount, int level)
 	m_ground.show(0, 0);
 	m_stateMenu.show(0, 0);
 
+	m_remainEenemy = 20;
+
 	//设置状态栏
-	m_stateMenu.setEnemyCount(17);
+	m_stateMenu.setEnemyCount(m_remainEenemy);
 	m_stateMenu.setLevel((level) ? level : 1);
 
 	//布置战场。
 	if(level)
 		m_ground.maps().createMaps(level);
 
+	//生成玩家.
 	for (size_t p = 0; p != m_playerNumber; ++p) {
-		m_player[p].tank = m_ground.addTank((Tank::MODEL)p, Tank::ALLISE, p);
-		m_player[p].tank->setCommander(new Player((Player::PLAYER)p));
-		m_stateMenu.setPlayerLife((Player::PLAYER)p, m_player[p].life);
+		m_playersData[p].tank = m_ground.addTank((Tank::MODEL)p, Tank::ALLISE, p);
+		m_playersData[p].tank->setDriver(&m_players[p]);
+		m_stateMenu.setPlayerLife((Player::PLAYER)p, m_playersData[p].life);
 	}
 
+	//生成AI
+	m_inUseAICount = 0;
 	for (size_t i = 0; i != 3; ++i) {
-		auto t = m_ground.addTank(Tank::ARMOURED1, Tank::ENEMY, i);
-		t->setCommander(new AI(t, 1));
+		m_ground.addTank(Tank::ORDINARY1, Tank::ENEMY, i)->setDriver(&m_AIs[m_inUseAICount++]);
 	}
+
+	m_stateMenu.setEnemyCount(m_stateMenu.enemyCount() - 3);
 }
 
-int Games::createEnemy()
+int Games::createEnemy(AI *driver)
 {
 	if (m_stateMenu.enemyCount() == 0) {
 		return -2;
 	}
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
+	std::default_random_engine rd(Timer::current() + unsigned(driver) % (unsigned(driver) / 2));
 	std::uniform_int_distribution<> uidModel(Tank::AGILITY, Tank::ORDINARY2), uidBindPoint(0, 2);
-	auto t = m_ground.addTank((Tank::MODEL)uidModel(gen), Tank::ENEMY, uidBindPoint(gen));
+	auto t = m_ground.addTank((Tank::MODEL)uidModel(rd), Tank::ENEMY, uidBindPoint(rd));
 
 	if (t == 0) {
-		m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, this);
+		SDL_UserEvent *user = new SDL_UserEvent;
+		user->type = CREATE_ENEMY;
+		user->data1 = driver;
+		m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, user);
 		return -1;
 	}
 
-	t->setCommander(new AI(t, m_stateMenu.level()));
+	//更新敌军数量。
+	m_stateMenu.setEnemyCount(m_stateMenu.enemyCount() - 1);
+	t->setDriver(driver);
 
 	return 0;
 }
@@ -115,12 +125,8 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 
 		//敌军阵亡.
 		if (user.code == Ground::ENEMY) {  
-
-			//更新敌军数量。
-			m_stateMenu.setEnemyCount((m_stateMenu.enemyCount() - 1 > 0) ? m_stateMenu.enemyCount() - 1 : 0);
-
 			//检查敌军数量是否为0
-			if (m_stateMenu.enemyCount() == 0) {
+			if (m_remainEenemy == 0) {
 
 				//触发游戏胜利事件。
 				SDL_UserEvent user;
@@ -131,24 +137,33 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			}
 
 			//1秒后再生成敌军。
-			m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, this);
+			SDL_UserEvent *param = new SDL_UserEvent;
+			*param = user;
+			param->type = CREATE_ENEMY;
+			param->data2 = this;
+			m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, param);
+			m_remainEenemy--;
 		}
 
 		//友军阵亡.
 		else {
-			auto scorecard = reinterpret_cast<std::map<Tank::MODEL, SCORECARD> *>(user.data2);
-			printf("英勇的 %d号 烈士击杀了: \n");
-			for (auto &s : *scorecard)
-			{
-				printf("Model: %d count: %d  total: %d\n", s.first, s.second.kill, s.second.score);
+			int model = user.timestamp;
+			if (m_playersData[model].life != 0) {
+				m_ground.addTank((Tank::MODEL)model, Tank::ALLISE, model)->setDriver(&m_players[model]);
+				--m_playersData[model].life;
+				m_stateMenu.setPlayerLife((Player::PLAYER)model, m_playersData[model].life);
 			}
 		}
 		break;
 
 	case CREATE_ENEMY:
-		createEnemy();
+		createEnemy(((AI *)(user.data2)));
 		break;
 	case GAME_OVER:
+		if (user.code == 1) {
+			printf("winner player!!\n");
+			getchar();
+		}
 
 		break;
 	default:
@@ -158,11 +173,7 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 
 Uint32 Games::enemyCreateTimeCallback(Uint32 interval, void * param)
 {
-	Games *g = reinterpret_cast<Games *> (param);
-
-	SDL_UserEvent user;
-	user.type = CREATE_ENEMY;
-	g->EventInterface::userEventTrigger(user);
-
+	director->userEventTrigger(*(reinterpret_cast<SDL_UserEvent *> (param)));
+	delete ((SDL_UserEvent *)param);
 	return 0;
 }

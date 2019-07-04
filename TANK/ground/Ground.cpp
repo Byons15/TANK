@@ -27,6 +27,7 @@ void Ground::open(void * data, int code)
 void Ground::close()
 {
 	uninstallUserEventHook();
+	clearGround();
 }
 
 Tank* Ground::addTank(Tank::MODEL tankModel, Tank::CAMP camp, int bindIndex)
@@ -64,9 +65,9 @@ void Ground::addMissile(Missile * m)
 	m->setDestoryIterator(--m_missiles.end());
 }
 
-int Ground::attackTank(Tank * aggressor, Tank * tank, int power)
+int Ground::attackTank(Driver * aggressor, Tank * tank, int power)
 {
-	auto result = tank->beHit(aggressor, power);
+	auto result = Tank::attack(aggressor, tank, power);
 
 	if (!result) 
 		destoryTank(tank);
@@ -203,7 +204,7 @@ int Ground::MissilepositionUpdate(Missile * m)
 			if (SDL_HasIntersection(&r1, &r2) != SDL_FALSE) {
 				auto d = iter;
 				++iter;
-				attackTank(m->sender(), *d, m->power());
+				attackTank(m->driver(), *d, m->power());
 				result = -2;
 				continue;
 			}
@@ -307,6 +308,10 @@ void Ground::clearGround()
 		delete iter;
 	}
 	m_tanks.clear();
+
+	for (auto &m : m_missiles)
+		delete m;
+	m_missiles.clear();
 }
 
 SDL_Point pixelToGroundPoint(const SDL_Point & pixelPoint)

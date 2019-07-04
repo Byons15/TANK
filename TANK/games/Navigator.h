@@ -10,8 +10,7 @@ typedef std::array<std::array<bool, MAP_SIZE>, MAP_SIZE> ROAD;
 class Navigator
 {
 public:
-	Navigator(const ROAD * road);
-
+	Navigator(const ROAD * road = nullptr);
 	//开始导航
 	//p1 : 开始位置
 	//p2 : 目的地
@@ -19,6 +18,8 @@ public:
 	int navigation(const SDL_Point &p1, const SDL_Point &p2);
 
 	int navigationToCollimationLine(const SDL_Point &p1, const SDL_Point &CollimationLine);
+
+	void setRoad(const ROAD *road) { m_road = road; }
 
 	//重置导航器。
 	void resetNavigator();

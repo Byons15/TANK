@@ -54,7 +54,7 @@ public:
 
 	//攻击坦克。
 	//坦克已摧毁返回0， 坦克已受伤返回1， 坦克处在无敌状态返回-1
-	int attackTank(Tank * aggressor, Tank *tank, int power);
+	int attackTank(Driver * aggressor, Tank *tank, int power);
 
 	int attackTerrain(const SDL_Point &pos, int power);
 
@@ -65,15 +65,11 @@ public:
 
 	void destoryTerrain(const SDL_Point &pos);
 
-	const std::set<Tank *> &tankList() const {
-		return m_tanks;
-	}
+	const std::set<Tank *> &tankList() const { return m_tanks; }
 
 	//坦克碰撞检查
 	//没有碰撞返回0， 与地形发生碰撞返回-1，与其他坦克发生碰撞则返回-2,并将被撞坦克赋值retColDest
 	int positionTest(Tank *tank, const SDL_Point &pixelPos, Tank ** retColDest);
-
-	int collisionCheck(Tank *tank, const SDL_Rect colRect, Tank ** retCOlDest);
 
 	int findTankOnRect(Tank *tank, const SDL_Rect &rect, std::vector<Tank *>& outResult);
 

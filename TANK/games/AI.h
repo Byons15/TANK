@@ -6,58 +6,17 @@
 #include "Navigator.h"
 #include <random>
 
-class Driver
-{
-private:
-	class Action
-	{
-	public:
-
-		//派生类实现，派生类必须满足返回值的要求。
-		//返回0表示动作还没有做完，下一帧继续调用。 
-		//返回-1表示动作已经做完，Action可以被delete。
-		virtual int action(const SDL_Point position, Uint32 timestamp, Mover::DIRECTION &outDirection) = 0;
-	};
-
-public:
-	Driver(Tank *tank, int level);
-	void run(const SDL_Point &position, Uint32 timestamp, Mover::DIRECTION &outDirection);
-
-	class Stay
-		:Action
-	{
-	public:
-		Stay();
-		int action(const SDL_Point position, Uint32 timestamp, Mover::DIRECTION &outDirection) override;
-	private:
-		Uint32 m_startTimestamp;
-		Uint32 m_stayTime;
-	};
-
-	class Move
-		:Action
-	{
-		Move();
-		int action(const SDL_Point position, Uint32 timestamp, Mover::DIRECTION &outDirection) override;
-	private:
-		Navigator m_gps;
-	};
-
-private:
-	
-};
-
 class AI :
-	public Commander,
+	public Driver,
 	public EventInterface
 {
 public:
-	AI(Tank *tank, int level);
+	AI();
 	~AI();
+	void setAILevel(int level) { m_level = level; }
 	virtual int command(SDL_Point position, Uint32 timestamp, Mover::DIRECTION &direction) override;
 	
 private:
-	Tank *m_tank;
 	int m_level;
 
 private: //driver

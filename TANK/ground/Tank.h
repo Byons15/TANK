@@ -4,14 +4,8 @@
 #include "Mover.h"
 #include "../TANKS.h"
 
-class Commander;
+class Driver;
 class Ground;
-
-struct SCORECARD
-{
-	unsigned kill = 0;
-	unsigned score = 0;
-};
 
 class Tank :
 	public Spirit
@@ -22,19 +16,20 @@ public:
 	{
 		//奖励箱触发。
 		//code：奖品
-		//data1：攻击者
-		//data2：被攻击者，携带奖励箱的tank
+		//data1：攻击者 type : Driver
+		//data2：被攻击者，携带奖励箱的tank type : Tank
 		BONUSCHEST = 0x300,
 
 		//坦克被击中（不一定摧毁了）。
-		//data1：攻击者
-		//data2：被攻击者（使用这个指针前请确保坦克还没有被销毁）
+		//data1：攻击者 type : Driver
+		//data2：被攻击者（使用这个指针前请确保坦克还没有被销毁）type : Tank
 		ATTACK,
 
 		//坦克被销毁，这个事件一定是跟着Tank::ATTACKTANK事件的。
 		//code：被摧毁的坦克的阵营。
-		//data1：被摧毁的坦克型号。
-		//data2: 被摧毁的坦克的计分板..
+		//data1: 攻击者 type : Driver
+		//data2：被攻击者。
+		//timestamp : 被攻击的坦克型号。
 		KILLED,
 	};
 
@@ -56,21 +51,13 @@ public:
 		ENEMY,
 	};
 	
-	int HP() const {
-		return m_HP;
-	}
-	inline const SDL_Point &pixelPosition() const {
-		return m_position;
-	}
-	inline SDL_Point position() const {
-		return SDL_Point{m_position.x / GRID_SIZE, m_position.y / GRID_SIZE};
-	}
+	int HP() const {return m_HP;}
+	inline const SDL_Point &pixelPosition() const {return m_position;}
+	inline SDL_Point position() const {return SDL_Point{m_position.x / GRID_SIZE, m_position.y / GRID_SIZE};}
 
 	//设置坦克位于战场的网格位置。
 	int setGroundPosition(const SDL_Point &pos);   
-	Mover::DIRECTION direction() const {
-		return m_direction;
-	}
+	Mover::DIRECTION direction() const {return m_direction;}
 	void fire();
 	void reload();
 
@@ -79,19 +66,11 @@ public:
 
 	//stopMove会使坦克进入“结束移动”状态，结束移动状态表示坦克自行移动到最近的下一个网格，同时不接受移动操作。
 	void stopMove();
-	int setCommander(Commander *cmder);
-	bool moveState() const {
-		return m_mover.state();
-	}
-	MODEL model() const {
-		return m_model;
-	}
-	Ground *ground() {
-		return m_ground;
-	}
-
-	int killScore() { return m_killScore; }
-
+	int setDriver(Driver *driver);
+	bool moveState() const {return m_mover.state();}
+	MODEL model() const {return m_model;}
+	Ground *ground() {return m_ground;}
+	Driver *driver() { return m_driver; }
 	CAMP camp() const { return m_camp; }
 
 	//设置奖励箱
@@ -99,18 +78,14 @@ public:
 	//成功返回0， 坦克处在无敌状态则返回-1
 	int setRewards(int rewarde);
 
-	std::map<Tank::MODEL, SCORECARD> *scorecard()
-	{
-		return m_scorecard;
-	}
-
 	//成功返回0， 坦克当前携带有奖励箱则返回-1
 	int invincible();
+
+	static int attack(Driver *aggressor, Tank *target, int power);
 
 private: friend class Ground;
 	Tank(Ground * ground, CAMP camp, MODEL &model, const SDL_Point &position);
 	~Tank();
-	int beHit(Tank *aggressor, int power);
 
 	static void setFactory(TankFactory *factory);
 	void update(Uint32 time);
@@ -121,38 +96,44 @@ private:
 	void unInvincible();
 
 	std::vector<Animation> m_form;
-
-	std::map<Tank::MODEL, SCORECARD> *m_scorecard;
 	Animation m_rewardsForm, m_invincibleForm;
 	Mover m_mover;
 	SDL_Point m_position;
 	SDL_Rect m_lastRect;
 	CAMP m_camp;
 	MODEL m_model;
-	int m_HP, m_rewarde, m_power, m_killScore;
+	int m_HP, m_rewarde, m_power;
 	float m_speeds, m_defaultSpeeds;
 	Mover::DIRECTION m_direction;
 	Ground *m_ground;
-	Commander *m_commander;
+	Driver *m_driver;
 	static TankFactory *sm_factory;
 	bool m_invincible, m_reload;
 };
  
-class Commander
+struct SOCRECARD
+{
+	int killCount = 0;
+	unsigned total = 0;
+};
+typedef std::map<Tank::MODEL, SOCRECARD> SCORECARDS;
+
+class Driver
 {
 public:
-	Commander();
+	Driver();
 
 	//派生类实现此函数以将命令传给坦克，这个函数会在Tank需要命令的时候调用。
 	//direction：派生类返回新的移动方向
 	//返回值：当前不下达移动命令时返回-1，下达了移动命令时返回0.
-	int drive(Tank *tank);
+	void drive(Tank *tank) { m_tank = tank; }
 	virtual bool requestFire() = 0;
-	Tank *tank() {
-		return m_tank;
-	}
+	Tank *tank() { return m_tank; }
+	void record(Tank::MODEL model);
 	virtual int command(SDL_Point cuttentPosition, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
-	virtual ~Commander() = default;
+	virtual ~Driver() = default;
 private:
 	Tank *m_tank;
+	std::vector<unsigned> sm_scoreTable;
+	SCORECARDS m_socrecards;
 };

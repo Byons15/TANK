@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL_events.h>
-
+#include <functional>
 #include "Director.h"
 
 /*
@@ -54,5 +54,7 @@ protected:
 	{
 		//DEFAULT
 	}
+
+	
 private:
 };
