@@ -303,7 +303,7 @@ bool Tank::onGrid()
 }
 
 Driver::Driver()
-	:m_tank(nullptr)
+	:m_tank(nullptr), m_total(0)
 {
 	if (sm_scoreTable.empty()) {
 		std::vector<std::string> data;
@@ -320,4 +320,5 @@ void Driver::record(Tank::MODEL model)
 {
 	m_socrecards[model].killCount++;
 	m_socrecards[model].total += sm_scoreTable[model];
+	m_total += sm_scoreTable[model];
 }

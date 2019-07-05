@@ -130,10 +130,13 @@ public:
 	virtual bool requestFire() = 0;
 	Tank *tank() { return m_tank; }
 	void record(Tank::MODEL model);
+	unsigned total() { return m_total; }
+	void clearScorecards() { m_socrecards.clear(); }
 	virtual int command(SDL_Point cuttentPosition, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
 	virtual ~Driver() = default;
 private:
 	Tank *m_tank;
 	std::vector<unsigned> sm_scoreTable;
 	SCORECARDS m_socrecards;
+	unsigned m_total;
 };

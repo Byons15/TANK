@@ -17,27 +17,11 @@ public:
 	}
 protected:
 	//see director::userEventTrigger
-	void userEventTrigger(const SDL_UserEvent &userEvent)
-	{
-		director->userEventTrigger(userEvent);
-	}
-
-	inline void installEventHook()
-	{
-		director->setEventHook(this);
-	}
-	inline void uninstallEventHook()
-	{
-		director->unsetEventHook(this);
-	}
-	inline void installUserEventHook()
-	{
-		director->setUserEventHook(this);
-	}
-	inline void uninstallUserEventHook()
-	{
-		director->unsetUserEventHook(this);
-	}
+	void userEventTrigger(const SDL_UserEvent &userEvent){director->userEventTrigger(userEvent);}
+	inline void installEventHook(){director->setEventHook(this);}
+	inline void uninstallEventHook(){director->unsetEventHook(this);}
+	inline void installUserEventHook(){director->setUserEventHook(this);}
+	inline void uninstallUserEventHook(){director->unsetUserEventHook(this);}
 	
 	//SDL事件钩子回调函数。
 	//调用Director::setEventHook函数，在事件触发时会回调这个函数。
@@ -57,4 +41,5 @@ protected:
 
 	
 private:
+	
 };

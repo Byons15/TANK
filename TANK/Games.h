@@ -48,8 +48,8 @@ private:
 	
 	struct PLAYERSTATE 
 	{
-		Tank *tank;
-		unsigned life = 5;
+		Tank *tank = 0;
+		unsigned life = 0;
 	} m_playersData[2];
 	Player m_players[2];
 	

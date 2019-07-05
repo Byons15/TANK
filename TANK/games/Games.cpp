@@ -51,6 +51,7 @@ void Games::startGame(int palyerCount, int level)
 	for (size_t p = 0; p != m_playerNumber; ++p) {
 		m_playersData[p].tank = m_ground.addTank((Tank::MODEL)p, Tank::ALLISE, p);
 		m_playersData[p].tank->setDriver(&m_players[p]);
+		m_playersData[p].life--;
 		m_stateMenu.setPlayerLife((Player::PLAYER)p, m_playersData[p].life);
 	}
 
@@ -101,6 +102,10 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 		m_gameModel = reinterpret_cast<int>(user.data1);
 		m_playerNumber = reinterpret_cast<int> (user.data2);
 
+		for (int i = 0; i != m_playerNumber; ++i) {
+			m_playersData[i].life = 5;
+		}
+
 		if (m_gameModel == 1) {
 			startGame(m_playerNumber, 1);
 		}
@@ -119,14 +124,18 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			m_startMenu.show(0, 0);
 		}
 		else {
+			for (auto i = 0; i != m_playerNumber; ++i) {
+				m_playersData[i].life++;
+			}
 			startGame(m_playerNumber, m_stateMenu.level() + 1);
 		}
 	case Tank::KILLED:
 
 		//敌军阵亡.
 		if (user.code == Ground::ENEMY) {  
+
 			//检查敌军数量是否为0
-			if (m_remainEenemy == 0) {
+			if (--m_remainEenemy == 0) {
 
 				//触发游戏胜利事件。
 				SDL_UserEvent user;
@@ -140,9 +149,7 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			SDL_UserEvent *param = new SDL_UserEvent;
 			*param = user;
 			param->type = CREATE_ENEMY;
-			param->data2 = this;
 			m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, param);
-			m_remainEenemy--;
 		}
 
 		//友军阵亡.
@@ -153,6 +160,14 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 				--m_playersData[model].life;
 				m_stateMenu.setPlayerLife((Player::PLAYER)model, m_playersData[model].life);
 			}
+			else {
+				if (!m_playersData[0].life && !m_playersData[1].life) {
+					SDL_UserEvent user;
+					user.type = GAME_OVER;
+					user.code = 0;
+					EventInterface::userEventTrigger(user);
+				}
+			}
 		}
 		break;
 
@@ -162,6 +177,10 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 	case GAME_OVER:
 		if (user.code == 1) {
 			printf("winner player!!\n");
+			getchar();
+		}
+		else {
+			printf("Game over!!");
 			getchar();
 		}
 
