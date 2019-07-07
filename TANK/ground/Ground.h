@@ -36,16 +36,10 @@ public:
 	Ground(Renderer *renderer);
 	~Ground();
 
-	Maps &maps() {
-		return m_maps;
-	}
-	const ROAD &colMap() const {
-		return m_colMap;
-	}
+	Maps &maps() {return m_maps;}
+	const ROAD &colMap() const {return m_colMap;}
 
-	const TankFactory &tankFactory() {
-		return m_tankFactory;
-	}
+	const TankFactory &tankFactory() {return m_tankFactory;}
 	
 	//成功返回指针，返回0表示复活点上有其他坦克，被占用了，生成失败。 
 	Tank* addTank(Tank::MODEL tankModel, Tank::CAMP camp, int bindIndex);

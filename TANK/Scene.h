@@ -27,18 +27,10 @@ public:
 	//设置场景背景颜色。
 	//成功返回0， 返回-1表示没有设置渲染器。
 	int setBackdropColor(const SDL_Color &color);
-	Renderer *renderer() {
-		return m_renderer;
-	}
+	Renderer *renderer() {return m_renderer;}
 	void setRect(const SDL_Rect &rect);
-	const SDL_Rect &rect() const {
-		return m_rect;
-	}
-
-	
-	bool state() const {
-		return m_state;
-	}
+	const SDL_Rect &rect() const {return m_rect;}
+	bool state() const {return m_state;}
 
 	void show(void *data, int code)
 	{

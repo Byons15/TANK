@@ -190,7 +190,7 @@ int Tank::attack(Driver * aggressor, Tank * target, int power)
 	}
 
 	if (!target->m_HP) {
-
+		aggressor->record(target->model());
 		user.type = KILLED;
 		user.code = target->m_camp;
 		user.data2 = target->driver();
@@ -301,6 +301,8 @@ bool Tank::onGrid()
 
 	return true;
 }
+
+std::vector<unsigned> Driver::sm_scoreTable;
 
 Driver::Driver()
 	:m_tank(nullptr), m_total(0)

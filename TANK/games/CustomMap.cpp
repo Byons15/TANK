@@ -37,7 +37,7 @@ CustomMap::CustomMap(Renderer * renderer, Ground *ground)
 	auto a = renderer->animationFactory().findAnimation("P1");
 	a.frameCount = 1;
 	m_curosr.setAnimation(a);
-	m_curosr.startFlicker(1000, 200);
+	m_curosr.setAlpha(193);
 
 	m_curosrPosition = ground->maps().alliesBindPosition(0);
 }
@@ -75,7 +75,7 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 				m_currentTerrainIndex = Maps::TAG_BASE;
 			break;
 			case Mover::RIGHT:
-				m_curosrPosition.x = (m_curosrPosition.x + 1 > MAP_SIZE) ? m_curosrPosition.x : m_curosrPosition.x + 1;
+				m_curosrPosition.x = (m_curosrPosition.x + 1 > MAP_SIZE - 2) ? m_curosrPosition.x : m_curosrPosition.x + 1;
 				m_currentTerrainIndex = Maps::TAG_BASE;
 			break;
 			case Mover::UP:
@@ -83,7 +83,7 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 				m_currentTerrainIndex = Maps::TAG_BASE;
 			break;
 			case Mover::DOWN:
-				m_curosrPosition.y = (m_curosrPosition.y + 1 > MAP_SIZE) ? m_curosrPosition.y : m_curosrPosition.y + 1;
+				m_curosrPosition.y = (m_curosrPosition.y + 1 > MAP_SIZE - 2) ? m_curosrPosition.y : m_curosrPosition.y + 1;
 				m_currentTerrainIndex = Maps::TAG_BASE;
 				break;
 			case BOX_A:  //boxA
@@ -98,8 +98,6 @@ void CustomMap::eventHookProc(const SDL_Event & event)
 							m_ground->maps().setTerrain(x, y, m_currentTerrainIndex);
 					}
 				}
-				
-
 				break;
 			case BOX_B:
 				hide();

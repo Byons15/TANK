@@ -14,30 +14,14 @@ public:
 		int playerLife[2], plyaerScore[2], level, enemyCount;
 	};
 	StateMenu(Renderer *renderer);
-	size_t playerLife(Player::PLAYER p) const {
-		return (p == Player::P1) ? m_text[2].data : m_text[3].data;
-	}
-	void setPlayerLife(Player::PLAYER p, size_t life) {
-		((p == Player::P1) ? m_text[2].data : m_text[3].data) = life;
-	}
-	size_t playerScore(Player::PLAYER p) const {
-		return (p == Player::P1) ? m_text[0].data : m_text[1].data;
-	}
-	void setPlayerScore(Player::PLAYER p, size_t score) {
-		((p == Player::P1) ? m_text[0].data : m_text[1].data) = score;
-	}
-	size_t level() const {
-		return m_text[4].data;
-	}
-	void setLevel(size_t level) {
-		m_text[4].data = level;
-	}
-	size_t enemyCount() const {
-		return m_enemyCount;
-	}
-	void setEnemyCount(size_t count) {
-		m_enemyCount = count;
-	}
+	size_t playerLife(Player::PLAYER p) const {return (p == Player::P1) ? m_text[2].data : m_text[3].data;}
+	void setPlayerLife(Player::PLAYER p, size_t life) {((p == Player::P1) ? m_text[2].data : m_text[3].data) = life;}
+	size_t playerScore(Player::PLAYER p) const {return (p == Player::P1) ? m_text[0].data : m_text[1].data;}
+	void setPlayerScore(Player::PLAYER p, size_t score) {((p == Player::P1) ? m_text[0].data : m_text[1].data) = score;}
+	size_t level() const {return m_text[4].data;}
+	void setLevel(size_t level) {m_text[4].data = level;}
+	size_t enemyCount() const {return m_enemyCount;}
+	void setEnemyCount(size_t count) {m_enemyCount = count;}
 
 
 	virtual ~StateMenu();

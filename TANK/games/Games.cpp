@@ -21,6 +21,7 @@ Games::Games()
 {
 	installEventHook();
 	installUserEventHook();
+	
 	m_startMenu.show(0, 0);
 }
 
@@ -53,6 +54,7 @@ void Games::startGame(int palyerCount, int level)
 		m_playersData[p].tank->setDriver(&m_players[p]);
 		m_playersData[p].life--;
 		m_stateMenu.setPlayerLife((Player::PLAYER)p, m_playersData[p].life);
+		m_players[p].clearScorecards();
 	}
 
 	//生成AI
@@ -71,7 +73,7 @@ int Games::createEnemy(AI *driver)
 	}
 
 	std::default_random_engine rd(Timer::current() + unsigned(driver) % (unsigned(driver) / 2));
-	std::uniform_int_distribution<> uidModel(Tank::AGILITY, Tank::ORDINARY2), uidBindPoint(0, 2);
+	std::uniform_int_distribution<> uidModel(Tank::ORDINARY1, Tank::ARMOURED3), uidBindPoint(0, 2);
 	auto t = m_ground.addTank((Tank::MODEL)uidModel(rd), Tank::ENEMY, uidBindPoint(rd));
 
 	if (t == 0) {
@@ -110,6 +112,8 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			startGame(m_playerNumber, 1);
 		}
 		else {
+			m_ground.show(0, 0);
+			m_stateMenu.show(0, 0);
 			m_ground.maps().clearMap();
 			m_customMap.show(0, 0);
 		}
@@ -129,6 +133,8 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			}
 			startGame(m_playerNumber, m_stateMenu.level() + 1);
 		}
+		break;
+
 	case Tank::KILLED:
 
 		//敌军阵亡.
@@ -150,6 +156,12 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 			*param = user;
 			param->type = CREATE_ENEMY;
 			m_EnemyCreateTimerID = Timer::addTimer(1000, enemyCreateTimeCallback, param);
+			if (user.data1 == &m_players[0]) {
+				m_stateMenu.setPlayerScore(Player::P1, m_stateMenu.playerScore(Player::P1) + Driver::queryScoreForModel((Tank::MODEL)user.timestamp));
+			}
+			else if (user.data1 == &m_players[1]) {
+				m_stateMenu.setPlayerScore(Player::P2, m_stateMenu.playerScore(Player::P2) + Driver::queryScoreForModel((Tank::MODEL)user.timestamp));
+			}
 		}
 
 		//友军阵亡.
@@ -175,13 +187,15 @@ void Games::userEventHookProc(const SDL_UserEvent & user)
 		createEnemy(((AI *)(user.data2)));
 		break;
 	case GAME_OVER:
+		m_ground.hide();
+		m_stateMenu.hide();
+
 		if (user.code == 1) {
-			printf("winner player!!\n");
-			getchar();
+			SCORECARDS *result[2] = {&m_players[0].scoreCards(), &m_players[1].scoreCards()};
+			m_resultView.show(&result, m_playerNumber);
 		}
 		else {
-			printf("Game over!!");
-			getchar();
+			m_startMenu.show(0, 0);
 		}
 
 		break;

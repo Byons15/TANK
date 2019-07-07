@@ -4,6 +4,7 @@
 #include <array>
 #include "Event.h"
 #include <set>
+#include "ground\Tank.h"
 
 class ResultView :
 	public Scene,
@@ -23,8 +24,6 @@ public:
 	ResultView(Renderer *renderer);
 	~ResultView();
 
-
-
 protected:
 	virtual int render() override;
 	virtual void update(Uint32 time) override;
@@ -37,6 +36,7 @@ protected:
 	virtual void close() override;
 
 private:
+	void resetListData();
 	void loadKey(const std::string & dataGroup);
 	static constexpr SDL_Color title1Color{ 56, 217, 123, 255}, 
 							   title2Color{252, 194,  13, 255}, 
@@ -59,7 +59,6 @@ private:
 		Spirit icon;
 		Text killCountBox, scoreBox;
 		SDL_Point iconPosition, killCountPosition, scorePosition;
-		int killCount = 0, score = 0;
 	};
 	std::array<std::array<ITEM, 4>, 2> m_lists;
 
@@ -67,12 +66,10 @@ private:
 	{
 		Text label, numberBox;
 		SDL_Point labelPosition, numberBoxPosition;
-		int data = 0;
 	};
-	std::array<COUNTBOX, 4> m_countBox;
-	std::array<RESULT, 2> m_result, m_currentList;
+	COUNTBOX m_countBox[2][2];
+	std::array<int, 5> m_results[2], m_currentList[2];
 	std::set<SDL_Keycode> m_switchKeys, m_selectKeys;
-	Uint32 m_lastUpdateTime;
-	bool m_resetView;
+	Uint32 m_lastUpdateTime, m_playerCount;
 };
 

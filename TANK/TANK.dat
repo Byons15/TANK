@@ -82,16 +82,16 @@ Keypad .
 <tank>
   P1 0.3 1 P1 DEFAULT DEFAULT
   P2 0.3 1 P2 DEFAULT DEFAULT
+  ordinary1 0.2 1 ordinary1 DEFAULT DEFAULT
+  ordinary2 0.2 1 ordinary2 DEFAULT DEFAULT
   agility 0.3 1 agility DEFAULT DEFAULT
   armoured1 0.2 1 armoured3 DEFAULT DEFAULT
   armoured2 0.2 2 armoured3 armoured2 DEFAULT DEFAULT
   armoured3 0.2 3 armoured3 armoured2 armoured1 DEFAULT DEFAULT
-  ordinary1 0.2 1 ordinary1 DEFAULT DEFAULT
-  ordinary2 0.2 1 ordinary2 DEFAULT DEFAULT
 <end>
 
 <scoreTable>
- 0 0 200 300 300 300 100 100
+ 0 0 100 100 200 300 300 300
 <end>
 
 <terrain>

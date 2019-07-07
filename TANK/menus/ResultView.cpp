@@ -3,9 +3,10 @@
 #include "../Renderer.h"
 #include "../FileLoader.h"
 #include <sstream>
+#include "../Timer.h"
 
 ResultView::ResultView(Renderer * renderer)
-	:Scene(renderer, { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT }), m_resetView(false)
+	:Scene(renderer, { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT })
 {
 
 	setBackdropColor({ 0, 0, 9, 255 });
@@ -53,11 +54,11 @@ ResultView::ResultView(Renderer * renderer)
 			m_lists[i][j].killCountBox.setTextRenderFlags(Text::biend);
 			m_lists[i][j].killCountBox.setFontSize(dataFontSize);
 			m_lists[i][j].killCountBox.setFontColor(color);
-			m_lists[i][j].killCountBox.setString(L"× " + std::to_wstring(m_lists[i][j].killCount));
+			m_lists[i][j].killCountBox.setString(L"× " + std::to_wstring(0));
 			m_lists[i][j].scoreBox.setTextRenderFlags(Text::biend);
 			m_lists[i][j].scoreBox.setFontSize(dataFontSize);
 			m_lists[i][j].scoreBox.setFontColor(color);
-			m_lists[i][j].scoreBox.setString(L"= " + std::to_wstring(m_lists[i][j].score));
+			m_lists[i][j].scoreBox.setString(L"= " + std::to_wstring(0));
 			m_lists[i][j].iconPosition = { modelIconPos.x + i * layoutOffset.x, modelIconPos.y + j * layoutOffset.y };
 			m_lists[i][j].killCountPosition = { killCountPos.x + i * layoutOffset.x, killCountPos.y + (j * layoutOffset.y) };
 			m_lists[i][j].scorePosition = { scorePos.x + (i * layoutOffset.x), scorePos.y + (j * layoutOffset.y) };
@@ -66,22 +67,24 @@ ResultView::ResultView(Renderer * renderer)
 
 
 	//准备统计框。
-	for (auto &c : m_countBox) {
-		c.label.setScene(this);
-		c.numberBox.setScene(this);
-		c.label.setTextRenderFlags(Text::biend);
-		c.numberBox.setTextRenderFlags(Text::biend);
-		c.label.setFontColor(color);
-		c.numberBox.setFontColor(color);
-		c.label.setFontSize(dataFontSize);
-		c.numberBox.setFontSize(dataFontSize);
-		c.numberBox.setString(std::to_wstring(c.data));
-		stream[3] >> c.labelPosition.x >> c.labelPosition.y >> c.numberBoxPosition.x >> c.numberBoxPosition.y;
+	for (auto i = 0; i != 2; ++i) {
+		for (auto j = 0; j != 2; ++j) {
+			auto &c = m_countBox[i][j];
+			c.label.setScene(this);
+			c.numberBox.setScene(this);
+			c.label.setTextRenderFlags(Text::biend);
+			c.numberBox.setTextRenderFlags(Text::biend);
+			c.label.setFontColor(color);
+			c.numberBox.setFontColor(color);
+			c.label.setFontSize(dataFontSize);
+			c.numberBox.setFontSize(dataFontSize);
+			c.numberBox.setString(std::to_wstring(0));
+			stream[3] >> c.labelPosition.x >> c.labelPosition.y >> c.numberBoxPosition.x >> c.numberBoxPosition.y;
+		}
+		m_countBox[i][0].label.setString(L"KILL: ");
 	}
-	m_countBox[0].label.setString(L"KILL: ");
-	m_countBox[1].label.setString(L"TOTAL: ");
-	m_countBox[2].label.setString(L"KILL: ");
-	m_countBox[3].label.setString(L"TOTAL: ");
+	m_countBox[0][1].label.setString(L"TOTAL: ");
+	m_countBox[1][1].label.setString(L"TOTAL: ");
 
 	//准备按钮。
 	m_select = 0;
@@ -104,7 +107,8 @@ ResultView::ResultView(Renderer * renderer)
 
 	loadKey("P1control");
 	loadKey("P2control");
-	
+
+	resetListData();
 }
 
 ResultView::~ResultView()
@@ -114,34 +118,35 @@ ResultView::~ResultView()
 
 void ResultView::open(void * data, int code)
 {
-	auto r = reinterpret_cast<RESULT *>(data);
-	if (!r)
+	auto s = (SCORECARDS **)(data);
+	if (!*s)
 		return;
+	
+	m_playerCount = code;
+	if (m_playerCount <= 0 || m_playerCount > 2)
+		throw std::out_of_range("Player count out of range");
 
-	m_result[0] = *r;
-	for (auto i = 0; i != 4; ++i) {
-		m_result[0].killCount += r->lists[i][0];
-		m_result[0].total += r->lists[i][1];
+	//复制结果，同时将ARMOURE1和ARMOURE2的结果存放到ARMOURED3。
+	for (auto i = 0; i != m_playerCount; ++i) {
+		auto &scorecards = *(*(s + i));
+		m_results[i][4] += m_results[i][0] = scorecards[Tank::ORDINARY1].killCount;
+		m_results[i][4] += m_results[i][1] = scorecards[Tank::ORDINARY2].killCount;
+		m_results[i][4] += m_results[i][2] = scorecards[Tank::AGILITY].killCount;
+		m_results[i][4] += m_results[i][3] = scorecards[Tank::ARMOURED1].killCount + 
+											 scorecards[Tank::ARMOURED2].killCount + 
+											 scorecards[Tank::ARMOURED3].killCount;
 	}
-
-	if (code == 2) {
-		m_result[1] = *(++r);
-		for (auto i = 0; i != 4; ++i) {
-			m_result[0].killCount += r->lists[i][0];
-			m_result[0].total += r->lists[i][1];
-		}
-	}
-	else {
-		m_result[1] = RESULT{};
-	}
-	m_resetView = true;
-
+	
+	resetListData();
+	m_lastUpdateTime = Timer::current();
 	installUserEventHook();
+	installEventHook();
 }
 
 void ResultView::close()
 {
 	uninstallUserEventHook();
+	uninstallEventHook();
 }
 
 int ResultView::render()
@@ -162,9 +167,12 @@ int ResultView::render()
 
 	m_cursor.renderFrame((!m_select) ? m_home.cursorPosition : m_next.cursorPosition);
 
-	for (auto &c : m_countBox) {
-		c.label.renderFrame(c.labelPosition);
-		c.numberBox.renderFrame(c.numberBoxPosition);
+	for (auto i = 0; i != m_playerCount; ++i) {
+		for (auto j = 0; j != 2; ++j) {
+			auto &c = m_countBox[i][j];
+			c.label.renderFrame(c.labelPosition);
+			c.numberBox.renderFrame(c.numberBoxPosition);
+		}
 	}
 
 	return 0;
@@ -172,40 +180,22 @@ int ResultView::render()
 
 void ResultView::update(Uint32 time)
 {
-//	return;
-	if (m_resetView) {
-		m_currentList.fill(RESULT{});
-		m_resetView = false;
-		m_lastUpdateTime = 0;
-	}
+	if (time - m_lastUpdateTime < updateInterval) 
+		return;
 
-	if (time - m_lastUpdateTime >= updateInterval) {
-		m_lastUpdateTime = time;
+	m_lastUpdateTime = time;
+	Tank::MODEL models[4] = {Tank::ORDINARY1, Tank::ORDINARY2, Tank::AGILITY, Tank::ARMOURED3};
 
-		for (size_t c = 0; c != 2; ++c) {
-			if (m_currentList[c].killCount < m_result[c].killCount) {
-				for (size_t i = 0; i != 4; ++i) {
-					++m_currentList[c].lists[i][0];
-					m_currentList[c].lists[i][1] += m_result[c].lists[i][1] / m_result[c].lists[i][0];
-					++m_currentList[c].killCount;
-					m_currentList[c].total += m_result[c].lists[i][1] / m_result[c].lists[i][0];
-				}
-			}
+	for (size_t c = 0; c != m_playerCount; ++c) {
+		SCORECARD stat;
+		for (auto i = 0; i != 4; ++i) {
+			stat.killCount += m_currentList[c][i] = m_currentList[c][i] + 1 >= m_results[c][i] ? m_results[c][i] : m_currentList[c][i]+1;
+			m_lists[c][i].killCountBox.setString(L"× " + std::to_wstring(m_currentList[c][i]));
+			m_lists[c][i].scoreBox.setString(L"= " + std::to_wstring(m_currentList[c][i]*Driver::queryScoreForModel(models[i])));
+			stat.total += m_currentList[c][i] * Driver::queryScoreForModel(models[i]);
 		}
-
-		//更新列表
-		for (auto c = 0; c != 2; ++c) {
-			for (auto i = 0; i != 4; ++i) {
-				m_lists[c][i].killCountBox.setString(L"× " + std::to_wstring(m_currentList[c].lists[i][0]));
-				m_lists[c][i].scoreBox.setString(L"= " + std::to_wstring(m_currentList[c].lists[i][1]));
-			}
-		}
-
-		//更新统计表
-		m_countBox[0].numberBox.setString(std::to_wstring(m_currentList[0].killCount));
-		m_countBox[1].numberBox.setString(std::to_wstring(m_currentList[0].total));
-		m_countBox[2].numberBox.setString(std::to_wstring(m_currentList[1].killCount));
-		m_countBox[3].numberBox.setString(std::to_wstring(m_currentList[1].total));
+		m_countBox[c][0].numberBox.setString(std::to_wstring(stat.killCount));
+		m_countBox[c][1].numberBox.setString(std::to_wstring(stat.total));
 	}
 }
 
@@ -267,6 +257,13 @@ void ResultView::eventHookProc(const SDL_Event & event)
 		break;
 	default:
 		break;
+	}
+}
+
+void ResultView::resetListData()
+{
+	for (int i = 0; i != 2; ++i) {
+		m_currentList[i].fill(0);
 	}
 }
 

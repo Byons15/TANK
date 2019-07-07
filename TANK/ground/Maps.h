@@ -33,28 +33,17 @@ public:
 	int setTerrain(int x, int y, uint32_t type = 0);
 	int createMaps(int level);
 
-	const TERRAIN &terrainData(size_t index) {
-		return m_terrainPool[index];
-	}
-	size_t terrainTypeMember() {
-		return m_terrainPool.size();
-	}
-
-	const SDL_Point basePosition() {
-		return m_reservePoint[0];
-	}
+	const TERRAIN &terrainData(size_t index) {return m_terrainPool[index];}
+	size_t terrainTypeMember() {return m_terrainPool.size();}
+	const SDL_Point basePosition() {return m_reservePoint[0];}
 
 	//获取敌军复活点。
 	//index：要获取的复活点标号，从0开始，最大值不能超过enemyBindCount-1.
-	const SDL_Point &enemyBindPosition(int index) {
-		return m_reservePoint[index + alliesBindCount + 1];
-	}
+	const SDL_Point &enemyBindPosition(int index) {return m_reservePoint[index + alliesBindCount + 1];}
 
 	//获取盟军复活点。
 	//index：要获取的复活点标号，从0开始，最大值不能超过alliesBindCount-1.
-	const SDL_Point &alliesBindPosition(int index) {
-		return m_reservePoint[index + 1];
-	}
+	const SDL_Point &alliesBindPosition(int index) {return m_reservePoint[index + 1];}
 	void clearMap();
 	~Maps();
 

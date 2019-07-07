@@ -186,7 +186,7 @@ int Ground::MissilepositionUpdate(Missile * m)
 		[this, &rect, &result, &m](int x, int y) -> void
 	{
 		if (m_maps(rect.x + x, rect.y + y)) {
-			if (m_maps.terrainData(m_maps(rect.x + x, rect.y + y) - 1).tankPass == 0) {
+			if (m_maps.terrainData(m_maps(rect.x + x, rect.y + y) - 1).HP != 0) {
 				attackTerrain({ rect.x + x, rect.y + y }, m->power());
 				result = -1;
 			}

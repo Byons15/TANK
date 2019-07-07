@@ -76,6 +76,8 @@ void StartMenu::open(void * data, int code)
 {
 	//接收键盘和鼠标输入以提供选项。
 	installEventHook();
+
+	switchMenu(1);
 }
 
 void StartMenu::eventHookProc(const SDL_Event & event)
@@ -85,14 +87,17 @@ void StartMenu::eventHookProc(const SDL_Event & event)
 	case SDL_KEYDOWN:
 		switch (event.key.keysym.sym)
 		{
+		case SDLK_s:
 		case SDLK_DOWN:
 			m_currItem = (m_currItem == 2) ? 0 : m_currItem + 1;
 			break;
 
+		case SDLK_w:
 		case SDLK_UP:
 			m_currItem = (m_currItem == 0) ? 2 : m_currItem - 1;
 			break;
 
+		case SDLK_j:
 		case SDLK_KP_ENTER:
 		case SDLK_RETURN:
 		case SDLK_RETURN2:

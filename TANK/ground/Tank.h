@@ -37,12 +37,12 @@ public:
 	{
 		P1,
 		P2,
+		ORDINARY1,
+		ORDINARY2,
 		AGILITY,
 		ARMOURED1,
 		ARMOURED2,
 		ARMOURED3,
-		ORDINARY1,
-		ORDINARY2,
 	};
 
 	enum CAMP
@@ -111,12 +111,12 @@ private:
 	bool m_invincible, m_reload;
 };
  
-struct SOCRECARD
+struct SCORECARD
 {
 	int killCount = 0;
 	unsigned total = 0;
 };
-typedef std::map<Tank::MODEL, SOCRECARD> SCORECARDS;
+typedef std::map<Tank::MODEL, SCORECARD> SCORECARDS;
 
 class Driver
 {
@@ -131,12 +131,15 @@ public:
 	Tank *tank() { return m_tank; }
 	void record(Tank::MODEL model);
 	unsigned total() { return m_total; }
+	static unsigned queryScoreForModel(Tank::MODEL model) { return sm_scoreTable[model]; }
+	const SCORECARD &scoreForModel(Tank::MODEL model) { return m_socrecards[model]; }
+	SCORECARDS &scoreCards() { return m_socrecards; }
 	void clearScorecards() { m_socrecards.clear(); }
 	virtual int command(SDL_Point cuttentPosition, Uint32 timestamp, Mover::DIRECTION &direction) = 0;
 	virtual ~Driver() = default;
 private:
 	Tank *m_tank;
-	std::vector<unsigned> sm_scoreTable;
+	static std::vector<unsigned> sm_scoreTable;
 	SCORECARDS m_socrecards;
 	unsigned m_total;
 };
